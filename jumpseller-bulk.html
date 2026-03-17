@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Carga masiva Jumpseller — Infopet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
+.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: var(--radius); padding: 48px 24px;
+  text-align: center; background: var(--surface); transition: all var(--transition);
+  cursor: pointer; margin-bottom: 24px;
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--accent); background: var(--accent-bg);
+}
+.drop-zone .drop-icon { font-size: 36px; color: var(--text-light); margin-bottom: 12px; }
+.drop-zone .drop-text { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+.drop-zone .drop-hint { font-size: 12px; color: var(--text-light); }
+.drop-zone input[type="file"] { display: none; }
+
+/* Summary counters */
+.counters {
+  display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.counter-chip {
+  display: flex; align-items: center; gap: 6px; padding: 6px 14px;
+  border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid var(--border);
+  background: var(--surface);
+}
+.counter-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.counter-chip .dot-green { background: var(--green); }
+.counter-chip .dot-yellow { background: #E9A820; }
+.counter-chip .dot-red { background: var(--red); }
+
+/* Filters */
+.filter-bar {
+  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--surface); color: var(--text-muted); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all var(--transition); font-family: var(--font-body);
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Table */
+.table-container { margin-bottom: 24px; }
+.table-container .table-wrap { border-radius: var(--radius); }
+.status-cell { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.row-ok {}
+.row-warning { background: #FFF8E1; }
+.row-error { background: #FFEBEE; }
+.editable { cursor: text; min-width: 60px; }
+.editable:focus { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 2px; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* Export bar */
+.export-bar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.export-bar .export-info { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+/* Alert */
+#alert { margin-bottom: 16px; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+
+/* Hidden */
+.hidden { display: none !important; }
+
+@media (max-width: 768px) {
+  .page-wrap { padding: 70px 12px 32px; }
+  .counters { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="carga-producto.html">Carga</a>
+    <a href="facturas.html">Facturas</a>
+    <a href="stock-dashboard.html">Stock</a>
+    <a href="jumpseller-bulk.html" class="active">Bulk</a>
+    <a href="sync-stock.html">Sync</a>
+  </div>
+</nav>
+
+<main class="page-wrap">
+  <h1 class="page-title">Carga masiva Jumpseller</h1>
+  <p class="page-subtitle">Sube tu Carga Maestra CSV &rarr; genera CSV Jumpseller</p>
+
+  <div id="alert" class="alert"></div>
+
+  <!-- Drop zone -->
+  <div class="drop-zone" id="dropZone">
+    <div class="drop-icon">&uarr;</div>
+    <div class="drop-text">Arrastra tu CSV aqu&iacute; o haz clic para seleccionar</div>
+    <div class="drop-hint">Carga Maestra de Google Sheets (.csv)</div>
+    <input type="file" id="fileInput" accept=".csv"/>
+  </div>
+
+  <!-- Results section (hidden until file loaded) -->
+  <div id="resultsSection" class="hidden">
+    <!-- Counters -->
+    <div class="counters">
+      <div class="counter-chip"><span class="dot dot-green"></span> <span id="countOk">0</span> OK</div>
+      <div class="counter-chip"><span class="dot dot-yellow"></span> <span id="countWarn">0</span> Warnings</div>
+      <div class="counter-chip"><span class="dot dot-red"></span> <span id="countErr">0</span> Errores</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
+      <button class="filter-btn" data-filter="ok" onclick="setFilter('ok', this)">OK</button>
+      <button class="filter-btn" data-filter="warning" onclick="setFilter('warning', this)">Warning</button>
+      <button class="filter-btn" data-filter="error" onclick="setFilter('error', this)">Error</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Nombre</th>
+              <th>SKU</th>
+              <th>Precio</th>
+              <th>Categor&iacute;a</th>
+              <th>Marca</th>
+              <th>C&oacute;digo Barra</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Export bar -->
+    <div class="export-bar">
+      <button class="btn btn-primary" id="btnExport" onclick="exportCSV()">Exportar CSV Jumpseller</button>
+      <span class="export-info" id="exportInfo"></span>
+    </div>
+  </div>
+</main>
+
+<script src="assets/utils.js"></script>
+<script>
+(function() {
+  let rows = [];
+  let currentFilter = 'all';
+  const alertEl = document.getElementById('alert');
+  const tbody = document.getElementById('tbody');
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const resultsSection = document.getElementById('resultsSection');
+
+  // Drop zone events
+  dropZone.addEventListener('click', function() { fileInput.click(); });
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    var files = e.dataTransfer.files;
+    if (files.length > 0) processFile(files[0]);
+  });
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) processFile(fileInput.files[0]);
+  });
+
+  function processFile(file) {
+    if (!file.name.endsWith('.csv')) {
+      showAlert(alertEl, 'err', 'Solo se aceptan archivos CSV.');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      parseCSV(e.target.result);
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  function parseCSV(text) {
+    var lines = text.split(/\r?\n/).filter(function(l) { return l.trim().length > 0; });
+    if (lines.length < 2) {
+      showAlert(alertEl, 'err', 'El CSV est\u00e1 vac\u00edo o solo tiene encabezado.');
+      return;
+    }
+
+    var headers = splitCSVLine(lines[0]).map(function(h) { return h.trim().toLowerCase(); });
+
+    // Auto-detect columns
+    var colMap = {
+      name: findCol(headers, ['nombre', 'name', 'producto', 'descripcion', 'descripción']),
+      sku: findCol(headers, ['sku', 'codigo', 'código', 'code']),
+      price: findCol(headers, ['precio', 'price', 'valor']),
+      category: findCol(headers, ['categoria', 'categoría', 'category', 'categories']),
+      brand: findCol(headers, ['marca', 'brand']),
+      barcode: findCol(headers, ['codigo barra', 'código barra', 'barcode', 'ean', 'upc', 'codigo_barra']),
+      stock: findCol(headers, ['stock', 'cantidad', 'quantity']),
+      description: findCol(headers, ['descripcion', 'descripción', 'description', 'detalle'])
+    };
+
+    rows = [];
+    var skus = {};
+
+    for (var i = 1; i < lines.length; i++) {
+      var cols = splitCSVLine(lines[i]);
+      var row = {
+        name: getVal(cols, colMap.name),
+        sku: getVal(cols, colMap.sku),
+        price: getVal(cols, colMap.price),
+        category: getVal(cols, colMap.category),
+        brand: getVal(cols, colMap.brand),
+        barcode: getVal(cols, colMap.barcode),
+        stock: getVal(cols, colMap.stock) || '0',
+        description: getVal(cols, colMap.description),
+        status: 'ok',
+        issues: []
+      };
+
+      // Validate
+      if (!row.name) { row.status = 'error'; row.issues.push('Falta nombre'); }
+      if (!row.price) { row.status = 'error'; row.issues.push('Falta precio'); }
+      if (row.sku && skus[row.sku]) {
+        if (row.status !== 'error') row.status = 'warning';
+        row.issues.push('SKU duplicado');
+      }
+      if (!row.barcode && row.status !== 'error') {
+        if (row.status !== 'error') row.status = 'warning';
+        row.issues.push('C\u00f3digo barra vac\u00edo');
+      }
+      if (row.sku) skus[row.sku] = true;
+
+      rows.push(row);
+    }
+
+    resultsSection.classList.remove('hidden');
+    dropZone.style.display = 'none';
+    renderCounters();
+    renderTable();
+    showAlert(alertEl, 'ok', rows.length + ' productos cargados desde CSV.');
+  }
+
+  function findCol(headers, aliases) {
+    for (var a = 0; a < aliases.length; a++) {
+      for (var h = 0; h < headers.length; h++) {
+        if (headers[h] === aliases[a] || headers[h].indexOf(aliases[a]) !== -1) return h;
+      }
+    }
+    return -1;
+  }
+
+  function getVal(cols, idx) {
+    if (idx < 0 || idx >= cols.length) return '';
+    return (cols[idx] || '').trim();
+  }
+
+  function splitCSVLine(line) {
+    var result = [];
+    var current = '';
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (inQuotes) {
+        if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+        else if (ch === '"') { inQuotes = false; }
+        else { current += ch; }
+      } else {
+        if (ch === '"') { inQuotes = true; }
+        else if (ch === ',' || ch === ';') { result.push(current); current = ''; }
+        else { current += ch; }
+      }
+    }
+    result.push(current);
+    return result;
+  }
+
+  function renderCounters() {
+    var ok = 0, warn = 0, err = 0;
+    rows.forEach(function(r) {
+      if (r.status === 'ok') ok++;
+      else if (r.status === 'warning') warn++;
+      else err++;
+    });
+    document.getElementById('countOk').textContent = ok;
+    document.getElementById('countWarn').textContent = warn;
+    document.getElementById('countErr').textContent = err;
+    document.getElementById('exportInfo').textContent = ok + ' productos listos para exportar';
+  }
+
+  function getDotClass(status) {
+    if (status === 'error') return 'dot dot-red';
+    if (status === 'warning') return 'dot dot-yellow';
+    return 'dot dot-green';
+  }
+
+  function getStatusLabel(status) {
+    if (status === 'error') return 'Error';
+    if (status === 'warning') return 'Warning';
+    return 'OK';
+  }
+
+  function renderTable() {
+    tbody.innerHTML = '';
+    var filtered = rows.filter(function(r) {
+      if (currentFilter === 'all') return true;
+      return r.status === currentFilter;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">Sin resultados para este filtro.</td></tr>';
+      return;
+    }
+
+    filtered.forEach(function(r, idx) {
+      var realIdx = rows.indexOf(r);
+      var rowClass = r.status === 'error' ? 'row-error' : (r.status === 'warning' ? 'row-warning' : 'row-ok');
+      var tr = document.createElement('tr');
+      tr.className = rowClass;
+      tr.innerHTML =
+        '<td><span class="status-cell"><span class="' + getDotClass(r.status) + '"></span> ' + getStatusLabel(r.status) + '</span></td>' +
+        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="name">' + escHtml(r.name) + '</td>' +
+        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="sku"><code>' + escHtml(r.sku) + '</code></td>' +
+        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="price">' + escHtml(r.price) + '</td>' +
+        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="category">' + escHtml(r.category) + '</td>' +
+        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="brand">' + escHtml(r.brand) + '</td>' +
+        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="barcode">' + escHtml(r.barcode) + '</td>' +
+        '<td>' + (r.issues.length > 0 ? r.issues.join(', ') : '-') + '</td>';
+      tbody.appendChild(tr);
+    });
+
+    // Listen for edits
+    tbody.querySelectorAll('.editable').forEach(function(cell) {
+      cell.addEventListener('blur', function() {
+        var idx = parseInt(this.getAttribute('data-idx'));
+        var field = this.getAttribute('data-field');
+        rows[idx][field] = this.textContent.trim();
+        revalidate();
+      });
+    });
+  }
+
+  function escHtml(s) {
+    var div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function revalidate() {
+    var skus = {};
+    rows.forEach(function(r) {
+      r.status = 'ok';
+      r.issues = [];
+      if (!r.name) { r.status = 'error'; r.issues.push('Falta nombre'); }
+      if (!r.price) { r.status = 'error'; r.issues.push('Falta precio'); }
+      if (r.sku && skus[r.sku]) {
+        if (r.status !== 'error') r.status = 'warning';
+        r.issues.push('SKU duplicado');
+      }
+      if (!r.barcode && r.status !== 'error') {
+        if (r.status !== 'error') r.status = 'warning';
+        r.issues.push('C\u00f3digo barra vac\u00edo');
+      }
+      if (r.sku) skus[r.sku] = true;
+    });
+    renderCounters();
+    renderTable();
+  }
+
+  // Filter
+  window.setFilter = function(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderTable();
+  };
+
+  // Export CSV
+  window.exportCSV = function() {
+    var exportRows = rows.filter(function(r) { return r.status === 'ok' || r.status === 'warning'; });
+    if (exportRows.length === 0) {
+      showAlert(alertEl, 'warn', 'No hay productos v\u00e1lidos para exportar. Corrige los errores primero.');
+      return;
+    }
+
+    var headers = ['Name', 'SKU', 'Categories', 'Price', 'Stock', 'Description', 'Brand', 'Barcode', 'Status'];
+    var csvRows = exportRows.map(function(r) {
+      return [
+        csvCell(r.name),
+        csvCell(r.sku),
+        csvCell(r.category),
+        csvCell(r.price),
+        csvCell(r.stock),
+        csvCell(r.description),
+        csvCell(r.brand),
+        csvCell(r.barcode),
+        csvCell('active')
+      ].join(',');
+    });
+
+    var csv = '\uFEFF' + headers.join(',') + '\n' + csvRows.join('\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var fecha = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = 'jumpseller_import_' + fecha + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showAlert(alertEl, 'ok', 'CSV Jumpseller exportado con ' + exportRows.length + ' productos.');
+  };
+
+  function csvCell(val) {
+    var s = String(val || '');
+    if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+})();
+</script>
+</body>
+</html>

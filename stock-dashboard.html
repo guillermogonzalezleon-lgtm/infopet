@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dashboard de compras — Infopet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
+.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+/* Top bar */
+.top-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 24px; padding: 14px 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.top-bar input[type="text"] {
+  flex: 1; min-width: 200px; padding: 8px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font-body);
+  background: var(--bg); color: var(--text); outline: none; transition: border-color var(--transition);
+}
+.top-bar input[type="text"]:focus { border-color: var(--accent); }
+
+/* Summary cards */
+.summary-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
+}
+.summary-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 24px; text-align: center; transition: all var(--transition);
+}
+.summary-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow); }
+.summary-card .label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+.summary-card .value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; }
+.summary-card.card-red { border-left: 4px solid var(--red); }
+.summary-card.card-red .value { color: var(--red); }
+.summary-card.card-yellow { border-left: 4px solid #E9A820; }
+.summary-card.card-yellow .value { color: #E9A820; }
+.summary-card.card-green { border-left: 4px solid var(--green); }
+.summary-card.card-green .value { color: var(--green); }
+
+/* Filters */
+.filter-bar {
+  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--surface); color: var(--text-muted); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all var(--transition); font-family: var(--font-body);
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Table */
+.table-container { margin-bottom: 24px; }
+.table-container .table-wrap { border-radius: var(--radius); }
+.status-cell { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* Order bar */
+.order-bar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.order-bar .order-info { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+/* Alert */
+#alert { margin-bottom: 16px; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+
+@media (max-width: 768px) {
+  .page-wrap { padding: 70px 12px 32px; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .top-bar { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="carga-producto.html">Carga</a>
+    <a href="facturas.html">Facturas</a>
+    <a href="stock-dashboard.html" class="active">Stock</a>
+    <a href="jumpseller-bulk.html">Bulk</a>
+    <a href="sync-stock.html">Sync</a>
+  </div>
+</nav>
+
+<main class="page-wrap">
+  <h1 class="page-title">Dashboard de compras</h1>
+  <p class="page-subtitle">Stock sem&aacute;foro &mdash; qu&eacute; comprar, cu&aacute;nto y a qui&eacute;n</p>
+
+  <div id="alert" class="alert"></div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <input type="text" id="searchInput" placeholder="Buscar producto o SKU..." oninput="filterTable()"/>
+    <button class="btn btn-primary btn-sm" id="btnRefresh" onclick="loadStock()">Actualizar stock</button>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-grid">
+    <div class="summary-card card-red">
+      <div class="label">Urgente (stock=0)</div>
+      <div class="value" id="countUrgent">--</div>
+    </div>
+    <div class="summary-card card-yellow">
+      <div class="label">Posible compra</div>
+      <div class="value" id="countWarning">--</div>
+    </div>
+    <div class="summary-card card-green">
+      <div class="label">Full stock</div>
+      <div class="value" id="countOk">--</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
+    <button class="filter-btn" data-filter="red" onclick="setFilter('red', this)">Urgente</button>
+    <button class="filter-btn" data-filter="yellow" onclick="setFilter('yellow', this)">Posible</button>
+    <button class="filter-btn" data-filter="green" onclick="setFilter('green', this)">Full</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Producto</th>
+            <th>SKU</th>
+            <th>Stock actual</th>
+            <th>Stock m&iacute;nimo</th>
+            <th>Cantidad a pedir</th>
+            <th>Costo estimado</th>
+            <th>Acci&oacute;n</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyState">Cargando productos...</div>
+  </div>
+
+  <!-- Order bar -->
+  <div class="order-bar">
+    <button class="btn btn-primary" id="btnOrder" onclick="generateOrder()" disabled>Generar orden de compra</button>
+    <span class="order-info" id="orderInfo"></span>
+  </div>
+</main>
+
+<script src="assets/utils.js"></script>
+<script>
+(function() {
+  let products = [];
+  let currentFilter = 'all';
+  const alertEl = document.getElementById('alert');
+  const tbody = document.getElementById('tbody');
+  const emptyState = document.getElementById('emptyState');
+
+  // Stock minimum defaults
+  const DEFAULT_MIN = 5;
+
+  function getStatus(stock, minStock) {
+    if (stock === 0 || stock < minStock * 0.5) return 'red';
+    if (stock <= minStock * 1.2) return 'yellow';
+    return 'green';
+  }
+
+  function getDotClass(status) {
+    if (status === 'red') return 'dot dot-red dot-pulse';
+    if (status === 'yellow') return 'dot dot-yellow dot-pulse';
+    return 'dot dot-green';
+  }
+
+  // Load stock from Bsale
+  window.loadStock = async function() {
+    const btn = document.getElementById('btnRefresh');
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+    emptyState.textContent = 'Cargando productos desde Bsale...';
+    emptyState.style.display = 'block';
+    tbody.innerHTML = '';
+    products = [];
+
+    try {
+      const data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&expand=[variants]');
+      const items = data.items || [];
+
+      for (const prod of items) {
+        const variants = prod.variants && prod.variants.items ? prod.variants.items : (prod.variants || []);
+        if (variants.length === 0) {
+          products.push({
+            name: prod.name || prod.description || '--',
+            sku: '--',
+            stock: 0,
+            minStock: DEFAULT_MIN,
+            cost: 0,
+            status: 'red'
+          });
+          continue;
+        }
+        for (const v of variants) {
+          const stock = typeof v.quantity === 'number' ? v.quantity : (v.stock || 0);
+          const cost = v.cost || v.costPrice || 0;
+          const minStock = DEFAULT_MIN;
+          const status = getStatus(stock, minStock);
+          const toOrder = status !== 'green' ? Math.max(0, minStock - stock) : 0;
+          products.push({
+            name: prod.name || prod.description || '--',
+            sku: v.sku || v.code || '--',
+            stock: stock,
+            minStock: minStock,
+            toOrder: toOrder,
+            cost: cost,
+            estimatedCost: toOrder * cost,
+            status: status
+          });
+        }
+      }
+
+      // Sort: red first, then yellow, then green
+      const order = { red: 0, yellow: 1, green: 2 };
+      products.sort(function(a, b) { return order[a.status] - order[b.status]; });
+
+      renderSummary();
+      renderTable();
+    } catch (err) {
+      showAlert(alertEl, 'err', 'Error al cargar productos: ' + err.message);
+      emptyState.textContent = 'Error al cargar datos. Intenta nuevamente.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Actualizar stock';
+    }
+  };
+
+  function renderSummary() {
+    const urgent = products.filter(function(p) { return p.status === 'red'; }).length;
+    const warning = products.filter(function(p) { return p.status === 'yellow'; }).length;
+    const ok = products.filter(function(p) { return p.status === 'green'; }).length;
+    document.getElementById('countUrgent').textContent = urgent;
+    document.getElementById('countWarning').textContent = warning;
+    document.getElementById('countOk').textContent = ok;
+
+    const actionable = urgent + warning;
+    document.getElementById('btnOrder').disabled = actionable === 0;
+    document.getElementById('orderInfo').textContent = actionable > 0
+      ? actionable + ' productos para incluir en orden de compra'
+      : 'Todo el stock est\u00e1 OK';
+  }
+
+  function getFiltered() {
+    const search = (document.getElementById('searchInput').value || '').toLowerCase();
+    return products.filter(function(p) {
+      if (currentFilter !== 'all' && p.status !== currentFilter) return false;
+      if (search && p.name.toLowerCase().indexOf(search) === -1 && p.sku.toLowerCase().indexOf(search) === -1) return false;
+      return true;
+    });
+  }
+
+  function renderTable() {
+    tbody.innerHTML = '';
+    var filtered = getFiltered();
+
+    if (filtered.length === 0) {
+      emptyState.textContent = products.length === 0 ? 'No se encontraron productos.' : 'Sin resultados para el filtro actual.';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    filtered.forEach(function(p) {
+      var toOrder = p.status !== 'green' ? Math.max(0, p.minStock - p.stock) : 0;
+      var estCost = toOrder * p.cost;
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-status', p.status);
+      tr.innerHTML =
+        '<td><span class="status-cell"><span class="' + getDotClass(p.status) + '"></span></span></td>' +
+        '<td>' + p.name + '</td>' +
+        '<td><code>' + p.sku + '</code></td>' +
+        '<td class="mono">' + p.stock + '</td>' +
+        '<td class="mono">' + p.minStock + '</td>' +
+        '<td class="mono">' + (toOrder > 0 ? toOrder : '-') + '</td>' +
+        '<td class="mono">' + (estCost > 0 ? '$' + estCost.toLocaleString('es-CL') : '-') + '</td>' +
+        '<td>' + (p.status !== 'green' ? '<button class="btn btn-primary btn-sm" onclick="addToOrder(\'' + p.sku.replace(/'/g, "\\'") + '\')">Agregar</button>' : '<span style="color:var(--text-light);font-size:12px">OK</span>') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Filter
+  window.setFilter = function(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderTable();
+  };
+
+  window.filterTable = function() {
+    renderTable();
+  };
+
+  // Add to order (visual feedback)
+  window.addToOrder = function(sku) {
+    var p = products.find(function(item) { return item.sku === sku; });
+    if (p) {
+      showAlert(alertEl, 'ok', p.name + ' agregado a la orden de compra.');
+    }
+  };
+
+  // Generate CSV order
+  window.generateOrder = function() {
+    var toOrder = products.filter(function(p) { return p.status === 'red' || p.status === 'yellow'; });
+    if (toOrder.length === 0) {
+      showAlert(alertEl, 'warn', 'No hay productos que necesiten reposici\u00f3n.');
+      return;
+    }
+
+    var headers = ['Producto', 'SKU', 'Stock Actual', 'Stock M\u00ednimo', 'Cantidad a Pedir', 'Costo Estimado', 'Estado'];
+    var rows = toOrder.map(function(p) {
+      var qty = Math.max(0, p.minStock - p.stock);
+      var est = qty * p.cost;
+      var estado = p.status === 'red' ? 'URGENTE' : 'POSIBLE';
+      return [p.name, p.sku, p.stock, p.minStock, qty, est, estado];
+    });
+
+    var csv = '\uFEFF' + headers.join(',') + '\n' + rows.map(function(r) {
+      return r.map(function(cell) {
+        var s = String(cell);
+        if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }).join(',');
+    }).join('\n');
+
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var fecha = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = 'orden_compra_' + fecha + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showAlert(alertEl, 'ok', 'Orden de compra generada con ' + toOrder.length + ' productos.');
+  };
+
+  // Initial load
+  loadStock();
+})();
+</script>
+</body>
+</html>

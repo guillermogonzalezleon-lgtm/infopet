@@ -1,5 +1,8 @@
 // Infopet — Proxy seguro para Jumpseller API
 // Nunca expone credenciales al cliente
+// WRITE_MODE protege contra escrituras accidentales
+
+import { requireWriteAccess } from './config.js';
 
 const ALLOWED_ENDPOINTS = [
   'products', 'orders', 'categories', 'stock'
@@ -12,6 +15,11 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Bloquear escrituras si WRITE_MODE no está habilitado
+  if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+    if (!requireWriteAccess(res)) return;
+  }
 
   const { endpoint, ...params } = req.query;
 
