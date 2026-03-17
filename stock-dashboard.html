@@ -227,92 +227,49 @@
     products = [];
 
     try {
-      // 1) Traer productos activos
-      var data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&state=0');
-      var items = data.items || [];
+      emptyState.textContent = 'Cargando stocks de Bsale...';
 
-      if (items.length === 0) {
-        emptyState.textContent = 'No se encontraron productos activos en Bsale.';
+      // Solo 2 llamadas: stocks con cantidad (paginado)
+      var allStocks = [];
+      var offset = 0;
+      var limit = 50;
+      while (true) {
+        var stockData = await apiFetch('/api/bsale?endpoint=stocks.json&limit=' + limit + '&offset=' + offset);
+        if (!stockData.items || stockData.items.length === 0) break;
+        allStocks = allStocks.concat(stockData.items);
+        emptyState.textContent = 'Cargando... ' + allStocks.length + ' registros de stock';
+        if (stockData.items.length < limit) break;
+        offset += limit;
+        // Pausa para no saturar el rate limit
+        await sleep(500);
+      }
+
+      if (allStocks.length === 0) {
+        emptyState.textContent = 'No se encontraron datos de stock.';
         renderSummary();
         return;
       }
 
-      // 2) Para cada producto, traer sus variantes con stock
-      var tasks = items.map(function(prod) {
-        return {
-          name: 'prod_' + prod.id,
-          fn: async function() {
-            var variantsUrl = '/api/bsale?endpoint=products/' + prod.id + '/variants.json';
-            var varData = await apiFetch(variantsUrl);
-            var variants = varData.items || [];
+      // Agrupar por variante
+      for (var i = 0; i < allStocks.length; i++) {
+        var s = allStocks[i];
+        var qty = s.quantity || 0;
+        var variantId = s.variant ? (s.variant.id || '') : '';
+        products.push({
+          name: 'Variante #' + variantId,
+          sku: variantId,
+          stock: qty,
+          status: getStatus(qty)
+        });
+      }
 
-            if (variants.length === 0) {
-              // Producto sin variantes — registrar con stock 0
-              products.push({
-                name: prod.name || prod.description || '(sin nombre)',
-                sku: '--',
-                stock: 0,
-                status: 'red'
-              });
-              return;
-            }
-
-            for (var v = 0; v < variants.length; v++) {
-              var vr = variants[v];
-              // Bsale devuelve stock en "quantity" de la variante o hay que pedir stock aparte
-              var stockQty = 0;
-
-              // Intentar obtener stock de los campos comunes
-              if (typeof vr.quantity === 'number') {
-                stockQty = vr.quantity;
-              } else if (typeof vr.stock === 'number') {
-                stockQty = vr.stock;
-              } else if (vr.stock_info && typeof vr.stock_info.quantity === 'number') {
-                stockQty = vr.stock_info.quantity;
-              }
-
-              // Intentar pedir stock de la variante si no viene inline
-              if (stockQty === 0 && vr.id) {
-                try {
-                  var stockData = await apiFetch('/api/bsale?endpoint=stocks.json&variant=' + vr.id);
-                  var stockItems = stockData.items || [];
-                  for (var s = 0; s < stockItems.length; s++) {
-                    stockQty += (stockItems[s].quantity || 0);
-                  }
-                } catch (e) {
-                  // Si falla, dejar stock en 0
-                }
-              }
-
-              var sku = vr.sku || vr.code || vr.barCode || '--';
-              var status = getStatus(stockQty);
-              var variantDesc = vr.description ? ' — ' + vr.description : '';
-
-              products.push({
-                name: (prod.name || prod.description || '(sin nombre)') + variantDesc,
-                sku: sku,
-                stock: stockQty,
-                status: status
-              });
-            }
-          }
-        };
-      });
-
-      // Ejecutar en paralelo con progreso
-      var completed = 0;
-      await parallelTasks(tasks, function(info) {
-        completed++;
-        emptyState.textContent = 'Cargando... ' + completed + ' de ' + items.length + ' productos';
-      });
-
-      // Ordenar: urgentes primero, luego ámbar, luego verdes
+      // Ordenar: urgentes primero
       var order = { red: 0, amber: 1, green: 2 };
       products.sort(function(a, b) { return order[a.status] - order[b.status]; });
 
       renderSummary();
       renderTable();
-      showAlert(alertEl, 'ok', products.length + ' variantes cargadas desde Bsale.');
+      showAlert(alertEl, 'ok', products.length + ' registros de stock cargados.');
 
     } catch (err) {
       showAlert(alertEl, 'err', 'Error al cargar productos: ' + err.message);
