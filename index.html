@@ -189,7 +189,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:#fff;font-size:15px;line-hei
     try{var data=await apiFetch(url);var v=fn(data);el.textContent=v.toLocaleString('es-CL');el.classList.remove('ld')}
     catch(e){el.textContent='—';el.classList.remove('ld')}
   }
-  lm('mBsale','/api/bsale?endpoint=products.json&limit=1',function(d){return d.count||0});
+  lm('mBsale','/api/bsale?endpoint=products.json&limit=1&state=1',function(d){return d.count||0});
   lm('mJump','/api/jumpseller?endpoint=products/count.json',function(d){return d.count||0});
   lm('mCrit','/api/bsale?endpoint=stocks.json&limit=1&quantity=0',function(d){return d.count||0});
 
