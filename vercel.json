@@ -1,0 +1,22 @@
+{
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/bsale", "destination": "/api/bsale.js" },
+    { "source": "/api/jumpseller", "destination": "/api/jumpseller.js" },
+    { "source": "/api/sheets", "destination": "/api/sheets.js" },
+    { "source": "/api/drive", "destination": "/api/drive.js" },
+    { "source": "/api/ocr", "destination": "/api/ocr.js" },
+    { "source": "/api/sync", "destination": "/api/sync.js" },
+    { "source": "/api/gmail", "destination": "/api/gmail.js" }
+  ]
+}
