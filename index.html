@@ -3,331 +3,198 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>InfoPet — Panel de gestión</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="assets/style.css"/>
+<title>InfoPet — Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
 <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F2F2F7;
+  --card:rgba(255,255,255,0.72);
+  --card-solid:#fff;
+  --border:rgba(0,0,0,0.06);
+  --text:#1D1D1F;
+  --text2:#48484A;
+  --text3:#8E8E93;
+  --accent:#2D6A4F;
+  --accent-bg:rgba(45,106,79,0.08);
+  --red:#FF3B30;
+  --red-bg:rgba(255,59,48,0.08);
+  --amber:#FF9500;
+  --amber-bg:rgba(255,149,0,0.08);
+  --green:#34C759;
+  --green-bg:rgba(52,199,89,0.08);
+  --r:20px;
+  --rs:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ── Nav ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(242,242,247,0.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:0.5px solid rgba(0,0,0,0.08);transition:all 0.4s}
+.nav.dark{background:rgba(0,0,0,0.6);border-bottom-color:rgba(255,255,255,0.08)}
+.nav-left{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.nav.dark .nav-left{color:#fff}
+.nav-logo{height:30px;border-radius:7px}
+.nav-name{font-weight:600;font-size:15px;letter-spacing:-0.02em}
+.nav-badge{font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:2px 8px;border-radius:5px}
+.nav-links{display:flex;gap:1px}
+.nav-links a{font-size:13px;font-weight:400;color:var(--text3);text-decoration:none;padding:6px 13px;border-radius:8px;transition:all 0.15s}
+.nav-links a:hover{background:rgba(0,0,0,0.04);color:var(--text)}
+.nav-links a.on{color:var(--accent);font-weight:500}
+.nav.dark .nav-links a{color:rgba(255,255,255,0.5)}
+.nav.dark .nav-links a.on{color:rgba(255,255,255,0.95)}
+.nav.dark .nav-links a:hover{background:rgba(255,255,255,0.08);color:#fff}
+
 /* ── Hero ── */
-.hero {
-  position: relative;
-  height: 280px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  margin-top: 52px;
-}
+.hero{position:relative;height:320px;display:flex;align-items:flex-end;overflow:hidden;margin-top:52px}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.1) 100%)}
+.hero-c{position:relative;z-index:2;padding:0 48px 40px;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.hero-text{flex:1}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.12);padding:5px 14px;border-radius:100px;margin-bottom:14px;backdrop-filter:blur(12px)}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:#34C759;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(28px,4vw,40px);color:#fff;line-height:1.15;margin-bottom:6px}
+.hero-date{font-size:14px;color:rgba(255,255,255,0.5);font-weight:300}
+.hero-stats{display:flex;gap:20px;flex-shrink:0}
+.hero-stat{text-align:center;min-width:80px}
+.hero-stat-val{font-size:28px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.hero-stat-label{font-size:10px;font-weight:500;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px}
 
-.hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-}
+/* ── Main ── */
+.main{max-width:1100px;margin:0 auto;padding:28px 24px 60px}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:12px;padding-left:4px}
 
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, rgba(10,15,10,0.85), rgba(10,15,10,0.3));
-  z-index: 1;
-}
+/* ── Metrics ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.m-card{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:var(--r);padding:18px 20px;transition:all 0.2s cubic-bezier(.4,0,.2,1);cursor:default}
+.m-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.06)}
+.m-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:8px}
+.m-val{font-size:28px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.02em;line-height:1}
+.m-val.ld{height:28px;width:72px;border-radius:8px;background:linear-gradient(90deg,#EBEBF0 25%,#E0E0E5 50%,#EBEBF0 75%);background-size:200% 100%;animation:shm 1.5s infinite}
+@keyframes shm{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.m-sub{font-size:11px;color:var(--text3);margin-top:8px;display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-g{background:var(--green)}.dot-r{background:var(--red)}.dot-a{background:var(--amber)}
+.dot-p{animation:pulse 1.8s infinite}
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 48px;
-  color: #fff;
-  max-width: 640px;
-}
+/* ── Actions ── */
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+.a-card{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--card);backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:var(--r);padding:22px 12px 18px;text-decoration:none;color:var(--text2);font-weight:500;font-size:13px;text-align:center;transition:all 0.2s cubic-bezier(.4,0,.2,1)}
+.a-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.06);color:var(--accent)}
+.a-icon{width:44px;height:44px;border-radius:var(--rs);background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all 0.2s}
+.a-card:hover .a-icon{background:var(--accent);color:#fff}
 
-.hero-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.85);
-  background: rgba(255,255,255,0.10);
-  border: 0.5px solid rgba(255,255,255,0.14);
-  padding: 5px 14px;
-  border-radius: 100px;
-  margin-bottom: 18px;
-  backdrop-filter: blur(8px);
-}
-
-.hero-content h1 {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(26px, 4vw, 36px);
-  color: #fff;
-  letter-spacing: -0.01em;
-  margin-bottom: 6px;
-  line-height: 1.2;
-}
-
-.hero-date {
-  font-size: 14px;
-  color: rgba(255,255,255,0.55);
-  font-weight: 400;
-}
-
-/* ── Page layout ── */
-.page-wrap {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 32px 24px 48px;
-}
-
-/* ── Metric cards ── */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 36px;
-}
-
-.metric-card {
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  transition: all 0.2s var(--ease);
-}
-
-.metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.07);
-}
-
-.metric-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
-
-.metric-value {
-  font-size: 26px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-
-.metric-value.loading {
-  height: 28px;
-  width: 64px;
-}
-
-.metric-sub {
-  font-size: 12px;
-  color: var(--text-3);
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* ── Quick actions ── */
-.actions-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  margin-bottom: 36px;
-}
-
-.action-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 14px;
-  text-decoration: none;
-  color: var(--text-2);
-  font-weight: 500;
-  font-size: 13px;
-  text-align: center;
-  transition: all 0.2s var(--ease);
-}
-
-.action-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.07);
-  color: var(--accent);
-}
-
-.action-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  background: var(--accent-bg);
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-  transition: all 0.2s var(--ease);
-}
-
-.action-card:hover .action-icon {
-  background: var(--accent);
-  color: white;
-}
-
-/* ── Sync widget ── */
-.sync-widget {
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.sync-widget h3 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 14px;
-}
-
-.sync-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.sync-result {
-  font-size: 13px;
-  color: var(--text-3);
-}
-
-.sync-result strong {
-  color: var(--text);
-}
+/* ── Sync ── */
+.sync-card{background:var(--card);backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:var(--r);padding:20px 24px}
+.sync-card h3{font-size:16px;font-weight:600;letter-spacing:-0.02em;margin-bottom:14px}
+.sync-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sync-res{font-size:13px;color:var(--text3)}.sync-res strong{color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--rs);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none}
+.btn-p{background:var(--text);color:#fff}.btn-p:hover{background:#333}
+.btn-d{background:var(--red);color:#fff}.btn-d:hover{background:#E0342B}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* ── Responsive ── */
-@media (max-width: 860px) {
-  .hero { height: 240px; }
-  .hero-content { padding: 0 24px; }
-  .hero-content h1 { font-size: 24px; }
-  .page-wrap { padding: 24px 16px 32px; }
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .actions-grid { grid-template-columns: repeat(2, 1fr); }
+@media(max-width:860px){
+  .nav-links{display:none}
+  .hero{height:260px}
+  .hero-c{padding:0 20px 28px;flex-direction:column;align-items:flex-start}
+  .hero-stats{display:none}
+  .hero h1{font-size:26px}
+  .main{padding:20px 16px 48px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .actions{grid-template-columns:repeat(3,1fr)}
 }
-
-@media (max-width: 480px) {
-  .metrics-grid { grid-template-columns: 1fr; }
-  .actions-grid { grid-template-columns: 1fr; }
+@media(max-width:480px){
+  .metrics{grid-template-columns:1fr}
+  .actions{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar">
-  <a href="index.html" class="navbar-brand">
-    <img src="assets/logo.jpeg" alt="InfoPet"/>
-    <span>InfoPet</span>
-    <span class="badge">panel</span>
+<!-- Nav -->
+<nav class="nav dark" id="topNav">
+  <a href="index.html" class="nav-left">
+    <img src="assets/logo.jpeg" class="nav-logo" alt="InfoPet"/>
+    <span class="nav-name">InfoPet</span>
+    <span class="nav-badge">Panel</span>
   </a>
-  <div class="navbar-links">
-    <a href="index.html" class="active">Inicio</a>
+  <div class="nav-links">
+    <a href="index.html" class="on">Inicio</a>
     <a href="carga-producto.html">Carga</a>
     <a href="facturas.html">Facturas</a>
     <a href="stock-dashboard.html">Stock</a>
     <a href="jumpseller-bulk.html">Bulk</a>
     <a href="sync-stock.html">Sync</a>
   </div>
-  <button class="hamburger" onclick="document.querySelector('.navbar-links').style.display=document.querySelector('.navbar-links').style.display==='flex'?'none':'flex'">&#9776;</button>
 </nav>
 
 <!-- Hero -->
 <div class="hero">
-  <video class="hero-video" autoplay muted loop playsinline src="assets/hero-bg.mp4"></video>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <div class="hero-pill">
-      <span class="dot dot-green dot-pulse"></span>
-      Bsale &middot; Jumpseller &middot; Sheets conectados
+  <video autoplay muted loop playsinline src="assets/hero-bg.mp4"></video>
+  <div class="hero-ov"></div>
+  <div class="hero-c">
+    <div class="hero-text">
+      <div class="hero-pill"><span class="hero-dot"></span>Bsale · Jumpseller · Sheets conectados</div>
+      <h1 id="greeting">Buenas tardes</h1>
+      <p class="hero-date" id="heroDate"></p>
     </div>
-    <h1 id="heroGreeting">Buenos días</h1>
-    <p class="hero-date" id="heroDate"></p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val" id="hBsale">—</div><div class="hero-stat-label">Bsale</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" id="hJump">—</div><div class="hero-stat-label">Jumpseller</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" id="hCrit">—</div><div class="hero-stat-label">Críticos</div></div>
+    </div>
   </div>
 </div>
 
 <!-- Main -->
-<main class="page-wrap">
+<main class="main">
 
-  <!-- Métricas en vivo -->
-  <div class="section-label fade-up">Métricas en vivo</div>
-  <div class="metrics-grid fade-up">
-    <div class="metric-card">
-      <div class="metric-label">Productos Bsale</div>
-      <div class="metric-value loading shimmer" id="metricBsale">&nbsp;</div>
+  <!-- Métricas -->
+  <div class="section-label">Métricas en vivo</div>
+  <div class="metrics">
+    <div class="m-card">
+      <div class="m-label">Productos Bsale</div>
+      <div class="m-val ld" id="mBsale">&nbsp;</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Productos Jumpseller</div>
-      <div class="metric-value loading shimmer" id="metricJumpseller">&nbsp;</div>
+    <div class="m-card">
+      <div class="m-label">Productos Jumpseller</div>
+      <div class="m-val ld" id="mJump">&nbsp;</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Stock crítico</div>
-      <div class="metric-value loading shimmer" id="metricCritico">&nbsp;</div>
-      <div class="metric-sub"><span class="dot dot-red"></span> Productos con stock 0</div>
+    <div class="m-card">
+      <div class="m-label">Stock crítico</div>
+      <div class="m-val ld" id="mCrit">&nbsp;</div>
+      <div class="m-sub"><span class="dot dot-r"></span>Productos con stock 0</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Sync status</div>
-      <div class="metric-value loading shimmer" id="metricSync">&nbsp;</div>
-      <div class="metric-sub" id="syncSub"></div>
+    <div class="m-card">
+      <div class="m-label">Sincronización</div>
+      <div class="m-val ld" id="mSync">&nbsp;</div>
+      <div class="m-sub" id="mSyncSub"></div>
     </div>
   </div>
 
-  <!-- Acciones rápidas -->
-  <div class="section-label fade-up">Acciones rápidas</div>
-  <div class="actions-grid fade-up">
-    <a href="carga-producto.html" class="action-card">
-      <span class="action-icon">+</span>
-      Cargar producto
-    </a>
-    <a href="jumpseller-bulk.html" class="action-card">
-      <span class="action-icon">&uarr;</span>
-      Carga masiva
-    </a>
-    <a href="facturas.html" class="action-card">
-      <span class="action-icon">#</span>
-      Facturas
-    </a>
-    <a href="stock-dashboard.html" class="action-card">
-      <span class="action-icon">&equiv;</span>
-      Dashboard stock
-    </a>
-    <a href="sync-stock.html" class="action-card">
-      <span class="action-icon">&harr;</span>
-      Sincronizar
-    </a>
+  <!-- Acciones -->
+  <div class="section-label">Acciones rápidas</div>
+  <div class="actions">
+    <a href="carga-producto.html" class="a-card"><span class="a-icon">+</span>Cargar producto</a>
+    <a href="jumpseller-bulk.html" class="a-card"><span class="a-icon">↑</span>Carga masiva</a>
+    <a href="facturas.html" class="a-card"><span class="a-icon">☰</span>Facturas</a>
+    <a href="stock-dashboard.html" class="a-card"><span class="a-icon">◉</span>Stock</a>
+    <a href="sync-stock.html" class="a-card"><span class="a-icon">⇄</span>Sincronizar</a>
   </div>
 
-  <!-- Sincronización -->
-  <div class="section-label fade-up">Sincronización</div>
-  <div class="sync-widget fade-up">
+  <!-- Sync -->
+  <div class="section-label">Sincronización rápida</div>
+  <div class="sync-card">
     <h3>Comparar Bsale vs Jumpseller</h3>
     <div class="sync-row">
-      <button class="btn btn-primary" id="btnQuickSync" onclick="quickSync()">Comparar ahora</button>
-      <span class="sync-result" id="syncResult"></span>
+      <button class="btn btn-p" id="btnSync" onclick="doSync()">Comparar ahora</button>
+      <span class="sync-res" id="syncRes"></span>
     </div>
     <div style="margin-top:12px;display:none" id="fixRow">
-      <button class="btn btn-danger" id="btnFixAll" onclick="fixAll()">Corregir todas las diferencias</button>
+      <button class="btn btn-d" id="btnFix" onclick="doFix()">Corregir diferencias</button>
     </div>
   </div>
 
@@ -336,129 +203,72 @@
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
 <script>
-(function() {
-  // ── Date & greeting ──
-  var now = new Date();
-  var hour = now.getHours();
-  var greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
-  document.getElementById('heroGreeting').textContent = greeting;
+(function(){
+  // Greeting
+  var h=new Date().getHours();
+  document.getElementById('greeting').textContent=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
+  var o={weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  var d=new Date().toLocaleDateString('es-CL',o);
+  document.getElementById('heroDate').textContent=d.charAt(0).toUpperCase()+d.slice(1);
 
-  var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  var dateStr = now.toLocaleDateString('es-CL', opts);
-  document.getElementById('heroDate').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+  // Nav scroll
+  var nav=document.getElementById('topNav');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>300){nav.classList.remove('dark')}else{nav.classList.add('dark')}
+  });
 
-  // ── Load metrics ──
-  async function loadMetric(id, url, extract) {
-    var el = document.getElementById(id);
-    try {
-      var data = await apiFetch(url);
-      var val = extract(data);
-      el.textContent = val.toLocaleString('es-CL');
-      el.classList.remove('loading', 'shimmer');
-    } catch (err) {
-      el.textContent = '--';
-      el.classList.remove('loading', 'shimmer');
-    }
+  // Metrics
+  async function lm(id,url,fn,heroId){
+    var el=document.getElementById(id);
+    try{
+      var data=await apiFetch(url);
+      var v=fn(data);
+      el.textContent=v.toLocaleString('es-CL');
+      el.classList.remove('ld');
+      if(heroId)document.getElementById(heroId).textContent=v.toLocaleString('es-CL');
+    }catch(e){el.textContent='—';el.classList.remove('ld')}
   }
+  lm('mBsale','/api/bsale?endpoint=products.json&limit=1',function(d){return d.count||0},'hBsale');
+  lm('mJump','/api/jumpseller?endpoint=products/count.json',function(d){return d.count||0},'hJump');
+  lm('mCrit','/api/bsale?endpoint=stocks.json&limit=1&quantity=0',function(d){return d.count||0},'hCrit');
 
-  loadMetric('metricBsale', '/api/bsale?endpoint=products.json&limit=1', function(d) { return d.count || 0; });
-  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products/count.json', function(d) { return d.count || 0; });
-  loadMetric('metricCritico', '/api/bsale?endpoint=stocks.json&limit=1&quantity=0', function(d) { return d.count || 0; });
-
-  // ── Sync status metric ──
-  (async function() {
-    var el = document.getElementById('metricSync');
-    var sub = document.getElementById('syncSub');
-    try {
-      var data = await apiFetch('/api/sync?action=compare');
-      var items = Array.isArray(data) ? data : (data.items || []);
-      var diffs = items.filter(function(p) { return p.diferencia !== null && p.diferencia !== 0; }).length;
-      el.classList.remove('loading', 'shimmer');
-      if (diffs === 0) {
-        el.innerHTML = '<span class="dot dot-green"></span>';
-        sub.textContent = 'Todo sincronizado';
-      } else {
-        el.innerHTML = '<span class="dot dot-red dot-pulse"></span>';
-        sub.textContent = diffs + ' diferencias';
-      }
-    } catch (err) {
-      el.textContent = '--';
-      el.classList.remove('loading', 'shimmer');
-      sub.textContent = 'Sin conexión';
-    }
+  // Sync metric
+  (async function(){
+    var el=document.getElementById('mSync');
+    var sub=document.getElementById('mSyncSub');
+    try{
+      var data=await apiFetch('/api/sync?action=compare');
+      var items=Array.isArray(data)?data:(data.items||[]);
+      var diffs=items.filter(function(p){return p.diferencia!==null&&p.diferencia!==0}).length;
+      el.classList.remove('ld');
+      if(diffs===0){el.innerHTML='<span class="dot dot-g"></span>';sub.textContent='Todo OK'}
+      else{el.innerHTML='<span class="dot dot-r dot-p"></span>';sub.textContent=diffs+' diferencias'}
+    }catch(e){el.textContent='—';el.classList.remove('ld');sub.textContent='Sin conexión'}
   })();
 
-  // ── Quick sync ──
-  var syncDiffs = [];
-
-  window.quickSync = async function() {
-    var btn = document.getElementById('btnQuickSync');
-    var result = document.getElementById('syncResult');
-    var fixRow = document.getElementById('fixRow');
-    btn.disabled = true;
-    btn.textContent = 'Comparando...';
-    result.textContent = '';
-    fixRow.style.display = 'none';
-
-    try {
-      var data = await apiFetch('/api/sync?action=compare');
-      var items = Array.isArray(data) ? data : (data.items || []);
-      syncDiffs = items.filter(function(p) { return p.diferencia !== null && p.diferencia !== 0; });
-
-      if (syncDiffs.length === 0) {
-        result.innerHTML = '<span class="dot dot-green"></span> <strong>Todo sincronizado</strong> — no hay diferencias.';
-      } else {
-        result.innerHTML = '<span class="dot dot-red dot-pulse"></span> <strong>' + syncDiffs.length + ' diferencias</strong> encontradas entre Bsale y Jumpseller.';
-        fixRow.style.display = 'block';
-      }
-    } catch (err) {
-      result.textContent = 'Error: ' + err.message;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Comparar ahora';
-    }
+  // Quick sync
+  var diffs=[];
+  window.doSync=async function(){
+    var btn=document.getElementById('btnSync'),res=document.getElementById('syncRes'),fix=document.getElementById('fixRow');
+    btn.disabled=true;btn.textContent='Comparando...';res.textContent='';fix.style.display='none';
+    try{
+      var data=await apiFetch('/api/sync?action=compare');
+      var items=Array.isArray(data)?data:(data.items||[]);
+      diffs=items.filter(function(p){return p.diferencia!==null&&p.diferencia!==0});
+      if(diffs.length===0){res.innerHTML='<span class="dot dot-g"></span> <strong>Todo sincronizado</strong>'}
+      else{res.innerHTML='<span class="dot dot-r dot-p"></span> <strong>'+diffs.length+'</strong> diferencias';fix.style.display='block'}
+    }catch(e){res.textContent='Error: '+e.message}
+    btn.disabled=false;btn.textContent='Comparar ahora';
   };
-
-  window.fixAll = async function() {
-    if (syncDiffs.length === 0) return;
-    var btn = document.getElementById('btnFixAll');
-    var result = document.getElementById('syncResult');
-    btn.disabled = true;
-    btn.textContent = 'Corrigiendo...';
-
-    var done = 0;
-    var errors = 0;
-    for (var i = 0; i < syncDiffs.length; i++) {
-      try {
-        await apiFetch('/api/sync?action=fix&sku=' + encodeURIComponent(syncDiffs[i].sku));
-      } catch (e) { errors++; }
-      done++;
-    }
-
-    if (errors === 0) {
-      result.innerHTML = '<span class="dot dot-green"></span> <strong>' + done + ' productos corregidos</strong> exitosamente.';
-    } else {
-      result.innerHTML = '<strong>' + (done - errors) + '/' + done + '</strong> corregidos. ' + errors + ' errores.';
-    }
-    document.getElementById('fixRow').style.display = 'none';
-    btn.disabled = false;
-    btn.textContent = 'Corregir todas las diferencias';
-    syncDiffs = [];
+  window.doFix=async function(){
+    if(!diffs.length)return;
+    var btn=document.getElementById('btnFix'),res=document.getElementById('syncRes');
+    btn.disabled=true;btn.textContent='Corrigiendo...';
+    var ok=0,err=0;
+    for(var i=0;i<diffs.length;i++){try{await apiFetch('/api/sync?action=fix&sku='+encodeURIComponent(diffs[i].sku));ok++}catch(e){err++}}
+    res.innerHTML=err===0?'<span class="dot dot-g"></span> <strong>'+ok+' corregidos</strong>':'<strong>'+ok+'/'+(ok+err)+'</strong> corregidos, '+err+' errores';
+    document.getElementById('fixRow').style.display='none';btn.disabled=false;btn.textContent='Corregir diferencias';diffs=[];
   };
-
-  // ── Fade-up observer ──
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.fade-up').forEach(function(el) {
-    observer.observe(el);
-  });
 })();
 </script>
 </body>
