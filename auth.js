@@ -183,21 +183,26 @@
   const input = document.getElementById('auth-input');
   const error = document.getElementById('auth-error');
 
+  // Auto-detectar contraseña mientras escribe (sin Enter)
+  input.addEventListener('input', function() {
+    const val = input.value.trim().toLowerCase();
+    if (VALID_KEYS.includes(val)) {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ timestamp: Date.now() }));
+      overlay.classList.add('success');
+      document.body.style.overflow = '';
+      setTimeout(() => overlay.remove(), 1200);
+    }
+  });
+
+  // También permitir Enter
   input.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       const val = input.value.trim().toLowerCase();
-      if (VALID_KEYS.includes(val)) {
-        // Éxito
-        localStorage.setItem(SESSION_KEY, JSON.stringify({ timestamp: Date.now() }));
-        overlay.classList.add('success');
-        document.body.style.overflow = '';
-        setTimeout(() => overlay.remove(), 1200);
-      } else {
-        // Error con shake
+      if (!VALID_KEYS.includes(val)) {
         error.classList.add('show');
         input.style.borderColor = 'rgba(212, 92, 74, 0.5)';
         input.style.animation = 'none';
-        input.offsetHeight; // trigger reflow
+        input.offsetHeight;
         input.style.animation = 'shake 0.4s ease';
         setTimeout(() => {
           input.style.borderColor = 'rgba(255,255,255,0.1)';
