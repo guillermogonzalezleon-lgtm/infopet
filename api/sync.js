@@ -1,15 +1,14 @@
+// Infopet — Sincronización de stock Bsale ↔ Jumpseller
+// Con backup automático antes de cualquier escritura
+// WRITE_MODE protege contra escrituras accidentales
+
+import { requireWriteAccess } from './config.js';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
-
-function jsonResponse(data, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS, ...extraHeaders },
-  });
-}
 
 // --- Bsale helpers ---
 
@@ -54,7 +53,7 @@ async function getBsaleProductsBySku(sku) {
 // --- Jumpseller helpers ---
 
 function jsQuery() {
-  return `login=${process.env.JUMPSELLER_LOGIN}&authtoken=${process.env.JUMPSELLER_TOKEN}`;
+  return `login=${process.env.JUMPSELLER_LOGIN}&authtoken=${process.env.JUMPSELLER_AUTH_TOKEN}`;
 }
 
 async function jumpsellerFetch(path, options = {}) {
@@ -98,6 +97,67 @@ async function updateJumpsellerStock(productId, stock) {
   });
 }
 
+// --- Backup antes de sincronizar ---
+
+async function backupBeforeSync() {
+  const productos = await getJumpsellerProducts();
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const backupData = productos.map(p => {
+    const prod = p.product || p;
+    return {
+      id: prod.id,
+      name: prod.name,
+      sku: prod.sku,
+      stock: prod.stock,
+      price: prod.price,
+      timestamp: new Date().toISOString()
+    };
+  });
+
+  // Intentar guardar backup en Google Sheets si está configurado
+  try {
+    const creds = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    const sheetId = process.env.GOOGLE_SHEETS_ID;
+    if (creds && sheetId) {
+      const { google } = await import('googleapis');
+      const auth = new google.auth.GoogleAuth({
+        credentials: JSON.parse(creds),
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
+      const sheets = google.sheets({ version: 'v4', auth });
+      const sheetName = `BACKUP_${timestamp}`;
+
+      // Crear pestaña de backup
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId: sheetId,
+        requestBody: {
+          requests: [{
+            addSheet: { properties: { title: sheetName } }
+          }]
+        }
+      });
+
+      // Escribir encabezados + datos
+      const header = ['ID', 'Nombre', 'SKU', 'Stock', 'Precio', 'Timestamp'];
+      const rows = backupData.map(p => [p.id, p.name, p.sku, p.stock, p.price, p.timestamp]);
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: sheetId,
+        range: `${sheetName}!A1`,
+        valueInputOption: 'RAW',
+        requestBody: { values: [header, ...rows] }
+      });
+
+      return { backupSheet: sheetName, count: backupData.length, saved: true };
+    }
+  } catch (err) {
+    console.error('Error guardando backup en Sheets:', err.message);
+  }
+
+  // Si no hay Sheets, retornar backup en memoria
+  return { backupSheet: `BACKUP_${timestamp}`, count: backupData.length, saved: false, data: backupData };
+}
+
 // --- Actions ---
 
 async function compare() {
@@ -139,56 +199,107 @@ async function compare() {
 }
 
 async function fix(sku) {
-  if (!sku) throw new Error('Se requiere el parametro sku');
+  if (!sku) throw new Error('Se requiere el parámetro sku');
 
   // Get Bsale stock
   const bsaleProds = await getBsaleProductsBySku(sku);
-  if (!bsaleProds.length) throw new Error(`No se encontro producto en Bsale con SKU: ${sku}`);
+  if (!bsaleProds.length) throw new Error(`No se encontró producto en Bsale con SKU: ${sku}`);
 
   const bp = bsaleProds[0];
   const variants = await getBsaleVariants(bp.id);
   const variant = variants.find((v) => v.code === sku || v.barCode === sku);
-  if (!variant) throw new Error(`No se encontro variante en Bsale con SKU: ${sku}`);
+  if (!variant) throw new Error(`No se encontró variante en Bsale con SKU: ${sku}`);
 
   const stockBsale = await getBsaleStock(variant.id);
 
   // Find and update in Jumpseller
   const jsProd = await findJumpsellerBySku(sku);
-  if (!jsProd) throw new Error(`No se encontro producto en Jumpseller con SKU: ${sku}`);
+  if (!jsProd) throw new Error(`No se encontró producto en Jumpseller con SKU: ${sku}`);
 
   await updateJumpsellerStock(jsProd.id, stockBsale);
 
   return { success: true, sku, nuevo_stock: stockBsale };
 }
 
+async function fixAll() {
+  // 1. BACKUP AUTOMÁTICO
+  const backup = await backupBeforeSync();
+  console.log(`Backup creado: ${backup.backupSheet} (${backup.count} productos)`);
+
+  // 2. Comparar
+  const diferencias = await compare();
+  const conDiferencia = diferencias.filter(d => d.diferencia !== null && d.diferencia !== 0);
+
+  if (conDiferencia.length === 0) {
+    return { success: true, message: 'Todo sincronizado, sin diferencias', backup: backup.backupSheet };
+  }
+
+  // 3. Sincronizar cada diferencia
+  const resultados = [];
+  for (const item of conDiferencia) {
+    try {
+      const r = await fix(item.sku);
+      resultados.push({ ...r, status: 'ok' });
+    } catch (err) {
+      resultados.push({ sku: item.sku, status: 'error', error: err.message });
+    }
+  }
+
+  return {
+    success: true,
+    backup: backup.backupSheet,
+    total: conDiferencia.length,
+    sincronizados: resultados.filter(r => r.status === 'ok').length,
+    errores: resultados.filter(r => r.status === 'error').length,
+    detalle: resultados
+  };
+}
+
 // --- Handler ---
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
-    return res.status(200).set(CORS_HEADERS).end();
+    Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+    return res.status(200).end();
   }
 
   Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
 
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Metodo no permitido' });
+    return res.status(405).json({ error: 'Método no permitido' });
   }
 
   const { action, sku } = req.query;
 
   try {
+    // compare es solo lectura → siempre permitido
     if (action === 'compare') {
       const data = await compare();
       res.setHeader('Cache-Control', 'no-cache');
       return res.status(200).json(data);
     }
 
+    // fix y fix_all modifican datos → requieren WRITE_MODE
     if (action === 'fix') {
+      if (!requireWriteAccess(res)) return;
+
+      // Backup antes de fix individual
+      const backup = await backupBeforeSync();
+      console.log(`Backup pre-fix: ${backup.backupSheet}`);
+
       const data = await fix(sku);
+      data.backup = backup.backupSheet;
       return res.status(200).json(data);
     }
 
-    return res.status(400).json({ error: 'Accion no valida. Usa action=compare o action=fix&sku=XXX' });
+    if (action === 'fix_all') {
+      if (!requireWriteAccess(res)) return;
+
+      const data = await fixAll();
+      return res.status(200).json(data);
+    }
+
+    return res.status(400).json({ error: 'Acción no válida. Usa action=compare, action=fix&sku=XXX, o action=fix_all' });
   } catch (err) {
     console.error('Error en sync:', err);
     return res.status(500).json({ error: err.message || 'Error interno del servidor' });

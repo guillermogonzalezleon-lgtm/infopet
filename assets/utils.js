@@ -79,3 +79,27 @@ async function parallelTasks(tasks, onProgress) {
 
   return results;
 }
+
+/** Muestra banner de ambiente si no es producción.
+ *  Llama a /api/env y si hay banner, lo muestra arriba de todo.
+ */
+async function checkEnvironment() {
+  try {
+    const res = await fetch('/api/env');
+    const info = await res.json();
+    if (info.banner) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#D4A843;color:#1A1A18;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;font-family:DM Sans,sans-serif;';
+      banner.textContent = info.banner;
+      document.body.prepend(banner);
+      // Ajustar padding del body para que no tape el contenido
+      document.body.style.paddingTop = '36px';
+    }
+    return info;
+  } catch (e) {
+    return { environment: 'unknown', writeEnabled: false };
+  }
+}
+
+// Auto-ejecutar al cargar
+document.addEventListener('DOMContentLoaded', checkEnvironment);
