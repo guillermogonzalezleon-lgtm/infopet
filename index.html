@@ -3,51 +3,145 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Infopet — Panel de gesti&oacute;n</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Infopet — Panel de gestión</title>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-.page-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 24px 48px; }
+/* ── Hero con video ── */
+.hero {
+  position: relative;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 0;
+}
 
-/* Header */
-.page-header { margin-bottom: 32px; }
-.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.page-date { font-size: 14px; color: var(--text-muted); }
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
 
-/* Metric cards */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(26,26,24,0.55) 0%, rgba(26,26,24,0.75) 100%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 80px 24px 48px;
+  color: #fff;
+}
+
+.hero-content h1 {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: heroFadeIn 0.8s ease 0.2s forwards;
+}
+
+.hero-content h1 strong {
+  font-weight: 700;
+}
+
+.hero-date {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 300;
+  opacity: 0;
+  animation: heroFadeIn 0.8s ease 0.4s forwards;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  animation: heroFadeIn 0.8s ease 0.1s forwards;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4CAF7D;
+  animation: pulse 2s infinite;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── Page ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 48px; }
+
+/* ── Metric cards ── */
 .metrics-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px;
 }
 .metric-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 20px 24px; transition: all var(--transition);
-  opacity: 0; animation: fadeIn 0.5s ease forwards;
+  padding: 22px 24px; transition: var(--transition);
+  opacity: 0; animation: fadeUp 0.6s var(--ease) forwards;
 }
 .metric-card:nth-child(1) { animation-delay: 0.05s; }
 .metric-card:nth-child(2) { animation-delay: 0.1s; }
 .metric-card:nth-child(3) { animation-delay: 0.15s; }
 .metric-card:nth-child(4) { animation-delay: 0.2s; }
-.metric-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow); }
-.metric-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
-.metric-value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; color: var(--text); }
-.metric-value.loading { color: var(--text-light); font-size: 14px; font-family: var(--font-body); }
-.metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+.metric-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+.metric-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.metric-value { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.metric-value.loading { color: var(--text-light); font-size: 14px; font-weight: 400; }
+.metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
 
-/* Section titles */
+/* ── Section titles ── */
 .section-title {
-  font-family: var(--font-heading); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 16px;
+  font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 16px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  display: flex; align-items: center; gap: 10px;
 }
+.section-title::before { content: ''; width: 20px; height: 1px; background: var(--border-hover); }
 
-/* Quick actions */
+/* ── Quick actions ── */
 .actions-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 36px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 40px;
 }
 .action-card {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 14px;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 16px 20px; text-decoration: none; color: var(--text);
-  font-weight: 600; font-size: 14px; transition: all var(--transition);
-  opacity: 0; animation: fadeIn 0.5s ease forwards;
+  padding: 18px 22px; text-decoration: none; color: var(--text);
+  font-weight: 500; font-size: 14px; transition: var(--transition);
+  opacity: 0; animation: fadeUp 0.6s var(--ease) forwards;
 }
 .action-card:nth-child(1) { animation-delay: 0.1s; }
 .action-card:nth-child(2) { animation-delay: 0.15s; }
@@ -56,32 +150,35 @@
 .action-card:nth-child(5) { animation-delay: 0.3s; }
 .action-card:hover {
   border-color: var(--accent); background: var(--accent-bg);
-  color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow);
+  color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow-lg);
 }
 .action-icon {
-  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  width: 40px; height: 40px; border-radius: 10px;
   background: var(--accent-bg); color: var(--accent);
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
+  font-size: 18px; flex-shrink: 0; transition: var(--transition);
 }
+.action-card:hover .action-icon { background: var(--accent); color: white; }
 
-/* Sync widget */
+/* ── Sync widget ── */
 .sync-widget {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 24px; opacity: 0; animation: fadeIn 0.5s ease 0.35s forwards;
+  padding: 24px; opacity: 0; animation: fadeUp 0.6s var(--ease) 0.35s forwards;
 }
-.sync-widget h3 { font-family: var(--font-heading); font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.sync-widget h3 { font-size: 16px; font-weight: 500; margin-bottom: 14px; }
 .sync-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .sync-result { font-size: 14px; color: var(--text-muted); }
 .sync-result strong { color: var(--text); }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
-  .page-wrap { padding: 70px 12px 32px; }
+  .hero { min-height: 260px; }
+  .hero-content h1 { font-size: 24px; }
+  .page-wrap { padding: 24px 12px 32px; }
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .actions-grid { grid-template-columns: 1fr; }
 }
@@ -93,26 +190,34 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar">
-  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+<nav class="navbar" style="background:rgba(26,26,24,0.7);border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px)">
+  <a href="index.html" class="navbar-brand" style="color:#fff">Infopet <span class="badge">panel</span></a>
   <div class="navbar-links">
-    <a href="index.html" class="active">Inicio</a>
-    <a href="carga-producto.html">Carga</a>
-    <a href="facturas.html">Facturas</a>
-    <a href="stock-dashboard.html">Stock</a>
-    <a href="jumpseller-bulk.html">Bulk</a>
-    <a href="sync-stock.html">Sync</a>
+    <a href="index.html" class="active" style="color:rgba(255,255,255,0.9)">Inicio</a>
+    <a href="carga-producto.html" style="color:rgba(255,255,255,0.5)">Carga</a>
+    <a href="facturas.html" style="color:rgba(255,255,255,0.5)">Facturas</a>
+    <a href="stock-dashboard.html" style="color:rgba(255,255,255,0.5)">Stock</a>
+    <a href="jumpseller-bulk.html" style="color:rgba(255,255,255,0.5)">Bulk</a>
+    <a href="sync-stock.html" style="color:rgba(255,255,255,0.5)">Sync</a>
   </div>
 </nav>
 
-<main class="page-wrap">
-  <!-- Header -->
-  <div class="page-header">
-    <h1 class="page-title">Infopet &middot; Panel de gesti&oacute;n</h1>
-    <p class="page-date" id="currentDate"></p>
+<!-- Hero con video de fondo -->
+<div class="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="assets/hero-bg.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Panel de gestión · Infopet Reñaca</div>
+    <h1><strong>InfoPet</strong> · Panel de gestión</h1>
+    <p class="hero-date" id="currentDate"></p>
   </div>
+</div>
 
+<main class="page-wrap">
   <!-- Metric cards -->
+  <div class="section-title">Métricas en vivo</div>
   <div class="metrics-grid">
     <div class="metric-card">
       <div class="metric-label">Productos Bsale</div>
@@ -123,7 +228,7 @@
       <div class="metric-value loading" id="metricJumpseller">Cargando...</div>
     </div>
     <div class="metric-card">
-      <div class="metric-label">Stock cr&iacute;tico</div>
+      <div class="metric-label">Stock crítico</div>
       <div class="metric-value loading" id="metricCritico">Cargando...</div>
       <div class="metric-sub">Productos con stock 0</div>
     </div>
@@ -135,14 +240,14 @@
   </div>
 
   <!-- Quick actions -->
-  <h2 class="section-title">Acciones r&aacute;pidas</h2>
+  <div class="section-title">Acciones rápidas</div>
   <div class="actions-grid">
     <a href="carga-producto.html" class="action-card">
       <span class="action-icon">+</span>
       Cargar producto
     </a>
     <a href="jumpseller-bulk.html" class="action-card">
-      <span class="action-icon">&uarr;</span>
+      <span class="action-icon">↑</span>
       Carga masiva CSV
     </a>
     <a href="facturas.html" class="action-card">
@@ -150,18 +255,18 @@
       Facturas
     </a>
     <a href="stock-dashboard.html" class="action-card">
-      <span class="action-icon">&equiv;</span>
+      <span class="action-icon">≡</span>
       Dashboard compras
     </a>
     <a href="sync-stock.html" class="action-card">
-      <span class="action-icon">&harr;</span>
+      <span class="action-icon">↔</span>
       Sincronizar stock
     </a>
   </div>
 
   <!-- Sync widget -->
   <div class="sync-widget">
-    <h3>Sincronizaci&oacute;n r&aacute;pida</h3>
+    <h3>Sincronización rápida</h3>
     <div class="sync-row">
       <button class="btn btn-primary" id="btnQuickSync" onclick="quickSync()">Sincronizar ahora</button>
       <span class="sync-result" id="syncResult"></span>
@@ -196,7 +301,10 @@
   }
 
   loadMetric('metricBsale', '/api/bsale?endpoint=products.json&limit=1', d => d.count || 0);
-  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products.json&limit=1', d => d.count || 0);
+  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products.json&limit=1', d => {
+    if (Array.isArray(d)) return d.length;
+    return d.count || 0;
+  });
   loadMetric('metricCritico', '/api/bsale?endpoint=stocks.json&limit=1&quantity=0', d => d.count || 0);
 
   // Sync status
@@ -205,8 +313,8 @@
     const sub = document.getElementById('syncSub');
     try {
       const data = await apiFetch('/api/sync?action=compare');
-      const items = data.items || data || [];
-      const diffs = items.filter(p => p.difference !== 0).length;
+      const items = Array.isArray(data) ? data : (data.items || []);
+      const diffs = items.filter(p => p.diferencia !== null && p.diferencia !== 0).length;
       el.classList.remove('loading');
       if (diffs === 0) {
         el.innerHTML = '<span class="dot dot-green"></span>';
@@ -218,7 +326,7 @@
     } catch (err) {
       el.textContent = '--';
       el.classList.remove('loading');
-      sub.textContent = 'Sin conexi\u00f3n';
+      sub.textContent = 'Sin conexión';
     }
   })();
 
@@ -236,11 +344,11 @@
 
     try {
       const data = await apiFetch('/api/sync?action=compare');
-      const items = data.items || data || [];
-      syncDiffs = items.filter(p => p.difference !== 0);
+      const items = Array.isArray(data) ? data : (data.items || []);
+      syncDiffs = items.filter(p => p.diferencia !== null && p.diferencia !== 0);
 
       if (syncDiffs.length === 0) {
-        result.innerHTML = '<span class="dot dot-green"></span> <strong>Todo sincronizado</strong> &mdash; no hay diferencias.';
+        result.innerHTML = '<span class="dot dot-green"></span> <strong>Todo sincronizado</strong> — no hay diferencias.';
       } else {
         result.innerHTML = '<span class="dot dot-red dot-pulse"></span> <strong>' + syncDiffs.length + ' diferencias</strong> encontradas entre Bsale y Jumpseller.';
         fixRow.style.display = 'block';
@@ -279,6 +387,26 @@
     btn.textContent = 'Corregir todas';
     syncDiffs = [];
   };
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', function() {
+    const nav = document.querySelector('.navbar');
+    if (window.scrollY > 200) {
+      nav.style.background = 'rgba(255,255,255,0.95)';
+      nav.style.borderBottomColor = 'var(--border)';
+      nav.querySelectorAll('.navbar-brand').forEach(el => el.style.color = 'var(--text)');
+      nav.querySelectorAll('.navbar-links a').forEach(el => {
+        el.style.color = el.classList.contains('active') ? 'var(--accent)' : 'var(--text-muted)';
+      });
+    } else {
+      nav.style.background = 'rgba(26,26,24,0.7)';
+      nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
+      nav.querySelectorAll('.navbar-brand').forEach(el => el.style.color = '#fff');
+      nav.querySelectorAll('.navbar-links a').forEach(el => {
+        el.style.color = el.classList.contains('active') ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
+      });
+    }
+  });
 })();
 </script>
 </body>
