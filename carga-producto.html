@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cargar producto — Infopet</title>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+  .page { max-width: 820px; margin: 0 auto; padding: 32px 24px; }
+  .page-title { font-size: 24px; margin-bottom: 24px; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  .form-input::placeholder { color: var(--text-light); }
+  textarea.form-input { resize: vertical; min-height: 80px; }
+
+  .btn-submit {
+    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
+    font-size: 15px;
+    padding: 14px 24px;
+  }
+
+  /* Progress */
+  .progress-wrap { display: none; margin-bottom: 16px; }
+  .progress-wrap.visible { display: block; }
+
+  /* Resumen */
+  .result-summary {
+    display: none;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .result-summary.visible { display: flex; }
+  .result-item {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+  }
+  .result-ok { background: var(--green-bg); color: var(--green); }
+  .result-err { background: var(--red-bg); color: var(--red); }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .page { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="carga-producto.html" class="active">Carga</a>
+    <a href="facturas.html">Facturas</a>
+    <a href="stock-dashboard.html">Stock</a>
+    <a href="jumpseller-bulk.html">Bulk</a>
+    <a href="sync-stock.html">Sync</a>
+  </div>
+</nav>
+
+<main class="page">
+  <h1 class="page-title">Cargar producto</h1>
+
+  <div id="alert" class="alert"></div>
+
+  <div class="result-summary" id="summary"></div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <form id="formProducto" autocomplete="off">
+    <div class="form-grid">
+      <!-- Fila 1 -->
+      <div class="form-group">
+        <label class="form-label">Nombre *</label>
+        <input type="text" id="nombre" class="form-input" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SKU</label>
+        <input type="text" id="sku" class="form-input" placeholder="auto si vacío"/>
+      </div>
+
+      <!-- Fila 2 -->
+      <div class="form-group">
+        <label class="form-label">Precio CLP *</label>
+        <input type="number" id="precio" class="form-input" min="0" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stock</label>
+        <input type="number" id="stock" class="form-input" min="0" value="0"/>
+      </div>
+
+      <!-- Fila 3 -->
+      <div class="form-group">
+        <label class="form-label">Categoría *</label>
+        <input type="text" id="categoria" class="form-input" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Marca</label>
+        <input type="text" id="marca" class="form-input"/>
+      </div>
+
+      <!-- Fila 4 -->
+      <div class="form-group">
+        <label class="form-label">Variante</label>
+        <input type="text" id="variante" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Código Barra EAN</label>
+        <input type="text" id="codigoBarra" class="form-input"/>
+      </div>
+
+      <!-- Full width -->
+      <div class="form-group full">
+        <label class="form-label">Descripción web</label>
+        <textarea id="descripcion" class="form-input"></textarea>
+      </div>
+
+      <div class="form-group full">
+        <label class="form-label">Clasificación</label>
+        <select id="clasificacion" class="form-input">
+          <option value="Alimento">Alimento</option>
+          <option value="Accesorio">Accesorio</option>
+          <option value="Higiene">Higiene</option>
+          <option value="Salud">Salud</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-submit">Cargar producto &rarr;</button>
+  </form>
+</main>
+
+<script src="assets/utils.js"></script>
+<script>
+(function() {
+  const form = document.getElementById('formProducto');
+  const alertEl = document.getElementById('alert');
+  const summaryEl = document.getElementById('summary');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar = document.getElementById('progressBar');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Limpiar estado previo
+    summaryEl.classList.remove('visible');
+    summaryEl.innerHTML = '';
+    alertEl.classList.remove('visible');
+
+    // Leer campos
+    const nombre = document.getElementById('nombre').value.trim();
+    const skuVal = document.getElementById('sku').value.trim();
+    const precio = Number(document.getElementById('precio').value);
+    const stock = Number(document.getElementById('stock').value) || 0;
+    const categoria = document.getElementById('categoria').value.trim();
+    const marca = document.getElementById('marca').value.trim();
+    const variante = document.getElementById('variante').value.trim();
+    const codigoBarra = document.getElementById('codigoBarra').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const clasificacion = document.getElementById('clasificacion').value;
+
+    // Validar obligatorios
+    if (!nombre || !precio || !categoria) {
+      return showAlert(alertEl, 'err', 'Completa los campos obligatorios: Nombre, Precio y Categoría.');
+    }
+
+    const sku = skuVal || autoSKU(nombre);
+
+    // Mostrar progreso
+    progressWrap.classList.add('visible');
+    progressBar.style.width = '0%';
+
+    const tasks = [
+      {
+        name: 'Bsale',
+        fn: () => apiFetch('/api/bsale?endpoint=products.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: nombre,
+            description: descripcion,
+            classificationsId: categoria,
+            variant: {
+              description: variante || nombre,
+              barCode: codigoBarra,
+              code: sku,
+              price: precio,
+              stock: stock
+            }
+          })
+        })
+      },
+      {
+        name: 'Jumpseller',
+        fn: () => apiFetch('/api/jumpseller?endpoint=products.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product: {
+              name: nombre,
+              price: precio,
+              stock: stock,
+              sku: sku,
+              description: descripcion,
+              brand: marca,
+              category: categoria
+            }
+          })
+        })
+      },
+      {
+        name: 'Sheets',
+        fn: () => apiFetch('/api/sheets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            values: [clasificacion, categoria, nombre, variante, marca, 0, codigoBarra, sku, 0, precio]
+          })
+        })
+      }
+    ];
+
+    const results = await parallelTasks(tasks, ({ done, total }) => {
+      progressBar.style.width = Math.round((done / total) * 100) + '%';
+    });
+
+    // Ocultar progreso
+    progressWrap.classList.remove('visible');
+
+    // Mostrar resumen
+    let allOk = true;
+    for (const [name, r] of Object.entries(results)) {
+      const ok = r.status === 'ok';
+      if (!ok) allOk = false;
+      const span = document.createElement('span');
+      span.className = 'result-item ' + (ok ? 'result-ok' : 'result-err');
+      span.textContent = (ok ? '\u2713 ' : '\u2717 ') + name;
+      if (!ok) span.title = r.error;
+      summaryEl.appendChild(span);
+    }
+    summaryEl.classList.add('visible');
+
+    if (allOk) {
+      showAlert(alertEl, 'ok', 'Producto cargado correctamente en los 3 canales.');
+      form.reset();
+      document.getElementById('stock').value = '0';
+    } else {
+      showAlert(alertEl, 'warn', 'Algunas cargas fallaron. Revisa el resumen.');
+    }
+  });
+})();
+</script>
+</body>
+</html>
