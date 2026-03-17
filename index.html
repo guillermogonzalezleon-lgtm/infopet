@@ -362,10 +362,7 @@
   }
 
   loadMetric('metricBsale', '/api/bsale?endpoint=products.json&limit=1', function(d) { return d.count || 0; });
-  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products.json&limit=1', function(d) {
-    if (Array.isArray(d)) return d.length;
-    return d.count || 0;
-  });
+  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products/count.json', function(d) { return d.count || 0; });
   loadMetric('metricCritico', '/api/bsale?endpoint=stocks.json&limit=1&quantity=0', function(d) { return d.count || 0; });
 
   // ── Sync status metric ──
