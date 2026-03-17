@@ -228,7 +228,7 @@
 
     try {
       // 1) Traer productos activos
-      var data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&state=1');
+      var data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&state=0');
       var items = data.items || [];
 
       if (items.length === 0) {

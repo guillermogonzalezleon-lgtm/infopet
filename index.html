@@ -10,10 +10,9 @@
 html,body{height:100%;overflow-x:hidden}
 body{font-family:'Inter',system-ui,sans-serif;color:#fff;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 
-/* ── Video fullscreen ── */
-.video-bg{position:fixed;inset:0;z-index:0}
-.video-bg video{width:100%;height:100%;object-fit:cover}
-.video-bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:saturate(120%) brightness(0.9)}
+/* ── Background ── */
+.video-bg{position:fixed;inset:0;z-index:0;background:#0a0f0d url('assets/banner-forest.jpg') center/cover no-repeat}
+.video-bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.6)}
 
 /* ── Content layer ── */
 .content{position:relative;z-index:1;min-height:100vh}
@@ -99,9 +98,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:#fff;font-size:15px;line-hei
 <body>
 
 <!-- Video fullscreen background -->
-<div class="video-bg">
-  <video autoplay muted loop playsinline src="assets/hero-bg.mp4"></video>
-</div>
+<div class="video-bg"></div>
 
 <!-- Content -->
 <div class="content">
@@ -203,7 +200,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:#fff;font-size:15px;line-hei
     try{var data=await apiFetch(url);var v=fn(data);el.textContent=v.toLocaleString('es-CL');el.classList.remove('ld')}
     catch(e){el.textContent='—';el.classList.remove('ld')}
   }
-  lm('mBsale','/api/bsale?endpoint=products.json&limit=1&state=1',function(d){return d.count||0});
+  lm('mBsale','/api/bsale?endpoint=products.json&limit=1&state=0',function(d){return d.count||0});
   lm('mJump','/api/jumpseller?endpoint=products/count.json',function(d){return d.count||0});
   lm('mCrit','/api/bsale?endpoint=stocks.json&limit=1&quantity=0',function(d){return d.count||0});
 
