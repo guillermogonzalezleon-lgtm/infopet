@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Infopet — Facturas de proveedores</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+/* ── Layout ── */
+.page-wrap{max-width:1100px;margin:0 auto;padding:80px 24px 48px}
+h1.page-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--text);margin-bottom:24px}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px}
+.tab-btn{padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;background:none;border:none;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text)}
+
+/* ── Form rows ── */
+.form-row{display:flex;gap:12px;align-items:end;margin-bottom:16px;flex-wrap:wrap}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:180px}
+.form-group label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.form-group input,.form-group select{padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);transition:border-color .2s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent)}
+
+/* ── Buttons ── */
+.btn{padding:10px 20px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface-2);color:var(--text)}
+.btn-secondary:hover{background:var(--border)}
+
+/* ── Dropzone ── */
+.dropzone{border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-bg)}
+.dropzone p{color:var(--text-muted);font-size:14px;margin-bottom:8px}
+.dropzone small{color:var(--text-light);font-size:12px}
+.dropzone input[type=file]{display:none}
+
+/* ── Preview ── */
+.img-preview{max-width:100%;max-height:300px;border-radius:8px;margin-top:12px;display:none;border:1px solid var(--border)}
+
+/* ── Table ── */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.data-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+.data-table td input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;background:transparent;color:var(--text)}
+.data-table td input:focus{outline:none;border-color:var(--accent)}
+
+/* ── Alert ── */
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+.alert.ok{display:block;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent)}
+.alert.err{display:block;background:var(--red-bg,rgba(212,92,74,.1));color:var(--red,#D45C4A);border:1px solid var(--red,#D45C4A)}
+
+/* ── Spinner ── */
+.spinner{display:none;align-items:center;gap:10px;padding:16px 0;color:var(--text-muted);font-size:14px}
+.spinner.show{display:flex}
+.spinner::before{content:'';width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Totals ── */
+.totals{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px}
+.total-item{display:flex;flex-direction:column;gap:2px}
+.total-item span:first-child{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.total-item span:last-child{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--text)}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .page-wrap{padding:70px 12px 32px}
+  .form-row{flex-direction:column}
+  .tabs{overflow-x:auto}
+  .tab-btn{white-space:nowrap;font-size:13px;padding:8px 14px}
+  .totals{flex-direction:column;gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+  <div class="nav-brand">Infopet</div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Inicio</a>
+    <a href="carga-producto.html" class="nav-link">Carga producto</a>
+    <a href="facturas.html" class="nav-link active">Facturas</a>
+    <a href="stock-dashboard.html" class="nav-link">Stock</a>
+    <a href="jumpseller-bulk.html" class="nav-link">Jumpseller</a>
+    <a href="sync-stock.html" class="nav-link">Sync</a>
+  </div>
+</nav>
+
+<main class="page-wrap">
+  <h1 class="page-title">Facturas de proveedores</h1>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="digital">Factura digital (Bsale)</button>
+    <button class="tab-btn" data-tab="fisica">Factura f&iacute;sica (foto)</button>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB 1 — Factura digital                 -->
+  <!-- ════════════════════════════════════════ -->
+  <div id="tab-digital" class="tab-panel active">
+    <div class="card">
+      <h2>Buscar factura en Bsale</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>N&uacute;mero de factura o RUT</label>
+          <input type="text" id="bsale-query" placeholder="Ej: 12345 o 76.123.456-7"/>
+        </div>
+        <button class="btn btn-primary" id="btn-buscar-bsale">Buscar en Bsale</button>
+      </div>
+      <div id="bsale-alert" class="alert"></div>
+      <div id="bsale-spinner" class="spinner">Buscando en Bsale...</div>
+    </div>
+
+    <div class="card" id="bsale-results" style="display:none">
+      <h2>Productos de la factura</h2>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Variante</th>
+              <th>Cantidad</th>
+              <th>Precio unit.</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="bsale-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;text-align:right">
+        <button class="btn btn-primary" id="btn-cargar-bsale">Cargar productos al sistema</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB 2 — Factura física                  -->
+  <!-- ════════════════════════════════════════ -->
+  <div id="tab-fisica" class="tab-panel">
+
+    <!-- Upload -->
+    <div class="card">
+      <h2>Subir foto de factura</h2>
+      <div class="dropzone" id="dropzone">
+        <p>Arrastra la foto aqu&iacute; o haz clic para seleccionar</p>
+        <small>Formatos: JPG, PNG, HEIC</small>
+        <input type="file" id="file-input" accept="image/*"/>
+      </div>
+      <img id="img-preview" class="img-preview" alt="Preview"/>
+      <div style="margin-top:16px">
+        <button class="btn btn-primary" id="btn-ocr" disabled>Procesar con OCR</button>
+      </div>
+      <div id="ocr-spinner" class="spinner">Procesando factura con IA...</div>
+      <div id="ocr-alert" class="alert"></div>
+    </div>
+
+    <!-- OCR Results -->
+    <div class="card" id="ocr-results" style="display:none">
+      <h2>Datos extra&iacute;dos</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>RUT Proveedor</label>
+          <input type="text" id="ocr-rut"/>
+        </div>
+        <div class="form-group">
+          <label>Proveedor</label>
+          <input type="text" id="ocr-proveedor"/>
+        </div>
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" id="ocr-fecha"/>
+        </div>
+        <div class="form-group">
+          <label>N&deg; Factura</label>
+          <input type="text" id="ocr-numero"/>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio unit.</th>
+              <th>C&oacute;digo barra</th>
+            </tr>
+          </thead>
+          <tbody id="ocr-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="totals" id="ocr-totals">
+        <div class="total-item">
+          <span>Subtotal</span>
+          <span id="ocr-subtotal">$0</span>
+        </div>
+        <div class="total-item">
+          <span>IVA (19%)</span>
+          <span id="ocr-iva">$0</span>
+        </div>
+        <div class="total-item">
+          <span>Total</span>
+          <span id="ocr-total">$0</span>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;text-align:right">
+        <button class="btn btn-primary" id="btn-confirmar">Confirmar y cargar</button>
+      </div>
+      <div id="confirm-spinner" class="spinner">Subiendo imagen y cargando productos...</div>
+      <div id="confirm-alert" class="alert"></div>
+    </div>
+  </div>
+</main>
+
+<script src="assets/utils.js"></script>
+<script>
+/* ── Tabs ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ══════════════════════════════════════════
+   TAB 1 — Factura digital (Bsale)
+   ══════════════════════════════════════════ */
+const bsaleQuery = document.getElementById('bsale-query');
+const bsaleAlert = document.getElementById('bsale-alert');
+const bsaleSpinner = document.getElementById('bsale-spinner');
+const bsaleResults = document.getElementById('bsale-results');
+const bsaleTbody = document.getElementById('bsale-tbody');
+
+let bsaleItems = [];
+
+document.getElementById('btn-buscar-bsale').addEventListener('click', async () => {
+  const q = bsaleQuery.value.trim();
+  if (!q) { showAlert(bsaleAlert, 'err', 'Ingresa un número de factura o RUT'); return; }
+
+  bsaleAlert.className = 'alert';
+  bsaleSpinner.classList.add('show');
+  bsaleResults.style.display = 'none';
+  bsaleItems = [];
+
+  try {
+    const res = await fetch('/api/bsale?endpoint=documents.json&number=' + encodeURIComponent(q));
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || 'Error de Bsale');
+
+    const docs = data.items || [];
+    if (docs.length === 0) {
+      showAlert(bsaleAlert, 'err', 'No se encontraron documentos para "' + q + '"');
+      bsaleSpinner.classList.remove('show');
+      return;
+    }
+
+    // Obtener detalles del primer documento
+    const doc = docs[0];
+    const detailUrl = doc.details?.href;
+    if (detailUrl) {
+      const endpoint = detailUrl.replace('https://api.bsale.cl/v1/', '');
+      const detRes = await fetch('/api/bsale?endpoint=' + encodeURIComponent(endpoint));
+      const detData = await detRes.json();
+      bsaleItems = (detData.items || []).map(d => ({
+        nombre: d.variant?.description || d.description || '',
+        variante: d.variant?.code || '',
+        cantidad: d.quantity || 0,
+        precio: d.netUnitValue || 0,
+        total: d.totalAmount || 0
+      }));
+    }
+
+    bsaleTbody.innerHTML = '';
+    bsaleItems.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${item.nombre}</td>
+        <td>${item.variante}</td>
+        <td>${item.cantidad}</td>
+        <td>${fmt(item.precio)}</td>
+        <td>${fmt(item.total)}</td>`;
+      bsaleTbody.appendChild(tr);
+    });
+
+    bsaleResults.style.display = 'block';
+    showAlert(bsaleAlert, 'ok', 'Se encontraron ' + bsaleItems.length + ' productos');
+  } catch (err) {
+    showAlert(bsaleAlert, 'err', err.message);
+  } finally {
+    bsaleSpinner.classList.remove('show');
+  }
+});
+
+document.getElementById('btn-cargar-bsale').addEventListener('click', async () => {
+  if (bsaleItems.length === 0) return;
+
+  try {
+    for (const item of bsaleItems) {
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          producto: item.nombre,
+          variante: item.variante,
+          cantidad: item.cantidad,
+          precio: item.precio
+        })
+      });
+    }
+    showAlert(bsaleAlert, 'ok', bsaleItems.length + ' productos cargados al sistema correctamente');
+  } catch (err) {
+    showAlert(bsaleAlert, 'err', 'Error cargando productos: ' + err.message);
+  }
+});
+
+/* ══════════════════════════════════════════
+   TAB 2 — Factura física (foto + OCR)
+   ══════════════════════════════════════════ */
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+const imgPreview = document.getElementById('img-preview');
+const btnOcr = document.getElementById('btn-ocr');
+const ocrSpinner = document.getElementById('ocr-spinner');
+const ocrAlert = document.getElementById('ocr-alert');
+const ocrResults = document.getElementById('ocr-results');
+const ocrTbody = document.getElementById('ocr-tbody');
+
+let uploadedFile = null;
+let uploadedBase64 = null;
+let uploadedMediaType = null;
+let ocrData = null;
+
+// Drag and drop
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) handleFile(fileInput.files[0]);
+});
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showAlert(ocrAlert, 'err', 'Solo se aceptan imágenes');
+    return;
+  }
+  uploadedFile = file;
+  uploadedMediaType = file.type;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    imgPreview.src = e.target.result;
+    imgPreview.style.display = 'block';
+    uploadedBase64 = e.target.result.split(',')[1];
+    btnOcr.disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+// OCR
+btnOcr.addEventListener('click', async () => {
+  if (!uploadedBase64) return;
+
+  ocrAlert.className = 'alert';
+  ocrSpinner.classList.add('show');
+  ocrResults.style.display = 'none';
+  btnOcr.disabled = true;
+
+  try {
+    const res = await fetch('/api/ocr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: uploadedBase64, mediaType: uploadedMediaType })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error de OCR');
+
+    ocrData = data;
+    fillOcrForm(data);
+    ocrResults.style.display = 'block';
+    showAlert(ocrAlert, 'ok', 'Factura procesada correctamente. Revisa los datos antes de confirmar.');
+  } catch (err) {
+    showAlert(ocrAlert, 'err', err.message);
+  } finally {
+    ocrSpinner.classList.remove('show');
+    btnOcr.disabled = false;
+  }
+});
+
+function fillOcrForm(data) {
+  document.getElementById('ocr-rut').value = data.rut_proveedor || '';
+  document.getElementById('ocr-proveedor').value = data.proveedor_nombre || '';
+  document.getElementById('ocr-fecha').value = data.fecha || '';
+  document.getElementById('ocr-numero').value = data.numero_factura || '';
+
+  ocrTbody.innerHTML = '';
+  (data.productos || []).forEach((p, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" data-field="nombre" data-i="${i}" value="${esc(p.nombre)}"/></td>
+      <td><input type="number" data-field="cantidad" data-i="${i}" value="${p.cantidad || 0}" min="0"/></td>
+      <td><input type="number" data-field="precio_unitario" data-i="${i}" value="${p.precio_unitario || 0}" min="0"/></td>
+      <td><input type="text" data-field="codigo_barra" data-i="${i}" value="${esc(p.codigo_barra)}"/></td>`;
+    ocrTbody.appendChild(tr);
+  });
+
+  document.getElementById('ocr-subtotal').textContent = fmt(data.subtotal);
+  document.getElementById('ocr-iva').textContent = fmt(data.iva);
+  document.getElementById('ocr-total').textContent = fmt(data.total);
+}
+
+function esc(s) { return (s || '').replace(/"/g, '&quot;'); }
+
+// Confirmar y cargar
+document.getElementById('btn-confirmar').addEventListener('click', async () => {
+  const confirmSpinner = document.getElementById('confirm-spinner');
+  const confirmAlert = document.getElementById('confirm-alert');
+  confirmAlert.className = 'alert';
+  confirmSpinner.classList.add('show');
+
+  try {
+    // 1) Subir imagen a Drive
+    const rut = document.getElementById('ocr-rut').value.replace(/\./g, '');
+    const fecha = document.getElementById('ocr-fecha').value.replace(/-/g, '');
+    const filename = 'FACTURA_' + rut + '_' + fecha + '.' + (uploadedFile.name.split('.').pop() || 'jpg');
+
+    const driveRes = await fetch('/api/drive', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: uploadedBase64, filename, mimeType: uploadedMediaType })
+    });
+    const driveData = await driveRes.json();
+    if (!driveRes.ok) throw new Error(driveData.error || 'Error subiendo a Drive');
+
+    // 2) Cargar productos en sheets
+    const rows = ocrTbody.querySelectorAll('tr');
+    let loaded = 0;
+    for (const row of rows) {
+      const inputs = row.querySelectorAll('input');
+      await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          producto: inputs[0].value,
+          cantidad: Number(inputs[1].value),
+          precio: Number(inputs[2].value),
+          codigo_barra: inputs[3].value,
+          proveedor: document.getElementById('ocr-proveedor').value,
+          rut_proveedor: document.getElementById('ocr-rut').value,
+          fecha: document.getElementById('ocr-fecha').value,
+          numero_factura: document.getElementById('ocr-numero').value,
+          drive_link: driveData.webViewLink || ''
+        })
+      });
+      loaded++;
+    }
+
+    showAlert(confirmAlert, 'ok',
+      loaded + ' productos cargados. Imagen guardada en Drive: ' +
+      '<a href="' + (driveData.webViewLink || '#') + '" target="_blank">Ver archivo</a>');
+  } catch (err) {
+    showAlert(confirmAlert, 'err', err.message);
+  } finally {
+    confirmSpinner.classList.remove('show');
+  }
+});
+
+/* ── Helpers ── */
+function showAlert(el, type, msg) {
+  el.className = 'alert ' + type;
+  el.innerHTML = msg;
+}
+</script>
+</body>
+</html>
