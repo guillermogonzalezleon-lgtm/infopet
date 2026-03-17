@@ -38,20 +38,55 @@ function autoSKU(name) {
   return words.slice(0, 4).map(w => w.substring(0, 3)).join('-');
 }
 
-/** Fetch wrapper con manejo de errores en español */
+/** Caché en memoria — guarda respuestas por 5 min para no saturar Bsale */
+var _cache = {};
+var CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+
+/** Fetch wrapper con caché + retry en rate limit */
 async function apiFetch(url, opts = {}) {
-  try {
-    const res = await fetch(url, opts);
-    if (!res.ok) {
-      const body = await res.text();
-      throw new Error(`Error ${res.status}: ${body || res.statusText}`);
+  // Solo cachear GETs
+  var isGet = !opts.method || opts.method === 'GET';
+  if (isGet && _cache[url] && (Date.now() - _cache[url].ts < CACHE_TTL)) {
+    return _cache[url].data;
+  }
+
+  var attempts = 0;
+  var maxAttempts = 3;
+
+  while (attempts < maxAttempts) {
+    try {
+      var res = await fetch(url, opts);
+
+      // Rate limit — esperar y reintentar
+      if (res.status === 429) {
+        attempts++;
+        if (attempts < maxAttempts) {
+          await sleep(10000); // esperar 10 segundos
+          continue;
+        }
+      }
+
+      if (!res.ok) {
+        var body = await res.text();
+        throw new Error('Error ' + res.status + ': ' + (body || res.statusText));
+      }
+
+      var data = await res.json();
+
+      // Guardar en caché si es GET
+      if (isGet) {
+        _cache[url] = { data: data, ts: Date.now() };
+      }
+
+      return data;
+    } catch (err) {
+      if (err.name === 'TypeError') {
+        throw new Error('Sin conexión al servidor. Verifica tu internet.');
+      }
+      if (attempts >= maxAttempts - 1) throw err;
+      attempts++;
+      await sleep(5000);
     }
-    return await res.json();
-  } catch (err) {
-    if (err.name === 'TypeError') {
-      throw new Error('Sin conexión al servidor. Verifica tu internet.');
-    }
-    throw err;
   }
 }
 
