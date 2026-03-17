@@ -2,7 +2,7 @@
    Infopet — Sistema de diseño
    ═══════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
   /* Superficie */
@@ -33,10 +33,15 @@
   --blue: #5B9BD5;
   --blue-bg: rgba(91, 155, 213, 0.1);
 
-  /* Tipografía */
-  --font-heading: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  /* Tipografía — Albert Sans (misma que infopetrenaca.cl) */
+  --font-heading: 'Albert Sans', sans-serif;
+  --font-body: 'Albert Sans', sans-serif;
   --font-mono: 'DM Mono', monospace;
+
+  /* Transiciones — estilo smconnection.cl */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Espaciado */
   --radius: 12px;
@@ -60,9 +65,14 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 300;
   line-height: 1.2;
+  letter-spacing: -0.01em;
 }
+
+h1 { font-size: 32px; }
+h2 { font-size: 24px; }
+h3 { font-size: 18px; font-weight: 500; }
 
 code, .mono {
   font-family: var(--font-mono);
@@ -73,56 +83,82 @@ code, .mono {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--surface);
+  background: rgba(255,255,255,0.92);
   border-bottom: 1px solid var(--border);
   padding: 0 32px;
-  height: 56px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: var(--transition);
 }
 
 .navbar-brand {
   font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 20px;
+  font-weight: 700;
   color: var(--text);
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 10px;
+  letter-spacing: -0.02em;
 }
 
 .navbar-brand .badge {
   background: var(--accent);
   color: white;
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .navbar-links {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }
 
 .navbar-links a {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--text-muted);
   text-decoration: none;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: var(--radius-sm);
-  transition: all var(--transition);
+  transition: var(--transition);
+  position: relative;
 }
 
-.navbar-links a:hover,
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 16px;
+  right: 16px;
+  height: 1.5px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s var(--ease);
+}
+
+.navbar-links a:hover::after,
+.navbar-links a.active::after {
+  transform: scaleX(1);
+}
+
+.navbar-links a:hover {
+  color: var(--text);
+}
+
 .navbar-links a.active {
-  background: var(--accent-bg);
   color: var(--accent);
+  font-weight: 500;
 }
 
 /* ── Cards ── */
@@ -131,12 +167,13 @@ code, .mono {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
-  transition: all var(--transition);
+  transition: var(--transition);
 }
 
 .card:hover {
   border-color: var(--border-hover);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
 }
 
 /* ── Botones ── */
@@ -144,26 +181,27 @@ code, .mono {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 11px 24px;
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   border: none;
-  transition: all var(--transition);
+  transition: var(--transition);
   text-decoration: none;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: var(--text);
   color: white;
 }
 
 .btn-primary:hover {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+  background: #243353;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(26, 26, 24, 0.2);
 }
 
 .btn-secondary {
@@ -284,9 +322,66 @@ tr:hover td { background: var(--accent-bg); }
   transition: width 0.4s ease;
 }
 
+/* ── Animaciones de entrada ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.stagger.visible > *:nth-child(1) { transition-delay: 0s; opacity: 1; transform: translateY(0); }
+.stagger.visible > *:nth-child(2) { transition-delay: 0.08s; opacity: 1; transform: translateY(0); }
+.stagger.visible > *:nth-child(3) { transition-delay: 0.16s; opacity: 1; transform: translateY(0); }
+.stagger.visible > *:nth-child(4) { transition-delay: 0.24s; opacity: 1; transform: translateY(0); }
+.stagger.visible > *:nth-child(5) { transition-delay: 0.32s; opacity: 1; transform: translateY(0); }
+.stagger.visible > *:nth-child(6) { transition-delay: 0.40s; opacity: 1; transform: translateY(0); }
+
+/* ── Hover glow sutil ── */
+.glow:hover {
+  box-shadow: 0 8px 32px rgba(45, 106, 79, 0.15);
+}
+
+/* ── Smooth scroll ── */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 70px;
+}
+
+/* ── Label estilo Infopet ── */
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.label-new {
+  background: #007EA7;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .navbar { padding: 0 16px; }
   .navbar-links { display: none; }
   .card { padding: 16px; }
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
 }
