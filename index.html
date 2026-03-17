@@ -7,246 +7,204 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F2F2F7;
-  --card:rgba(255,255,255,0.72);
-  --card-solid:#fff;
-  --border:rgba(0,0,0,0.06);
-  --text:#1D1D1F;
-  --text2:#48484A;
-  --text3:#8E8E93;
-  --accent:#2D6A4F;
-  --accent-bg:rgba(45,106,79,0.08);
-  --red:#FF3B30;
-  --red-bg:rgba(255,59,48,0.08);
-  --amber:#FF9500;
-  --amber-bg:rgba(255,149,0,0.08);
-  --green:#34C759;
-  --green-bg:rgba(52,199,89,0.08);
-  --r:20px;
-  --rs:12px;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'Inter',system-ui,sans-serif;color:#fff;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ── Video fullscreen ── */
+.video-bg{position:fixed;inset:0;z-index:0}
+.video-bg video{width:100%;height:100%;object-fit:cover}
+.video-bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:saturate(120%) brightness(0.9)}
+
+/* ── Content layer ── */
+.content{position:relative;z-index:1;min-height:100vh}
 
 /* ── Nav ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(242,242,247,0.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:0.5px solid rgba(0,0,0,0.08);transition:all 0.4s}
-.nav.dark{background:rgba(0,0,0,0.6);border-bottom-color:rgba(255,255,255,0.08)}
-.nav-left{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
-.nav.dark .nav-left{color:#fff}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(0,0,0,0.25);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:0.5px solid rgba(255,255,255,0.08)}
+.nav-left{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
 .nav-logo{height:30px;border-radius:7px}
-.nav-name{font-weight:600;font-size:15px;letter-spacing:-0.02em}
-.nav-badge{font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:2px 8px;border-radius:5px}
+.nav-name{font-weight:600;font-size:15px;letter-spacing:-0.01em}
+.nav-badge{font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:rgba(45,106,79,0.9);color:#fff;padding:2px 8px;border-radius:5px}
 .nav-links{display:flex;gap:1px}
-.nav-links a{font-size:13px;font-weight:400;color:var(--text3);text-decoration:none;padding:6px 13px;border-radius:8px;transition:all 0.15s}
-.nav-links a:hover{background:rgba(0,0,0,0.04);color:var(--text)}
-.nav-links a.on{color:var(--accent);font-weight:500}
-.nav.dark .nav-links a{color:rgba(255,255,255,0.5)}
-.nav.dark .nav-links a.on{color:rgba(255,255,255,0.95)}
-.nav.dark .nav-links a:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-links a{font-size:13px;font-weight:400;color:rgba(255,255,255,0.45);text-decoration:none;padding:6px 14px;border-radius:8px;transition:all 0.15s}
+.nav-links a:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9)}
+.nav-links a.on{color:#fff;font-weight:500}
 
-/* ── Hero ── */
-.hero{position:relative;height:320px;display:flex;align-items:flex-end;overflow:hidden;margin-top:52px}
-.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero-ov{position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.1) 100%)}
-.hero-c{position:relative;z-index:2;padding:0 48px 40px;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
-.hero-text{flex:1}
-.hero-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.12);padding:5px 14px;border-radius:100px;margin-bottom:14px;backdrop-filter:blur(12px)}
+/* ── Hero section ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 48px 48px}
+.hero-top{margin-bottom:48px}
+.hero-pill{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.1);padding:5px 16px;border-radius:100px;margin-bottom:16px;backdrop-filter:blur(12px)}
 .hero-dot{width:6px;height:6px;border-radius:50%;background:#34C759;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(28px,4vw,40px);color:#fff;line-height:1.15;margin-bottom:6px}
-.hero-date{font-size:14px;color:rgba(255,255,255,0.5);font-weight:300}
-.hero-stats{display:flex;gap:20px;flex-shrink:0}
-.hero-stat{text-align:center;min-width:80px}
-.hero-stat-val{font-size:28px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
-.hero-stat-label{font-size:10px;font-weight:500;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(32px,5vw,52px);line-height:1.1;margin-bottom:8px}
+.hero-date{font-size:15px;color:rgba(255,255,255,0.4);font-weight:300}
 
-/* ── Main ── */
-.main{max-width:1100px;margin:0 auto;padding:28px 24px 60px}
-.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:12px;padding-left:4px}
+/* ── Glass cards ── */
+.glass{background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:0.5px solid rgba(255,255,255,0.1);border-radius:20px;transition:all 0.25s cubic-bezier(.4,0,.2,1)}
+.glass:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,0.2)}
 
 /* ── Metrics ── */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
-.m-card{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:var(--r);padding:18px 20px;transition:all 0.2s cubic-bezier(.4,0,.2,1);cursor:default}
-.m-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.06)}
-.m-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:8px}
-.m-val{font-size:28px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.02em;line-height:1}
-.m-val.ld{height:28px;width:72px;border-radius:8px;background:linear-gradient(90deg,#EBEBF0 25%,#E0E0E5 50%,#EBEBF0 75%);background-size:200% 100%;animation:shm 1.5s infinite}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px}
+.m-card{padding:20px 22px}
+.m-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.4);margin-bottom:10px}
+.m-val{font-size:32px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-0.03em;line-height:1;color:#fff}
+.m-val.ld{height:32px;width:80px;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shm 1.5s infinite}
 @keyframes shm{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.m-sub{font-size:11px;color:var(--text3);margin-top:8px;display:flex;align-items:center;gap:5px}
+.m-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:10px;display:flex;align-items:center;gap:5px}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
-.dot-g{background:var(--green)}.dot-r{background:var(--red)}.dot-a{background:var(--amber)}
+.dot-g{background:#34C759}.dot-r{background:#FF3B30}.dot-a{background:#FF9500}
 .dot-p{animation:pulse 1.8s infinite}
 
 /* ── Actions ── */
-.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
-.a-card{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--card);backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:var(--r);padding:22px 12px 18px;text-decoration:none;color:var(--text2);font-weight:500;font-size:13px;text-align:center;transition:all 0.2s cubic-bezier(.4,0,.2,1)}
-.a-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.06);color:var(--accent)}
-.a-icon{width:44px;height:44px;border-radius:var(--rs);background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all 0.2s}
-.a-card:hover .a-icon{background:var(--accent);color:#fff}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.35);margin-bottom:14px;padding-left:4px}
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:36px}
+.a-card{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 12px 20px;text-decoration:none;color:rgba(255,255,255,0.7);font-weight:500;font-size:13px;text-align:center}
+.a-card:hover{color:#fff}
+.a-icon{width:48px;height:48px;border-radius:14px;background:rgba(45,106,79,0.2);border:0.5px solid rgba(45,106,79,0.3);color:#5EBD8A;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all 0.25s}
+.a-card:hover .a-icon{background:rgba(45,106,79,0.5);color:#fff;transform:scale(1.05)}
 
 /* ── Sync ── */
-.sync-card{background:var(--card);backdrop-filter:blur(20px);border:0.5px solid var(--border);border-radius:var(--r);padding:20px 24px}
-.sync-card h3{font-size:16px;font-weight:600;letter-spacing:-0.02em;margin-bottom:14px}
+.sync-card{padding:24px 28px}
+.sync-card h3{font-size:17px;font-weight:600;letter-spacing:-0.02em;margin-bottom:16px;color:rgba(255,255,255,0.9)}
 .sync-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.sync-res{font-size:13px;color:var(--text3)}.sync-res strong{color:var(--text)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--rs);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none}
-.btn-p{background:var(--text);color:#fff}.btn-p:hover{background:#333}
-.btn-d{background:var(--red);color:#fff}.btn-d:hover{background:#E0342B}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+.sync-res{font-size:13px;color:rgba(255,255,255,0.45)}.sync-res strong{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:12px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s}
+.btn-p{background:rgba(255,255,255,0.12);color:#fff;border:0.5px solid rgba(255,255,255,0.15)}.btn-p:hover{background:rgba(255,255,255,0.18)}
+.btn-d{background:rgba(255,59,48,0.2);color:#FF6961;border:0.5px solid rgba(255,59,48,0.25)}.btn-d:hover{background:rgba(255,59,48,0.3)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:32px 24px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:0.02em}
 
 /* ── Responsive ── */
 @media(max-width:860px){
   .nav-links{display:none}
-  .hero{height:260px}
-  .hero-c{padding:0 20px 28px;flex-direction:column;align-items:flex-start}
-  .hero-stats{display:none}
-  .hero h1{font-size:26px}
-  .main{padding:20px 16px 48px}
+  .hero{padding:80px 20px 32px}
   .metrics{grid-template-columns:repeat(2,1fr)}
   .actions{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:480px){
   .metrics{grid-template-columns:1fr}
   .actions{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:28px}
 }
 </style>
 </head>
 <body>
 
-<!-- Nav -->
-<nav class="nav dark" id="topNav">
-  <a href="index.html" class="nav-left">
-    <img src="assets/logo.jpeg" class="nav-logo" alt="InfoPet"/>
-    <span class="nav-name">InfoPet</span>
-    <span class="nav-badge">Panel</span>
-  </a>
-  <div class="nav-links">
-    <a href="index.html" class="on">Inicio</a>
-    <a href="carga-producto.html">Carga</a>
-    <a href="facturas.html">Facturas</a>
-    <a href="stock-dashboard.html">Stock</a>
-    <a href="jumpseller-bulk.html">Bulk</a>
-    <a href="sync-stock.html">Sync</a>
-  </div>
-</nav>
-
-<!-- Hero -->
-<div class="hero">
+<!-- Video fullscreen background -->
+<div class="video-bg">
   <video autoplay muted loop playsinline src="assets/hero-bg.mp4"></video>
-  <div class="hero-ov"></div>
-  <div class="hero-c">
-    <div class="hero-text">
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a href="index.html" class="nav-left">
+      <img src="assets/logo.jpeg" class="nav-logo" alt="InfoPet"/>
+      <span class="nav-name">InfoPet</span>
+      <span class="nav-badge">Panel</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="on">Inicio</a>
+      <a href="carga-producto.html">Carga</a>
+      <a href="facturas.html">Facturas</a>
+      <a href="stock-dashboard.html">Stock</a>
+      <a href="jumpseller-bulk.html">Bulk</a>
+      <a href="sync-stock.html">Sync</a>
+    </div>
+  </nav>
+
+  <!-- Hero + everything -->
+  <div class="hero">
+    <div class="hero-top">
       <div class="hero-pill"><span class="hero-dot"></span>Bsale · Jumpseller · Sheets conectados</div>
       <h1 id="greeting">Buenas tardes</h1>
       <p class="hero-date" id="heroDate"></p>
     </div>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-val" id="hBsale">—</div><div class="hero-stat-label">Bsale</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" id="hJump">—</div><div class="hero-stat-label">Jumpseller</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" id="hCrit">—</div><div class="hero-stat-label">Críticos</div></div>
+
+    <!-- Métricas -->
+    <div class="section-label">Métricas en vivo</div>
+    <div class="metrics">
+      <div class="glass m-card">
+        <div class="m-label">Productos Bsale</div>
+        <div class="m-val ld" id="mBsale">&nbsp;</div>
+      </div>
+      <div class="glass m-card">
+        <div class="m-label">Productos Jumpseller</div>
+        <div class="m-val ld" id="mJump">&nbsp;</div>
+      </div>
+      <div class="glass m-card">
+        <div class="m-label">Stock crítico</div>
+        <div class="m-val ld" id="mCrit">&nbsp;</div>
+        <div class="m-sub"><span class="dot dot-r"></span>Stock en 0</div>
+      </div>
+      <div class="glass m-card">
+        <div class="m-label">Sincronización</div>
+        <div class="m-val ld" id="mSync">&nbsp;</div>
+        <div class="m-sub" id="mSyncSub"></div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="section-label">Acciones rápidas</div>
+    <div class="actions">
+      <a href="carga-producto.html" class="glass a-card"><span class="a-icon">+</span>Cargar producto</a>
+      <a href="jumpseller-bulk.html" class="glass a-card"><span class="a-icon">↑</span>Carga masiva</a>
+      <a href="facturas.html" class="glass a-card"><span class="a-icon">☰</span>Facturas</a>
+      <a href="stock-dashboard.html" class="glass a-card"><span class="a-icon">◉</span>Stock</a>
+      <a href="sync-stock.html" class="glass a-card"><span class="a-icon">⇄</span>Sincronizar</a>
+    </div>
+
+    <!-- Sync -->
+    <div class="section-label">Sincronización rápida</div>
+    <div class="glass sync-card">
+      <h3>Comparar Bsale vs Jumpseller</h3>
+      <div class="sync-row">
+        <button class="btn btn-p" id="btnSync" onclick="doSync()">Comparar ahora</button>
+        <span class="sync-res" id="syncRes"></span>
+      </div>
+      <div style="margin-top:12px;display:none" id="fixRow">
+        <button class="btn btn-d" id="btnFix" onclick="doFix()">Corregir diferencias</button>
+      </div>
     </div>
   </div>
+
+  <div class="footer">InfoPet Reñaca · Panel de gestión · 2026</div>
 </div>
-
-<!-- Main -->
-<main class="main">
-
-  <!-- Métricas -->
-  <div class="section-label">Métricas en vivo</div>
-  <div class="metrics">
-    <div class="m-card">
-      <div class="m-label">Productos Bsale</div>
-      <div class="m-val ld" id="mBsale">&nbsp;</div>
-    </div>
-    <div class="m-card">
-      <div class="m-label">Productos Jumpseller</div>
-      <div class="m-val ld" id="mJump">&nbsp;</div>
-    </div>
-    <div class="m-card">
-      <div class="m-label">Stock crítico</div>
-      <div class="m-val ld" id="mCrit">&nbsp;</div>
-      <div class="m-sub"><span class="dot dot-r"></span>Productos con stock 0</div>
-    </div>
-    <div class="m-card">
-      <div class="m-label">Sincronización</div>
-      <div class="m-val ld" id="mSync">&nbsp;</div>
-      <div class="m-sub" id="mSyncSub"></div>
-    </div>
-  </div>
-
-  <!-- Acciones -->
-  <div class="section-label">Acciones rápidas</div>
-  <div class="actions">
-    <a href="carga-producto.html" class="a-card"><span class="a-icon">+</span>Cargar producto</a>
-    <a href="jumpseller-bulk.html" class="a-card"><span class="a-icon">↑</span>Carga masiva</a>
-    <a href="facturas.html" class="a-card"><span class="a-icon">☰</span>Facturas</a>
-    <a href="stock-dashboard.html" class="a-card"><span class="a-icon">◉</span>Stock</a>
-    <a href="sync-stock.html" class="a-card"><span class="a-icon">⇄</span>Sincronizar</a>
-  </div>
-
-  <!-- Sync -->
-  <div class="section-label">Sincronización rápida</div>
-  <div class="sync-card">
-    <h3>Comparar Bsale vs Jumpseller</h3>
-    <div class="sync-row">
-      <button class="btn btn-p" id="btnSync" onclick="doSync()">Comparar ahora</button>
-      <span class="sync-res" id="syncRes"></span>
-    </div>
-    <div style="margin-top:12px;display:none" id="fixRow">
-      <button class="btn btn-d" id="btnFix" onclick="doFix()">Corregir diferencias</button>
-    </div>
-  </div>
-
-</main>
 
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
 <script>
 (function(){
-  // Greeting
   var h=new Date().getHours();
   document.getElementById('greeting').textContent=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';
   var o={weekday:'long',year:'numeric',month:'long',day:'numeric'};
   var d=new Date().toLocaleDateString('es-CL',o);
   document.getElementById('heroDate').textContent=d.charAt(0).toUpperCase()+d.slice(1);
 
-  // Nav scroll
-  var nav=document.getElementById('topNav');
-  window.addEventListener('scroll',function(){
-    if(window.scrollY>300){nav.classList.remove('dark')}else{nav.classList.add('dark')}
-  });
-
-  // Metrics
-  async function lm(id,url,fn,heroId){
+  async function lm(id,url,fn){
     var el=document.getElementById(id);
-    try{
-      var data=await apiFetch(url);
-      var v=fn(data);
-      el.textContent=v.toLocaleString('es-CL');
-      el.classList.remove('ld');
-      if(heroId)document.getElementById(heroId).textContent=v.toLocaleString('es-CL');
-    }catch(e){el.textContent='—';el.classList.remove('ld')}
+    try{var data=await apiFetch(url);var v=fn(data);el.textContent=v.toLocaleString('es-CL');el.classList.remove('ld')}
+    catch(e){el.textContent='—';el.classList.remove('ld')}
   }
-  lm('mBsale','/api/bsale?endpoint=products.json&limit=1',function(d){return d.count||0},'hBsale');
-  lm('mJump','/api/jumpseller?endpoint=products/count.json',function(d){return d.count||0},'hJump');
-  lm('mCrit','/api/bsale?endpoint=stocks.json&limit=1&quantity=0',function(d){return d.count||0},'hCrit');
+  lm('mBsale','/api/bsale?endpoint=products.json&limit=1',function(d){return d.count||0});
+  lm('mJump','/api/jumpseller?endpoint=products/count.json',function(d){return d.count||0});
+  lm('mCrit','/api/bsale?endpoint=stocks.json&limit=1&quantity=0',function(d){return d.count||0});
 
-  // Sync metric
   (async function(){
-    var el=document.getElementById('mSync');
-    var sub=document.getElementById('mSyncSub');
+    var el=document.getElementById('mSync'),sub=document.getElementById('mSyncSub');
     try{
       var data=await apiFetch('/api/sync?action=compare');
       var items=Array.isArray(data)?data:(data.items||[]);
       var diffs=items.filter(function(p){return p.diferencia!==null&&p.diferencia!==0}).length;
       el.classList.remove('ld');
-      if(diffs===0){el.innerHTML='<span class="dot dot-g"></span>';sub.textContent='Todo OK'}
+      if(diffs===0){el.innerHTML='<span class="dot dot-g"></span>';sub.textContent='Todo sincronizado'}
       else{el.innerHTML='<span class="dot dot-r dot-p"></span>';sub.textContent=diffs+' diferencias'}
     }catch(e){el.textContent='—';el.classList.remove('ld');sub.textContent='Sin conexión'}
   })();
 
-  // Quick sync
   var diffs=[];
   window.doSync=async function(){
     var btn=document.getElementById('btnSync'),res=document.getElementById('syncRes'),fix=document.getElementById('fixRow');
@@ -255,18 +213,16 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
       var data=await apiFetch('/api/sync?action=compare');
       var items=Array.isArray(data)?data:(data.items||[]);
       diffs=items.filter(function(p){return p.diferencia!==null&&p.diferencia!==0});
-      if(diffs.length===0){res.innerHTML='<span class="dot dot-g"></span> <strong>Todo sincronizado</strong>'}
+      if(diffs.length===0)res.innerHTML='<span class="dot dot-g"></span> <strong>Todo sincronizado</strong>';
       else{res.innerHTML='<span class="dot dot-r dot-p"></span> <strong>'+diffs.length+'</strong> diferencias';fix.style.display='block'}
     }catch(e){res.textContent='Error: '+e.message}
     btn.disabled=false;btn.textContent='Comparar ahora';
   };
   window.doFix=async function(){
-    if(!diffs.length)return;
-    var btn=document.getElementById('btnFix'),res=document.getElementById('syncRes');
-    btn.disabled=true;btn.textContent='Corrigiendo...';
-    var ok=0,err=0;
+    if(!diffs.length)return;var btn=document.getElementById('btnFix'),res=document.getElementById('syncRes');
+    btn.disabled=true;btn.textContent='Corrigiendo...';var ok=0,err=0;
     for(var i=0;i<diffs.length;i++){try{await apiFetch('/api/sync?action=fix&sku='+encodeURIComponent(diffs[i].sku));ok++}catch(e){err++}}
-    res.innerHTML=err===0?'<span class="dot dot-g"></span> <strong>'+ok+' corregidos</strong>':'<strong>'+ok+'/'+(ok+err)+'</strong> corregidos, '+err+' errores';
+    res.innerHTML=err===0?'<span class="dot dot-g"></span> <strong>'+ok+' corregidos</strong>':'<strong>'+ok+'/'+(ok+err)+'</strong> ok, '+err+' errores';
     document.getElementById('fixRow').style.display='none';btn.disabled=false;btn.textContent='Corregir diferencias';diffs=[];
   };
 })();
