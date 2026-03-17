@@ -4,8 +4,19 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Facturas — Infopet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
+  :root {
+    --text-muted: #6E6E73;
+    --text-light: #A1A1A6;
+    --surface-2: #F0F0F2;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  body { padding-top: 52px; }
+
   .page { max-width: 1060px; margin: 0 auto; padding: 32px 24px; }
 
   .page-header { margin-bottom: 28px; }
@@ -35,8 +46,21 @@
     background: var(--accent);
     color: #fff;
   }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+  .tab-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  }
+  .tab-panel.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .tab-panel.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   /* ── Search bar ── */
   .search-row {
@@ -47,14 +71,6 @@
   .search-row .form-input { flex: 1; }
 
   /* ── Status pills ── */
-  .pill {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
   .pill-blue { background: var(--blue-bg); color: var(--blue); }
   .pill-grey { background: var(--surface-2); color: var(--text-muted); }
 
@@ -261,7 +277,7 @@
   <!-- ════════════════════════════════════
        TAB 1 — Factura digital (Bsale)
        ════════════════════════════════════ -->
-  <div id="tab-digital" class="tab-panel active">
+  <div id="tab-digital" class="tab-panel active fade-in">
     <div class="card">
       <div class="search-row">
         <input type="text" id="bsale-query" class="form-input" placeholder="Buscar por N&deg; factura o RUT"/>
@@ -271,7 +287,7 @@
       <div id="bsale-spinner" class="spinner-inline">Buscando en Bsale...</div>
     </div>
 
-    <div class="card" id="bsale-results" style="display:none">
+    <div class="card" id="bsale-results" style="display:none;margin-top:16px">
       <div class="table-wrap">
         <table>
           <thead>
@@ -324,7 +340,7 @@
     </div>
 
     <!-- OCR Results -->
-    <div class="card" id="ocr-results" style="display:none">
+    <div class="card" id="ocr-results" style="display:none;margin-top:16px">
       <h3 style="margin-bottom:16px">Datos extra&iacute;dos</h3>
 
       <div class="ocr-header-grid">
@@ -378,7 +394,6 @@
       <div class="action-row">
         <button class="btn btn-primary" id="btn-confirmar">Confirmar y cargar</button>
       </div>
-      <div id="confirm-spinner" class="spinner-inline">Subiendo imagen y cargando productos...</div>
       <div id="confirm-alert" class="alert"></div>
     </div>
   </div>
@@ -389,14 +404,27 @@
 <script src="assets/utils.js"></script>
 <script>
 /* ══════════════════════════════════════
-   Tabs
+   Tabs con transicion suave
    ══════════════════════════════════════ */
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    // Desactivar todos
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.remove('active', 'fade-in');
+    });
+
+    // Activar el seleccionado
     btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    const panel = document.getElementById('tab-' + btn.dataset.tab);
+    panel.classList.add('active');
+
+    // Trigger fade-in en el siguiente frame para que la transicion funcione
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        panel.classList.add('fade-in');
+      });
+    });
   });
 });
 
@@ -523,32 +551,9 @@ bsaleTbody.addEventListener('click', async (e) => {
   parentTr.after(detailTr);
 });
 
-// Cargar productos a sheets
-document.getElementById('btn-cargar-bsale').addEventListener('click', async () => {
-  // Collect all detail items
-  const allItems = Object.values(bsaleDetailItems).flat();
-  if (allItems.length === 0) {
-    showAlert(bsaleCargarAlert, 'err', 'Primero haz clic en "Ver detalle" para cargar las l\u00edneas de producto.');
-    return;
-  }
-
-  try {
-    for (const item of allItems) {
-      await fetch('/api/sheets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          producto: item.nombre,
-          variante: item.variante,
-          cantidad: item.cantidad,
-          precio: item.precio
-        })
-      });
-    }
-    showAlert(bsaleCargarAlert, 'ok', allItems.length + ' productos cargados al sistema correctamente');
-  } catch (err) {
-    showAlert(bsaleCargarAlert, 'err', 'Error cargando productos: ' + err.message);
-  }
+// Cargar productos — WRITE bloqueado
+document.getElementById('btn-cargar-bsale').addEventListener('click', () => {
+  alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas');
 });
 
 /* ══════════════════════════════════════
@@ -558,14 +563,9 @@ const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
 const imgPreview = document.getElementById('img-preview');
 const btnOcr = document.getElementById('btn-ocr');
-const ocrLoading = document.getElementById('ocr-loading');
 const ocrAlert = document.getElementById('ocr-alert');
-const ocrResults = document.getElementById('ocr-results');
-const ocrTbody = document.getElementById('ocr-tbody');
 
 let uploadedFile = null;
-let uploadedBase64 = null;
-let uploadedMediaType = null;
 
 // Drag and drop
 dropzone.addEventListener('click', () => fileInput.click());
@@ -586,123 +586,24 @@ function handleFile(file) {
     return;
   }
   uploadedFile = file;
-  uploadedMediaType = file.type;
 
   const reader = new FileReader();
   reader.onload = e => {
     imgPreview.src = e.target.result;
     imgPreview.style.display = 'block';
-    uploadedBase64 = e.target.result.split(',')[1];
     btnOcr.disabled = false;
   };
   reader.readAsDataURL(file);
 }
 
-// OCR
-btnOcr.addEventListener('click', async () => {
-  if (!uploadedBase64) return;
-
-  ocrAlert.classList.remove('visible');
-  ocrLoading.classList.add('visible');
-  ocrResults.style.display = 'none';
-  btnOcr.disabled = true;
-
-  try {
-    const res = await fetch('/api/ocr', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: uploadedBase64, mediaType: uploadedMediaType })
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Error de OCR');
-
-    fillOcrForm(data);
-    ocrResults.style.display = 'block';
-    showAlert(ocrAlert, 'ok', 'Factura procesada. Revisa los datos antes de confirmar.');
-  } catch (err) {
-    showAlert(ocrAlert, 'err', err.message);
-  } finally {
-    ocrLoading.classList.remove('visible');
-    btnOcr.disabled = false;
-  }
+// Procesar con OCR — creditos bloqueados
+btnOcr.addEventListener('click', () => {
+  alert('Funci\u00f3n no activa a\u00fan \u2014 carga cr\u00e9ditos en Claude API');
 });
 
-function fillOcrForm(data) {
-  document.getElementById('ocr-rut').value = data.rut_proveedor || '';
-  document.getElementById('ocr-proveedor').value = data.proveedor_nombre || '';
-  document.getElementById('ocr-fecha').value = data.fecha || '';
-  document.getElementById('ocr-numero').value = data.numero_factura || '';
-
-  ocrTbody.innerHTML = '';
-  (data.productos || []).forEach((p, i) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><input type="text" data-field="nombre" data-i="${i}" value="${esc(p.nombre)}"/></td>
-      <td><input type="number" data-field="cantidad" data-i="${i}" value="${p.cantidad || 0}" min="0"/></td>
-      <td><input type="number" data-field="precio_unitario" data-i="${i}" value="${p.precio_unitario || 0}" min="0"/></td>
-      <td><input type="text" data-field="codigo_barra" data-i="${i}" value="${esc(p.codigo_barra)}"/></td>`;
-    ocrTbody.appendChild(tr);
-  });
-
-  document.getElementById('ocr-subtotal').textContent = fmt(data.subtotal);
-  document.getElementById('ocr-iva').textContent = fmt(data.iva);
-  document.getElementById('ocr-total').textContent = fmt(data.total);
-}
-
-function esc(s) { return (s || '').replace(/"/g, '&quot;'); }
-
-// Confirmar y cargar
-document.getElementById('btn-confirmar').addEventListener('click', async () => {
-  const confirmSpinner = document.getElementById('confirm-spinner');
-  const confirmAlert = document.getElementById('confirm-alert');
-  confirmAlert.classList.remove('visible');
-  confirmSpinner.classList.add('show');
-
-  try {
-    // 1) Subir imagen a Drive
-    const rut = document.getElementById('ocr-rut').value.replace(/\./g, '');
-    const fecha = document.getElementById('ocr-fecha').value.replace(/-/g, '');
-    const filename = 'FACTURA_' + rut + '_' + fecha + '.' + (uploadedFile.name.split('.').pop() || 'jpg');
-
-    const driveRes = await fetch('/api/drive', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ file: uploadedBase64, filename, mimeType: uploadedMediaType })
-    });
-    const driveData = await driveRes.json();
-    if (!driveRes.ok) throw new Error(driveData.error || 'Error subiendo a Drive');
-
-    // 2) Cargar productos en sheets
-    const rows = ocrTbody.querySelectorAll('tr');
-    let loaded = 0;
-    for (const row of rows) {
-      const inputs = row.querySelectorAll('input');
-      await fetch('/api/sheets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          producto: inputs[0].value,
-          cantidad: Number(inputs[1].value),
-          precio: Number(inputs[2].value),
-          codigo_barra: inputs[3].value,
-          proveedor: document.getElementById('ocr-proveedor').value,
-          rut_proveedor: document.getElementById('ocr-rut').value,
-          fecha: document.getElementById('ocr-fecha').value,
-          numero_factura: document.getElementById('ocr-numero').value,
-          drive_link: driveData.webViewLink || ''
-        })
-      });
-      loaded++;
-    }
-
-    showAlert(confirmAlert, 'ok',
-      loaded + ' productos cargados. Imagen guardada en Drive.');
-  } catch (err) {
-    showAlert(confirmAlert, 'err', err.message);
-  } finally {
-    confirmSpinner.classList.remove('show');
-  }
+// Confirmar y cargar — WRITE bloqueado
+document.getElementById('btn-confirmar').addEventListener('click', () => {
+  alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas');
 });
 </script>
 </body>

@@ -4,8 +4,19 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Cargar producto — Infopet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
+  :root {
+    --text-muted: #6E6E73;
+    --text-light: #A1A1A6;
+    --surface-2: #F0F0F2;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  body { padding-top: 52px; }
+
   .page { max-width: 860px; margin: 0 auto; padding: 32px 24px; }
 
   .page-header { margin-bottom: 32px; }
@@ -72,6 +83,22 @@
   .form-grid .full { grid-column: 1 / -1; }
   .form-input::placeholder { color: var(--text-light); }
   textarea.form-input { resize: vertical; min-height: 80px; }
+
+  /* ── Validation ── */
+  .form-input.invalid {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px var(--red-bg);
+  }
+  .form-input.invalid + .field-error,
+  .field-error.visible {
+    display: block;
+  }
+  .field-error {
+    display: none;
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 4px;
+  }
 
   .btn-submit {
     margin-top: 12px;
@@ -168,12 +195,13 @@
   </div>
 
   <div class="card" id="formCard">
-    <form id="formProducto" autocomplete="off">
+    <form id="formProducto" autocomplete="off" novalidate>
       <div class="form-grid">
 
         <div class="form-group">
           <label class="form-label">Nombre *</label>
           <input type="text" id="nombre" class="form-input" required/>
+          <span class="field-error">Este campo es obligatorio</span>
         </div>
         <div class="form-group">
           <label class="form-label">SKU</label>
@@ -183,6 +211,7 @@
         <div class="form-group">
           <label class="form-label">Precio CLP *</label>
           <input type="number" id="precio" class="form-input" min="0" required/>
+          <span class="field-error">Este campo es obligatorio</span>
         </div>
         <div class="form-group">
           <label class="form-label">Stock</label>
@@ -192,6 +221,7 @@
         <div class="form-group">
           <label class="form-label">Categor&iacute;a *</label>
           <input type="text" id="categoria" class="form-input" required/>
+          <span class="field-error">Este campo es obligatorio</span>
         </div>
         <div class="form-group">
           <label class="form-label">Marca</label>
@@ -237,9 +267,6 @@
 (function() {
   const form = document.getElementById('formProducto');
   const alertEl = document.getElementById('alert');
-  const summaryEl = document.getElementById('summary');
-  const progressWrap = document.getElementById('progressWrap');
-  const progressBar = document.getElementById('progressBar');
 
   /* ── Stepper helpers ── */
   function setStep(n) {
@@ -255,117 +282,57 @@
     });
   }
 
-  form.addEventListener('submit', async (e) => {
+  // Iniciar en step 1
+  setStep(1);
+
+  /* ── Clear validation on input ── */
+  form.querySelectorAll('.form-input[required]').forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('invalid');
+      const errorSpan = input.nextElementSibling;
+      if (errorSpan && errorSpan.classList.contains('field-error')) {
+        errorSpan.classList.remove('visible');
+      }
+    });
+  });
+
+  /* ── Form submit ── */
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    // Limpiar estado previo
-    summaryEl.classList.remove('visible');
-    summaryEl.innerHTML = '';
+    // Clear previous alerts
     alertEl.classList.remove('visible');
 
-    // Leer campos
-    const nombre = document.getElementById('nombre').value.trim();
-    const skuVal = document.getElementById('sku').value.trim();
-    const precio = Number(document.getElementById('precio').value);
-    const stock = Number(document.getElementById('stock').value) || 0;
-    const categoria = document.getElementById('categoria').value.trim();
-    const marca = document.getElementById('marca').value.trim();
-    const variante = document.getElementById('variante').value.trim();
-    const codigoBarra = document.getElementById('codigoBarra').value.trim();
-    const descripcion = document.getElementById('descripcion').value.trim();
-    const clasificacion = document.getElementById('clasificacion').value;
+    // Validate required fields
+    const requiredFields = form.querySelectorAll('.form-input[required]');
+    let hasErrors = false;
 
-    // Validar obligatorios
-    if (!nombre || !precio || !categoria) {
-      return showAlert(alertEl, 'err', 'Completa los campos obligatorios: Nombre, Precio y Categor\u00eda.');
-    }
-
-    const sku = skuVal || autoSKU(nombre);
-
-    // Step 2: Revision
-    setStep(2);
-    progressWrap.classList.add('visible');
-    progressBar.style.width = '0%';
-
-    const tasks = [
-      {
-        name: 'Bsale',
-        fn: () => apiFetch('/api/bsale?endpoint=products.json', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: nombre,
-            description: descripcion,
-            classificationsId: categoria,
-            variant: {
-              description: variante || nombre,
-              barCode: codigoBarra,
-              code: sku,
-              price: precio,
-              stock: stock
-            }
-          })
-        })
-      },
-      {
-        name: 'Jumpseller',
-        fn: () => apiFetch('/api/jumpseller?endpoint=products.json', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            product: {
-              name: nombre,
-              price: precio,
-              stock: stock,
-              sku: sku,
-              description: descripcion,
-              brand: marca,
-              category: categoria
-            }
-          })
-        })
-      },
-      {
-        name: 'Sheets',
-        fn: () => apiFetch('/api/sheets', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            values: [clasificacion, categoria, nombre, variante, marca, 0, codigoBarra, sku, 0, precio]
-          })
-        })
+    requiredFields.forEach(input => {
+      input.classList.remove('invalid');
+      const errorSpan = input.nextElementSibling;
+      if (errorSpan && errorSpan.classList.contains('field-error')) {
+        errorSpan.classList.remove('visible');
       }
-    ];
 
-    const results = await parallelTasks(tasks, ({ done, total }) => {
-      progressBar.style.width = Math.round((done / total) * 100) + '%';
+      if (!input.value.trim()) {
+        hasErrors = true;
+        input.classList.add('invalid');
+        if (errorSpan && errorSpan.classList.contains('field-error')) {
+          errorSpan.classList.add('visible');
+        }
+      }
     });
 
-    // Ocultar progreso
-    progressWrap.classList.remove('visible');
-
-    // Step 3: Resultado
-    setStep(3);
-
-    let allOk = true;
-    for (const [name, r] of Object.entries(results)) {
-      const ok = r.status === 'ok';
-      if (!ok) allOk = false;
-      const span = document.createElement('span');
-      span.className = 'result-pill ' + (ok ? 'result-ok' : 'result-err');
-      span.textContent = (ok ? '\u2713 ' : '\u2717 ') + name;
-      if (!ok) span.title = r.error;
-      summaryEl.appendChild(span);
+    if (hasErrors) {
+      showAlert(alertEl, 'err', 'Completa los campos obligatorios: Nombre, Precio y Categor\u00eda.');
+      // Focus first invalid field
+      const firstInvalid = form.querySelector('.form-input.invalid');
+      if (firstInvalid) firstInvalid.focus();
+      return;
     }
-    summaryEl.classList.add('visible');
 
-    if (allOk) {
-      showAlert(alertEl, 'ok', 'Producto cargado correctamente en los 3 canales.');
-      form.reset();
-      document.getElementById('stock').value = '0';
-    } else {
-      showAlert(alertEl, 'warn', 'Algunas cargas fallaron. Revisa el resumen.');
-    }
+    // WRITE_MODE disabled — show alert
+    alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas (WRITE_MODE desactivado)');
   });
 })();
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Dashboard de compras — InfoPet</title>
+<title>Dashboard de Stock — InfoPet</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
@@ -73,6 +73,7 @@
 /* Table */
 .table-section { margin-bottom: 24px; }
 .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm, 10px); }
+.mono { font-variant-numeric: tabular-nums; }
 
 /* Order bar */
 .order-bar {
@@ -87,6 +88,14 @@
 
 /* Empty state */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted, #6E6E73); font-size: 14px; }
+
+/* Loading spinner */
+.loading-spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--accent, #2D6A4F);
+  border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 768px) {
   .page-wrap { padding: 70px 12px 32px; }
@@ -116,15 +125,15 @@
 
 <main class="page-wrap">
   <div class="page-header">
-    <h1>Dashboard de compras</h1>
-    <p>Stock sem&aacute;foro &mdash; qu&eacute; comprar, cu&aacute;nto y a qui&eacute;n</p>
+    <h1>Dashboard de Stock</h1>
+    <p>Sem&aacute;foro de inventario &mdash; control r&aacute;pido de qu&eacute; reponer</p>
   </div>
 
   <div id="alert" class="alert"></div>
 
   <!-- Top bar -->
   <div class="top-bar">
-    <input type="text" id="searchInput" placeholder="Buscar producto o SKU..." oninput="filterTable()"/>
+    <input type="text" id="searchInput" placeholder="Buscar producto..." oninput="filterTable()"/>
     <button class="btn btn-primary" id="btnRefresh" onclick="loadStock()">Actualizar</button>
     <div class="filter-bar">
       <button class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
@@ -137,15 +146,15 @@
   <!-- Summary cards -->
   <div class="summary-grid">
     <div class="summary-card card-red">
-      <div class="card-label"><span class="dot dot-red dot-pulse"></span> Urgente</div>
+      <div class="card-label"><span class="dot dot-red dot-pulse"></span> Urgente (stock 0)</div>
       <div class="card-value" id="countUrgent">--</div>
     </div>
     <div class="summary-card card-amber">
-      <div class="card-label"><span class="dot dot-amber"></span> Posible</div>
+      <div class="card-label"><span class="dot dot-amber"></span> Posible (stock 1-5)</div>
       <div class="card-value" id="countWarning">--</div>
     </div>
     <div class="summary-card card-green">
-      <div class="card-label"><span class="dot dot-green"></span> Full</div>
+      <div class="card-label"><span class="dot dot-green"></span> Full (stock &gt;5)</div>
       <div class="card-value" id="countOk">--</div>
     </div>
   </div>
@@ -161,9 +170,6 @@
               <th>Producto</th>
               <th>SKU</th>
               <th>Stock</th>
-              <th>M&iacute;nimo</th>
-              <th>Pedir</th>
-              <th>Costo est.</th>
               <th>Acci&oacute;n</th>
             </tr>
           </thead>
@@ -176,7 +182,7 @@
 
   <!-- Order bar -->
   <div class="order-bar">
-    <button class="btn btn-primary" id="btnOrder" onclick="generateOrder()" disabled>Generar orden de compra (CSV)</button>
+    <button class="btn btn-primary" id="btnOrder" onclick="generateOrder()">Generar orden de compra</button>
     <span class="order-info" id="orderInfo"></span>
   </div>
 </main>
@@ -190,11 +196,11 @@
   var alertEl = document.getElementById('alert');
   var tbody = document.getElementById('tbody');
   var emptyState = document.getElementById('emptyState');
-  var DEFAULT_MIN = 5;
 
-  function getStatus(stock, minStock) {
-    if (stock === 0 || stock < minStock * 0.5) return 'red';
-    if (stock <= minStock * 1.2) return 'amber';
+  // Semáforo: red = 0, amber = 1-5, green = >5
+  function getStatus(stock) {
+    if (stock <= 0) return 'red';
+    if (stock <= 5) return 'amber';
     return 'green';
   }
 
@@ -204,53 +210,110 @@
     return '<span class="dot dot-green"></span>';
   }
 
-  // Load stock from Bsale
+  function getStatusLabel(status) {
+    if (status === 'red') return 'Sin stock';
+    if (status === 'amber') return 'Bajo';
+    return 'OK';
+  }
+
+  // Cargar stock desde Bsale
   window.loadStock = async function() {
     var btn = document.getElementById('btnRefresh');
     btn.disabled = true;
-    btn.textContent = 'Cargando...';
+    btn.innerHTML = '<span class="loading-spinner"></span>Cargando...';
     emptyState.textContent = 'Cargando productos desde Bsale...';
     emptyState.style.display = 'block';
     tbody.innerHTML = '';
     products = [];
 
     try {
-      var data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&expand=[variants]');
+      // 1) Traer productos activos
+      var data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&state=1');
       var items = data.items || [];
 
-      for (var i = 0; i < items.length; i++) {
-        var prod = items[i];
-        var variants = prod.variants && prod.variants.items ? prod.variants.items : (prod.variants || []);
-        if (variants.length === 0) {
-          products.push({
-            name: prod.name || prod.description || '--',
-            sku: '--', stock: 0, minStock: DEFAULT_MIN,
-            cost: 0, status: 'red'
-          });
-          continue;
-        }
-        for (var v = 0; v < variants.length; v++) {
-          var vr = variants[v];
-          var stock = typeof vr.quantity === 'number' ? vr.quantity : (vr.stock || 0);
-          var cost = vr.cost || vr.costPrice || 0;
-          var minStock = DEFAULT_MIN;
-          var status = getStatus(stock, minStock);
-          var toOrder = status !== 'green' ? Math.max(0, minStock - stock) : 0;
-          products.push({
-            name: prod.name || prod.description || '--',
-            sku: vr.sku || vr.code || '--',
-            stock: stock, minStock: minStock,
-            toOrder: toOrder, cost: cost,
-            estimatedCost: toOrder * cost, status: status
-          });
-        }
+      if (items.length === 0) {
+        emptyState.textContent = 'No se encontraron productos activos en Bsale.';
+        renderSummary();
+        return;
       }
 
+      // 2) Para cada producto, traer sus variantes con stock
+      var tasks = items.map(function(prod) {
+        return {
+          name: 'prod_' + prod.id,
+          fn: async function() {
+            var variantsUrl = '/api/bsale?endpoint=products/' + prod.id + '/variants.json';
+            var varData = await apiFetch(variantsUrl);
+            var variants = varData.items || [];
+
+            if (variants.length === 0) {
+              // Producto sin variantes — registrar con stock 0
+              products.push({
+                name: prod.name || prod.description || '(sin nombre)',
+                sku: '--',
+                stock: 0,
+                status: 'red'
+              });
+              return;
+            }
+
+            for (var v = 0; v < variants.length; v++) {
+              var vr = variants[v];
+              // Bsale devuelve stock en "quantity" de la variante o hay que pedir stock aparte
+              var stockQty = 0;
+
+              // Intentar obtener stock de los campos comunes
+              if (typeof vr.quantity === 'number') {
+                stockQty = vr.quantity;
+              } else if (typeof vr.stock === 'number') {
+                stockQty = vr.stock;
+              } else if (vr.stock_info && typeof vr.stock_info.quantity === 'number') {
+                stockQty = vr.stock_info.quantity;
+              }
+
+              // Intentar pedir stock de la variante si no viene inline
+              if (stockQty === 0 && vr.id) {
+                try {
+                  var stockData = await apiFetch('/api/bsale?endpoint=stocks.json&variant=' + vr.id);
+                  var stockItems = stockData.items || [];
+                  for (var s = 0; s < stockItems.length; s++) {
+                    stockQty += (stockItems[s].quantity || 0);
+                  }
+                } catch (e) {
+                  // Si falla, dejar stock en 0
+                }
+              }
+
+              var sku = vr.sku || vr.code || vr.barCode || '--';
+              var status = getStatus(stockQty);
+              var variantDesc = vr.description ? ' — ' + vr.description : '';
+
+              products.push({
+                name: (prod.name || prod.description || '(sin nombre)') + variantDesc,
+                sku: sku,
+                stock: stockQty,
+                status: status
+              });
+            }
+          }
+        };
+      });
+
+      // Ejecutar en paralelo con progreso
+      var completed = 0;
+      await parallelTasks(tasks, function(info) {
+        completed++;
+        emptyState.textContent = 'Cargando... ' + completed + ' de ' + items.length + ' productos';
+      });
+
+      // Ordenar: urgentes primero, luego ámbar, luego verdes
       var order = { red: 0, amber: 1, green: 2 };
       products.sort(function(a, b) { return order[a.status] - order[b.status]; });
 
       renderSummary();
       renderTable();
+      showAlert(alertEl, 'ok', products.length + ' variantes cargadas desde Bsale.');
+
     } catch (err) {
       showAlert(alertEl, 'err', 'Error al cargar productos: ' + err.message);
       emptyState.textContent = 'Error al cargar datos. Intenta nuevamente.';
@@ -271,11 +334,10 @@
     document.getElementById('countWarning').textContent = warning;
     document.getElementById('countOk').textContent = ok;
 
-    var actionable = urgent + warning;
-    document.getElementById('btnOrder').disabled = actionable === 0;
-    document.getElementById('orderInfo').textContent = actionable > 0
-      ? actionable + ' productos para incluir en orden de compra'
-      : 'Todo el stock est\u00e1 OK';
+    var total = urgent + warning + ok;
+    document.getElementById('orderInfo').textContent = total > 0
+      ? total + ' variantes en total · ' + urgent + ' sin stock · ' + warning + ' stock bajo'
+      : '';
   }
 
   function getFiltered() {
@@ -300,8 +362,6 @@
 
     for (var i = 0; i < filtered.length; i++) {
       var p = filtered[i];
-      var toOrder = p.status !== 'green' ? Math.max(0, p.minStock - p.stock) : 0;
-      var estCost = toOrder * p.cost;
       var tr = document.createElement('tr');
       tr.setAttribute('data-status', p.status);
       tr.innerHTML =
@@ -309,12 +369,9 @@
         '<td>' + escHtml(p.name) + '</td>' +
         '<td><code>' + escHtml(p.sku) + '</code></td>' +
         '<td class="mono">' + p.stock + '</td>' +
-        '<td class="mono">' + p.minStock + '</td>' +
-        '<td class="mono">' + (toOrder > 0 ? toOrder : '-') + '</td>' +
-        '<td class="mono">' + (estCost > 0 ? '$' + estCost.toLocaleString('es-CL') : '-') + '</td>' +
         '<td>' + (p.status !== 'green'
-          ? '<button class="btn btn-primary btn-sm" onclick="requestOrder(\'' + escAttr(p.sku) + '\')">Pedir</button>'
-          : '<span style="color:var(--text-muted);font-size:12px">OK</span>') + '</td>';
+          ? '<button class="btn btn-primary btn-sm" onclick="requestOrder()">Pedir</button>'
+          : '<span style="color:var(--text-3);font-size:12px">OK</span>') + '</td>';
       tbody.appendChild(tr);
     }
   }
@@ -325,11 +382,7 @@
     return d.innerHTML;
   }
 
-  function escAttr(s) {
-    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-  }
-
-  // Filters
+  // Filtros
   window.setFilter = function(filter, btn) {
     currentFilter = filter;
     document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
@@ -339,48 +392,17 @@
 
   window.filterTable = function() { renderTable(); };
 
-  // Request order feedback
-  window.requestOrder = function(sku) {
-    var p = products.find(function(item) { return item.sku === sku; });
-    if (p) showAlert(alertEl, 'ok', p.name + ' agregado a la orden de compra.');
+  // Botón Pedir — función no activa
+  window.requestOrder = function() {
+    alert('Función no activa aún');
   };
 
-  // Generate CSV order
+  // Botón Generar orden de compra — función no activa
   window.generateOrder = function() {
-    var toOrder = products.filter(function(p) { return p.status === 'red' || p.status === 'amber'; });
-    if (toOrder.length === 0) {
-      showAlert(alertEl, 'warn', 'No hay productos que necesiten reposici\u00f3n.');
-      return;
-    }
-
-    var headers = ['Producto', 'SKU', 'Stock Actual', 'Stock M\u00ednimo', 'Cantidad a Pedir', 'Costo Estimado', 'Estado'];
-    var rows = toOrder.map(function(p) {
-      var qty = Math.max(0, p.minStock - p.stock);
-      var est = qty * p.cost;
-      var estado = p.status === 'red' ? 'URGENTE' : 'POSIBLE';
-      return [p.name, p.sku, p.stock, p.minStock, qty, est, estado];
-    });
-
-    var csv = '\uFEFF' + headers.join(',') + '\n' + rows.map(function(r) {
-      return r.map(function(cell) {
-        var s = String(cell);
-        if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1) return '"' + s.replace(/"/g, '""') + '"';
-        return s;
-      }).join(',');
-    }).join('\n');
-
-    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    var fecha = new Date().toISOString().slice(0, 10);
-    a.href = url;
-    a.download = 'orden_compra_' + fecha + '.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    showAlert(alertEl, 'ok', 'Orden de compra generada con ' + toOrder.length + ' productos.');
+    alert('Función no activa aún — próximamente');
   };
 
-  // Initial load
+  // Carga inicial
   loadStock();
 })();
 </script>

@@ -10,39 +10,49 @@
 .page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
 .page-header { margin-bottom: 32px; }
 .page-header h1 { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: var(--text, #1D1D1F); margin-bottom: 6px; }
-.page-header p { font-size: 15px; color: var(--text-muted, #6E6E73); }
+.page-header p { font-size: 15px; color: var(--text-3, #6E6E73); }
 
 /* Drop zone */
 .drop-zone {
-  border: 2px dashed var(--border, #E5E3DA); border-radius: var(--radius, 16px);
+  border: 2px dashed var(--border-strong, #D1D1D6); border-radius: var(--radius, 16px);
   padding: 64px 24px; text-align: center;
   background: var(--surface, rgba(255,255,255,0.80));
   transition: all 0.2s ease; cursor: pointer; margin-bottom: 28px;
+  position: relative;
 }
 .drop-zone:hover, .drop-zone.dragover {
   border-color: var(--accent, #2D6A4F); background: rgba(45,106,79,0.04);
 }
-.drop-zone .drop-icon { font-size: 48px; color: var(--text-muted, #6E6E73); margin-bottom: 16px; line-height: 1; }
+.drop-zone .drop-icon {
+  width: 56px; height: 56px; margin: 0 auto 16px;
+  border-radius: 14px; background: var(--accent-bg, rgba(45,106,79,0.09));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: var(--accent, #2D6A4F);
+}
 .drop-zone .drop-text { font-size: 15px; color: var(--text, #1D1D1F); font-weight: 500; margin-bottom: 6px; }
-.drop-zone .drop-hint { font-size: 13px; color: var(--text-muted, #6E6E73); }
-.drop-zone input[type="file"] { display: none; }
+.drop-zone .drop-hint { font-size: 13px; color: var(--text-3, #6E6E73); }
+.drop-zone input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
 /* Summary pills */
 .summary-pills { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
 .pill {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 18px; border-radius: 100px; font-size: 14px; font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif; cursor: default;
 }
-.pill-green { background: rgba(45,106,79,0.1); color: var(--green, #2D6A4F); }
-.pill-amber { background: rgba(155,107,10,0.1); color: #9B6B0A; }
-.pill-red { background: rgba(192,57,43,0.1); color: var(--red, #C0392B); }
+.pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pill-green { background: var(--green-bg, rgba(45,106,79,0.08)); color: var(--green, #2D6A4F); }
+.pill-green .pill-dot { background: var(--green, #2D6A4F); }
+.pill-amber { background: var(--amber-bg, rgba(155,107,10,0.08)); color: var(--amber, #9B6B0A); }
+.pill-amber .pill-dot { background: var(--amber, #9B6B0A); }
+.pill-red { background: var(--red-bg, rgba(192,57,43,0.08)); color: var(--red, #C0392B); }
+.pill-red .pill-dot { background: var(--red, #C0392B); }
 
 /* Filter pills */
 .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .filter-pill {
-  padding: 7px 18px; border: 1px solid var(--border, #E5E3DA); border-radius: 100px;
-  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-muted, #6E6E73);
+  padding: 7px 18px; border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: 100px;
+  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-3, #6E6E73);
   font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
   font-family: 'Inter', sans-serif;
 }
@@ -53,21 +63,68 @@
 .status-pill {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 3px 12px; border-radius: 100px; font-size: 12px; font-weight: 600;
+  white-space: nowrap;
 }
-.status-pill.s-ok { background: rgba(45,106,79,0.1); color: var(--green, #2D6A4F); }
-.status-pill.s-warning { background: rgba(155,107,10,0.1); color: #9B6B0A; }
-.status-pill.s-error { background: rgba(192,57,43,0.1); color: var(--red, #C0392B); }
+.status-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.status-pill.s-ok { background: var(--green-bg, rgba(45,106,79,0.08)); color: var(--green, #2D6A4F); }
+.status-pill.s-ok .dot { background: var(--green, #2D6A4F); }
+.status-pill.s-warning { background: var(--amber-bg, rgba(155,107,10,0.08)); color: var(--amber, #9B6B0A); }
+.status-pill.s-warning .dot { background: var(--amber, #9B6B0A); }
+.status-pill.s-error { background: var(--red-bg, rgba(192,57,43,0.08)); color: var(--red, #C0392B); }
+.status-pill.s-error .dot { background: var(--red, #C0392B); }
 
 /* Table */
 .table-section { margin-bottom: 24px; }
+.table-section .card { padding: 0; background: var(--surface-solid, #fff); border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: var(--radius, 16px); overflow: hidden; }
+.table-wrap { overflow-x: auto; }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table-wrap thead th {
+  text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3, #6E6E73);
+  border-bottom: 1px solid var(--border, rgba(0,0,0,0.07)); background: var(--bg, #F5F5F7);
+}
+.table-wrap tbody td {
+  padding: 10px 16px; border-bottom: 1px solid var(--border, rgba(0,0,0,0.04));
+  color: var(--text, #1D1D1F); vertical-align: middle;
+}
+.table-wrap tbody tr:last-child td { border-bottom: none; }
+.table-wrap tbody tr:hover { background: rgba(45,106,79,0.02); }
+.table-wrap code { font-size: 12px; background: var(--bg, #F5F5F7); padding: 2px 6px; border-radius: 4px; }
+.table-wrap .issue-hint { font-size: 12px; color: var(--text-3, #6E6E73); display: block; margin-top: 2px; }
 
 /* Export bar */
 .export-bar {
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 16px 20px; background: var(--surface, rgba(255,255,255,0.80));
-  border: 1px solid var(--border, #E5E3DA); border-radius: var(--radius, 16px);
+  padding: 16px 20px; background: var(--surface-solid, #fff);
+  border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: var(--radius, 16px);
 }
-.export-bar .export-info { font-size: 13px; color: var(--text-muted, #6E6E73); margin-left: auto; }
+.export-bar .export-info { font-size: 13px; color: var(--text-3, #6E6E73); margin-left: auto; }
+
+/* Detected columns info */
+.detected-cols {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+  padding: 12px 16px; background: var(--surface-solid, #fff);
+  border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: var(--radius-sm, 10px);
+  font-size: 13px; color: var(--text-3, #6E6E73);
+}
+.detected-cols strong { color: var(--text, #1D1D1F); font-weight: 600; margin-right: 4px; }
+.detected-cols .col-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--accent-bg, rgba(45,106,79,0.09)); color: var(--accent, #2D6A4F);
+  padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 500;
+}
+.detected-cols .col-miss {
+  background: var(--red-bg, rgba(192,57,43,0.08)); color: var(--red, #C0392B);
+}
+
+/* Reset button */
+.btn-reset {
+  padding: 7px 16px; border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: 100px;
+  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-3, #6E6E73);
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+.btn-reset:hover { border-color: var(--red, #C0392B); color: var(--red, #C0392B); }
 
 /* Alert */
 #alert { margin-bottom: 16px; }
@@ -103,39 +160,42 @@
 <main class="page-wrap">
   <div class="page-header">
     <h1>Carga masiva</h1>
-    <p>Sube tu Carga Maestra CSV &rarr; genera CSV Jumpseller</p>
+    <p>Sube tu Carga Maestra CSV &rarr; genera CSV listo para Jumpseller</p>
   </div>
 
   <div id="alert" class="alert"></div>
 
   <!-- Drop zone -->
   <div class="drop-zone" id="dropZone">
-    <div class="drop-icon">&uarr;</div>
+    <div class="drop-icon">&#8593;</div>
     <div class="drop-text">Arrastra tu CSV aqu&iacute; o haz clic para seleccionar</div>
     <div class="drop-hint">Carga Maestra desde Google Sheets (.csv)</div>
-    <input type="file" id="fileInput" accept=".csv"/>
+    <input type="file" id="fileInput" accept=".csv,text/csv"/>
   </div>
 
   <!-- Results section -->
   <div id="resultsSection" class="hidden">
+    <!-- Detected columns -->
+    <div class="detected-cols" id="detectedCols"></div>
+
     <!-- Summary pills -->
     <div class="summary-pills">
-      <span class="pill pill-green"><span id="countOk">0</span> OK</span>
-      <span class="pill pill-amber"><span id="countWarn">0</span> Warnings</span>
-      <span class="pill pill-red"><span id="countErr">0</span> Errores</span>
+      <span class="pill pill-green"><span class="pill-dot"></span><span id="countOk">0</span> OK</span>
+      <span class="pill pill-amber"><span class="pill-dot"></span><span id="countWarn">0</span> Warnings</span>
+      <span class="pill pill-red"><span class="pill-dot"></span><span id="countErr">0</span> Errores</span>
     </div>
 
     <!-- Filters -->
     <div class="filter-bar">
-      <button class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
-      <button class="filter-pill" data-filter="ok" onclick="setFilter('ok', this)">OK</button>
-      <button class="filter-pill" data-filter="warning" onclick="setFilter('warning', this)">Warning</button>
-      <button class="filter-pill" data-filter="error" onclick="setFilter('error', this)">Error</button>
+      <button class="filter-pill active" data-filter="all">Todos</button>
+      <button class="filter-pill" data-filter="ok">OK</button>
+      <button class="filter-pill" data-filter="warning">Warning</button>
+      <button class="filter-pill" data-filter="error">Error</button>
     </div>
 
     <!-- Table -->
     <div class="table-section">
-      <div class="card" style="padding:0;">
+      <div class="card">
         <div class="table-wrap">
           <table>
             <thead>
@@ -144,6 +204,7 @@
                 <th>Nombre</th>
                 <th>SKU</th>
                 <th>Precio</th>
+                <th>Stock</th>
                 <th>Categor&iacute;a</th>
                 <th>Marca</th>
                 <th>C&oacute;digo Barra</th>
@@ -157,7 +218,8 @@
 
     <!-- Export bar -->
     <div class="export-bar">
-      <button class="btn btn-primary" id="btnExport" onclick="exportCSV()">Exportar CSV Jumpseller</button>
+      <button class="btn btn-primary" id="btnExport">Exportar CSV Jumpseller</button>
+      <button class="btn-reset" id="btnReset">Cargar otro archivo</button>
       <span class="export-info" id="exportInfo"></span>
     </div>
   </div>
@@ -174,30 +236,81 @@
   var dropZone = document.getElementById('dropZone');
   var fileInput = document.getElementById('fileInput');
   var resultsSection = document.getElementById('resultsSection');
+  var detectedColsEl = document.getElementById('detectedCols');
 
-  // Drop zone events
-  dropZone.addEventListener('click', function() { fileInput.click(); });
-  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
-  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+  /* ── Drop zone events ── */
+  dropZone.addEventListener('click', function(e) {
+    if (e.target === fileInput) return;
+    fileInput.click();
+  });
+
+  dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragenter', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('dragover');
+  });
+
   dropZone.addEventListener('drop', function(e) {
     e.preventDefault();
+    e.stopPropagation();
     dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
+    var files = e.dataTransfer.files;
+    if (files.length > 0) processFile(files[0]);
   });
+
   fileInput.addEventListener('change', function() {
     if (fileInput.files.length > 0) processFile(fileInput.files[0]);
   });
 
+  /* ── Filter pills ── */
+  document.querySelectorAll('.filter-pill').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      currentFilter = btn.getAttribute('data-filter');
+      document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderTable();
+    });
+  });
+
+  /* ── Export button ── */
+  document.getElementById('btnExport').addEventListener('click', exportCSV);
+
+  /* ── Reset button ── */
+  document.getElementById('btnReset').addEventListener('click', function() {
+    rows = [];
+    currentFilter = 'all';
+    resultsSection.classList.add('hidden');
+    dropZone.style.display = '';
+    fileInput.value = '';
+    document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+  });
+
+  /* ── Process file ── */
   function processFile(file) {
-    if (!file.name.endsWith('.csv')) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
       showAlert(alertEl, 'err', 'Solo se aceptan archivos CSV.');
       return;
     }
     var reader = new FileReader();
     reader.onload = function(e) { parseCSV(e.target.result); };
+    reader.onerror = function() { showAlert(alertEl, 'err', 'Error al leer el archivo.'); };
     reader.readAsText(file, 'UTF-8');
   }
 
+  /* ── Parse CSV ── */
   function parseCSV(text) {
     var lines = text.split(/\r?\n/).filter(function(l) { return l.trim().length > 0; });
     if (lines.length < 2) {
@@ -207,47 +320,67 @@
 
     var headers = splitCSVLine(lines[0]).map(function(h) { return h.trim().toLowerCase(); });
 
+    // Column mapping — order matters, more specific aliases first
     var colMap = {
-      name: findCol(headers, ['nombre', 'name', 'producto', 'descripcion', 'descripci\u00f3n']),
-      sku: findCol(headers, ['sku', 'codigo', 'c\u00f3digo', 'code']),
-      price: findCol(headers, ['precio', 'price', 'valor']),
-      category: findCol(headers, ['categoria', 'categor\u00eda', 'category', 'categories']),
-      brand: findCol(headers, ['marca', 'brand']),
-      barcode: findCol(headers, ['codigo barra', 'c\u00f3digo barra', 'barcode', 'ean', 'upc', 'codigo_barra']),
-      stock: findCol(headers, ['stock', 'cantidad', 'quantity']),
+      name:        findCol(headers, ['nombre', 'name', 'producto']),
+      sku:         findCol(headers, ['sku', 'codigo', 'c\u00f3digo', 'code']),
+      price:       findCol(headers, ['precio', 'price', 'valor']),
+      category:    findCol(headers, ['categoria', 'categor\u00eda', 'category', 'categories']),
+      brand:       findCol(headers, ['marca', 'brand']),
+      barcode:     findCol(headers, ['codigo barra', 'c\u00f3digo barra', 'barcode', 'ean', 'upc', 'codigo_barra']),
+      stock:       findCol(headers, ['stock', 'cantidad', 'quantity']),
       description: findCol(headers, ['descripcion', 'descripci\u00f3n', 'description', 'detalle'])
     };
 
-    rows = [];
-    var skus = {};
+    // Show detected columns
+    showDetectedColumns(colMap, headers);
 
+    rows = [];
+    var skuCount = {};
+
+    // First pass: count SKUs for duplicate detection
+    for (var i = 1; i < lines.length; i++) {
+      var cols = splitCSVLine(lines[i]);
+      var sku = getVal(cols, colMap.sku);
+      if (sku) {
+        skuCount[sku] = (skuCount[sku] || 0) + 1;
+      }
+    }
+
+    // Second pass: build rows with validation
     for (var i = 1; i < lines.length; i++) {
       var cols = splitCSVLine(lines[i]);
       var row = {
-        name: getVal(cols, colMap.name),
-        sku: getVal(cols, colMap.sku),
-        price: getVal(cols, colMap.price),
-        category: getVal(cols, colMap.category),
-        brand: getVal(cols, colMap.brand),
-        barcode: getVal(cols, colMap.barcode),
-        stock: getVal(cols, colMap.stock) || '0',
+        name:        getVal(cols, colMap.name),
+        sku:         getVal(cols, colMap.sku),
+        price:       getVal(cols, colMap.price),
+        category:    getVal(cols, colMap.category),
+        brand:       getVal(cols, colMap.brand),
+        barcode:     getVal(cols, colMap.barcode),
+        stock:       getVal(cols, colMap.stock) || '0',
         description: getVal(cols, colMap.description),
-        status: 'ok',
-        issues: []
+        status:      'ok',
+        issues:      []
       };
 
-      // Validate
+      // Red: missing required fields
       if (!row.name) { row.status = 'error'; row.issues.push('Falta nombre'); }
-      if (!row.price) { row.status = 'error'; row.issues.push('Falta precio'); }
-      if (row.sku && skus[row.sku]) {
+      if (!row.price || isNaN(parseFloat(row.price.replace(/[$.]/g, '').replace(',', '.')))) {
+        row.status = 'error';
+        row.issues.push('Falta precio');
+      }
+
+      // Amber: duplicate SKU
+      if (row.sku && skuCount[row.sku] > 1) {
         if (row.status !== 'error') row.status = 'warning';
         row.issues.push('SKU duplicado');
       }
-      if (!row.barcode && row.status !== 'error') {
+
+      // Amber: empty barcode
+      if (!row.barcode) {
         if (row.status !== 'error') row.status = 'warning';
         row.issues.push('C\u00f3digo barra vac\u00edo');
       }
-      if (row.sku) skus[row.sku] = true;
 
       rows.push(row);
     }
@@ -259,10 +392,38 @@
     showAlert(alertEl, 'ok', rows.length + ' productos cargados desde CSV.');
   }
 
+  /* ── Show detected columns ── */
+  function showDetectedColumns(colMap, headers) {
+    var labels = {
+      name: 'Nombre', sku: 'SKU', price: 'Precio', category: 'Categor\u00eda',
+      brand: 'Marca', barcode: 'C\u00f3d. Barra', stock: 'Stock', description: 'Descripci\u00f3n'
+    };
+    var html = '<strong>Columnas detectadas:</strong> ';
+    var keys = Object.keys(colMap);
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      var idx = colMap[k];
+      if (idx >= 0) {
+        html += '<span class="col-tag">' + labels[k] + ' \u2192 ' + escHtml(headers[idx]) + '</span>';
+      } else {
+        html += '<span class="col-tag col-miss">' + labels[k] + ' \u2717</span>';
+      }
+    }
+    detectedColsEl.innerHTML = html;
+  }
+
+  /* ── Find column by aliases ── */
   function findCol(headers, aliases) {
+    // Exact match first
     for (var a = 0; a < aliases.length; a++) {
       for (var h = 0; h < headers.length; h++) {
-        if (headers[h] === aliases[a] || headers[h].indexOf(aliases[a]) !== -1) return h;
+        if (headers[h] === aliases[a]) return h;
+      }
+    }
+    // Partial match
+    for (var a = 0; a < aliases.length; a++) {
+      for (var h = 0; h < headers.length; h++) {
+        if (headers[h].indexOf(aliases[a]) !== -1) return h;
       }
     }
     return -1;
@@ -273,6 +434,7 @@
     return (cols[idx] || '').trim();
   }
 
+  /* ── CSV line parser (handles quotes, commas, semicolons) ── */
   function splitCSVLine(line) {
     var result = [];
     var current = '';
@@ -293,6 +455,7 @@
     return result;
   }
 
+  /* ── Render counters ── */
   function renderCounters() {
     var ok = 0, warn = 0, err = 0;
     for (var i = 0; i < rows.length; i++) {
@@ -306,12 +469,14 @@
     document.getElementById('exportInfo').textContent = (ok + warn) + ' productos listos para exportar';
   }
 
+  /* ── Status pill HTML ── */
   function getStatusPill(status) {
-    if (status === 'error') return '<span class="status-pill s-error">Error</span>';
-    if (status === 'warning') return '<span class="status-pill s-warning">Warning</span>';
-    return '<span class="status-pill s-ok">OK</span>';
+    var labels = { error: 'Error', warning: 'Warning', ok: 'OK' };
+    var cls = 's-' + status;
+    return '<span class="status-pill ' + cls + '"><span class="dot"></span>' + labels[status] + '</span>';
   }
 
+  /* ── Render table ── */
   function renderTable() {
     tbody.innerHTML = '';
     var filtered = rows.filter(function(r) {
@@ -320,18 +485,20 @@
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted)">Sin resultados para este filtro.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-3,#6E6E73)">Sin resultados para este filtro.</td></tr>';
       return;
     }
 
     for (var i = 0; i < filtered.length; i++) {
       var r = filtered[i];
       var tr = document.createElement('tr');
+      var issueHtml = r.issues.length > 0 ? '<span class="issue-hint">' + escHtml(r.issues.join(' \u00b7 ')) + '</span>' : '';
       tr.innerHTML =
         '<td>' + getStatusPill(r.status) + '</td>' +
-        '<td>' + escHtml(r.name) + (r.issues.length > 0 ? ' <small style="color:var(--text-muted)">(' + escHtml(r.issues.join(', ')) + ')</small>' : '') + '</td>' +
+        '<td>' + escHtml(r.name) + issueHtml + '</td>' +
         '<td><code>' + escHtml(r.sku) + '</code></td>' +
         '<td>' + escHtml(r.price) + '</td>' +
+        '<td>' + escHtml(r.stock) + '</td>' +
         '<td>' + escHtml(r.category) + '</td>' +
         '<td>' + escHtml(r.brand) + '</td>' +
         '<td>' + escHtml(r.barcode) + '</td>';
@@ -341,46 +508,46 @@
 
   function escHtml(s) {
     var d = document.createElement('div');
-    d.textContent = s;
+    d.textContent = s || '';
     return d.innerHTML;
   }
 
-  // Filter
-  window.setFilter = function(filter, btn) {
-    currentFilter = filter;
-    document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    renderTable();
-  };
-
-  // Export CSV Jumpseller
-  window.exportCSV = function() {
+  /* ── Export CSV Jumpseller ── */
+  function exportCSV() {
     var exportRows = rows.filter(function(r) { return r.status === 'ok' || r.status === 'warning'; });
     if (exportRows.length === 0) {
       showAlert(alertEl, 'warn', 'No hay productos v\u00e1lidos para exportar. Corrige los errores primero.');
       return;
     }
 
-    var headers = ['Name', 'SKU', 'Categories', 'Price', 'Stock', 'Description', 'Brand', 'Barcode', 'Status'];
+    var csvHeaders = ['Name', 'SKU', 'Categories', 'Price', 'Stock', 'Description', 'Brand', 'Barcode', 'Status'];
     var csvRows = exportRows.map(function(r) {
       return [
-        csvCell(r.name), csvCell(r.sku), csvCell(r.category),
-        csvCell(r.price), csvCell(r.stock), csvCell(r.description),
-        csvCell(r.brand), csvCell(r.barcode), csvCell('active')
+        csvCell(r.name),
+        csvCell(r.sku),
+        csvCell(r.category),
+        csvCell(r.price),
+        csvCell(r.stock),
+        csvCell(r.description),
+        csvCell(r.brand),
+        csvCell(r.barcode),
+        csvCell('active')
       ].join(',');
     });
 
-    var csv = '\uFEFF' + headers.join(',') + '\n' + csvRows.join('\n');
+    var csv = '\uFEFF' + csvHeaders.join(',') + '\n' + csvRows.join('\n');
     var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     var fecha = new Date().toISOString().slice(0, 10);
     a.href = url;
     a.download = 'jumpseller_import_' + fecha + '.csv';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showAlert(alertEl, 'ok', 'CSV Jumpseller exportado con ' + exportRows.length + ' productos.');
-  };
+  }
 
   function csvCell(val) {
     var s = String(val || '');
