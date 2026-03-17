@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Infopet — Panel de gestión</title>
-<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>InfoPet — Panel de gestión</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-/* ── Hero con video ── */
+/* ── Hero ── */
 .hero {
   position: relative;
-  min-height: 340px;
+  height: 280px;
   display: flex;
   align-items: center;
-  justify-content: center;
   overflow: hidden;
-  margin-bottom: 0;
+  margin-top: 52px;
 }
 
 .hero-video {
@@ -30,294 +29,354 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(26,26,24,0.55) 0%, rgba(26,26,24,0.75) 100%);
+  background: linear-gradient(to right, rgba(10,15,10,0.85), rgba(10,15,10,0.3));
   z-index: 1;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  text-align: center;
-  padding: 80px 24px 48px;
+  padding: 0 48px;
   color: #fff;
+  max-width: 640px;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.10);
+  border: 0.5px solid rgba(255,255,255,0.14);
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+  backdrop-filter: blur(8px);
 }
 
 .hero-content h1 {
-  font-size: clamp(28px, 5vw, 44px);
-  font-weight: 300;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(26px, 4vw, 36px);
   color: #fff;
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
-  opacity: 0;
-  animation: heroFadeIn 0.8s ease 0.2s forwards;
-}
-
-.hero-content h1 strong {
-  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+  line-height: 1.2;
 }
 
 .hero-date {
   font-size: 14px;
-  color: rgba(255,255,255,0.6);
-  font-weight: 300;
-  opacity: 0;
-  animation: heroFadeIn 0.8s ease 0.4s forwards;
+  color: rgba(255,255,255,0.55);
+  font-weight: 400;
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.8);
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 5px 14px;
-  border-radius: 100px;
-  margin-bottom: 20px;
-  backdrop-filter: blur(8px);
-  opacity: 0;
-  animation: heroFadeIn 0.8s ease 0.1s forwards;
+/* ── Page layout ── */
+.page-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
 }
-
-.hero-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #4CAF7D;
-  animation: pulse 2s infinite;
-}
-
-@keyframes heroFadeIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-/* ── Page ── */
-.page-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 48px; }
 
 /* ── Metric cards ── */
 .metrics-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 36px;
 }
-.metric-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 22px 24px; transition: var(--transition);
-  opacity: 0; animation: fadeUp 0.6s var(--ease) forwards;
-}
-.metric-card:nth-child(1) { animation-delay: 0.05s; }
-.metric-card:nth-child(2) { animation-delay: 0.1s; }
-.metric-card:nth-child(3) { animation-delay: 0.15s; }
-.metric-card:nth-child(4) { animation-delay: 0.2s; }
-.metric-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-lg); transform: translateY(-3px); }
-.metric-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-.metric-value { font-family: var(--font-heading); font-size: 32px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-.metric-value.loading { color: var(--text-light); font-size: 14px; font-weight: 400; }
-.metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
 
-/* ── Section titles ── */
-.section-title {
-  font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 16px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  display: flex; align-items: center; gap: 10px;
+.metric-card {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: all 0.2s var(--ease);
 }
-.section-title::before { content: ''; width: 20px; height: 1px; background: var(--border-hover); }
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.07);
+}
+
+.metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.metric-value.loading {
+  height: 28px;
+  width: 64px;
+}
+
+.metric-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
 /* ── Quick actions ── */
 .actions-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 36px;
 }
+
 .action-card {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 18px 22px; text-decoration: none; color: var(--text);
-  font-weight: 500; font-size: 14px; transition: var(--transition);
-  opacity: 0; animation: fadeUp 0.6s var(--ease) forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 14px;
+  text-decoration: none;
+  color: var(--text-2);
+  font-weight: 500;
+  font-size: 13px;
+  text-align: center;
+  transition: all 0.2s var(--ease);
 }
-.action-card:nth-child(1) { animation-delay: 0.1s; }
-.action-card:nth-child(2) { animation-delay: 0.15s; }
-.action-card:nth-child(3) { animation-delay: 0.2s; }
-.action-card:nth-child(4) { animation-delay: 0.25s; }
-.action-card:nth-child(5) { animation-delay: 0.3s; }
+
 .action-card:hover {
-  border-color: var(--accent); background: var(--accent-bg);
-  color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.07);
+  color: var(--accent);
 }
+
 .action-icon {
-  width: 40px; height: 40px; border-radius: 10px;
-  background: var(--accent-bg); color: var(--accent);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0; transition: var(--transition);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: all 0.2s var(--ease);
 }
-.action-card:hover .action-icon { background: var(--accent); color: white; }
+
+.action-card:hover .action-icon {
+  background: var(--accent);
+  color: white;
+}
 
 /* ── Sync widget ── */
 .sync-widget {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 24px; opacity: 0; animation: fadeUp 0.6s var(--ease) 0.35s forwards;
-}
-.sync-widget h3 { font-size: 16px; font-weight: 500; margin-bottom: 14px; }
-.sync-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.sync-result { font-size: 14px; color: var(--text-muted); }
-.sync-result strong { color: var(--text); }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
 }
 
-@media (max-width: 768px) {
-  .hero { min-height: 260px; }
+.sync-widget h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.sync-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sync-result {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.sync-result strong {
+  color: var(--text);
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .hero { height: 240px; }
+  .hero-content { padding: 0 24px; }
   .hero-content h1 { font-size: 24px; }
-  .page-wrap { padding: 24px 12px 32px; }
+  .page-wrap { padding: 24px 16px 32px; }
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .actions-grid { grid-template-columns: 1fr; }
+  .actions-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 480px) {
   .metrics-grid { grid-template-columns: 1fr; }
+  .actions-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
 <!-- Navbar -->
-<nav class="navbar" style="background:rgba(26,26,24,0.7);border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px)">
-  <a href="index.html" class="navbar-brand" style="color:#fff"><img src="assets/logo.jpeg" alt="InfoPet" style="height:36px;border-radius:6px;margin-right:4px"> <span class="badge">panel</span></a>
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <img src="assets/logo.jpeg" alt="InfoPet"/>
+    <span>InfoPet</span>
+    <span class="badge">panel</span>
+  </a>
   <div class="navbar-links">
-    <a href="index.html" class="active" style="color:rgba(255,255,255,0.9)">Inicio</a>
-    <a href="carga-producto.html" style="color:rgba(255,255,255,0.5)">Carga</a>
-    <a href="facturas.html" style="color:rgba(255,255,255,0.5)">Facturas</a>
-    <a href="stock-dashboard.html" style="color:rgba(255,255,255,0.5)">Stock</a>
-    <a href="jumpseller-bulk.html" style="color:rgba(255,255,255,0.5)">Bulk</a>
-    <a href="sync-stock.html" style="color:rgba(255,255,255,0.5)">Sync</a>
+    <a href="index.html" class="active">Inicio</a>
+    <a href="carga-producto.html">Carga</a>
+    <a href="facturas.html">Facturas</a>
+    <a href="stock-dashboard.html">Stock</a>
+    <a href="jumpseller-bulk.html">Bulk</a>
+    <a href="sync-stock.html">Sync</a>
   </div>
+  <button class="hamburger" onclick="document.querySelector('.navbar-links').style.display=document.querySelector('.navbar-links').style.display==='flex'?'none':'flex'">&#9776;</button>
 </nav>
 
-<!-- Hero con video de fondo -->
+<!-- Hero -->
 <div class="hero">
-  <video class="hero-video" autoplay muted loop playsinline>
-    <source src="assets/hero-bg.mp4" type="video/mp4"/>
-  </video>
+  <video class="hero-video" autoplay muted loop playsinline src="assets/hero-bg.mp4"></video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-badge">Panel de gestión · Infopet Reñaca</div>
-    <img src="assets/logo.jpeg" alt="InfoPet Reñaca" style="height:80px;border-radius:12px;margin-bottom:16px;opacity:0;animation:heroFadeIn 0.8s ease 0.15s forwards">
-    <h1><strong>InfoPet</strong> · Panel de gestión</h1>
-    <p class="hero-date" id="currentDate"></p>
+    <div class="hero-pill">
+      <span class="dot dot-green dot-pulse"></span>
+      Bsale &middot; Jumpseller &middot; Sheets conectados
+    </div>
+    <h1 id="heroGreeting">Buenos días</h1>
+    <p class="hero-date" id="heroDate"></p>
   </div>
 </div>
 
+<!-- Main -->
 <main class="page-wrap">
-  <!-- Metric cards -->
-  <div class="section-title">Métricas en vivo</div>
-  <div class="metrics-grid">
+
+  <!-- Métricas en vivo -->
+  <div class="section-label fade-up">Métricas en vivo</div>
+  <div class="metrics-grid fade-up">
     <div class="metric-card">
       <div class="metric-label">Productos Bsale</div>
-      <div class="metric-value loading" id="metricBsale">Cargando...</div>
+      <div class="metric-value loading shimmer" id="metricBsale">&nbsp;</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">Productos Jumpseller</div>
-      <div class="metric-value loading" id="metricJumpseller">Cargando...</div>
+      <div class="metric-value loading shimmer" id="metricJumpseller">&nbsp;</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">Stock crítico</div>
-      <div class="metric-value loading" id="metricCritico">Cargando...</div>
-      <div class="metric-sub">Productos con stock 0</div>
+      <div class="metric-value loading shimmer" id="metricCritico">&nbsp;</div>
+      <div class="metric-sub"><span class="dot dot-red"></span> Productos con stock 0</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">Sync status</div>
-      <div class="metric-value loading" id="metricSync">Cargando...</div>
+      <div class="metric-value loading shimmer" id="metricSync">&nbsp;</div>
       <div class="metric-sub" id="syncSub"></div>
     </div>
   </div>
 
-  <!-- Quick actions -->
-  <div class="section-title">Acciones rápidas</div>
-  <div class="actions-grid">
+  <!-- Acciones rápidas -->
+  <div class="section-label fade-up">Acciones rápidas</div>
+  <div class="actions-grid fade-up">
     <a href="carga-producto.html" class="action-card">
       <span class="action-icon">+</span>
       Cargar producto
     </a>
     <a href="jumpseller-bulk.html" class="action-card">
-      <span class="action-icon">↑</span>
-      Carga masiva CSV
+      <span class="action-icon">&uarr;</span>
+      Carga masiva
     </a>
     <a href="facturas.html" class="action-card">
       <span class="action-icon">#</span>
       Facturas
     </a>
     <a href="stock-dashboard.html" class="action-card">
-      <span class="action-icon">≡</span>
-      Dashboard compras
+      <span class="action-icon">&equiv;</span>
+      Dashboard stock
     </a>
     <a href="sync-stock.html" class="action-card">
-      <span class="action-icon">↔</span>
-      Sincronizar stock
+      <span class="action-icon">&harr;</span>
+      Sincronizar
     </a>
   </div>
 
-  <!-- Sync widget -->
-  <div class="sync-widget">
-    <h3>Sincronización rápida</h3>
+  <!-- Sincronización -->
+  <div class="section-label fade-up">Sincronización</div>
+  <div class="sync-widget fade-up">
+    <h3>Comparar Bsale vs Jumpseller</h3>
     <div class="sync-row">
-      <button class="btn btn-primary" id="btnQuickSync" onclick="quickSync()">Sincronizar ahora</button>
+      <button class="btn btn-primary" id="btnQuickSync" onclick="quickSync()">Comparar ahora</button>
       <span class="sync-result" id="syncResult"></span>
     </div>
     <div style="margin-top:12px;display:none" id="fixRow">
-      <button class="btn btn-danger" id="btnFixAll" onclick="fixAll()">Corregir todas</button>
+      <button class="btn btn-danger" id="btnFixAll" onclick="fixAll()">Corregir todas las diferencias</button>
     </div>
   </div>
+
 </main>
 
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
 <script>
 (function() {
-  // Current date
-  const now = new Date();
-  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('currentDate').textContent =
-    now.toLocaleDateString('es-CL', opts).replace(/^\w/, c => c.toUpperCase());
+  // ── Date & greeting ──
+  var now = new Date();
+  var hour = now.getHours();
+  var greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches';
+  document.getElementById('heroGreeting').textContent = greeting;
 
-  // Load metrics in parallel
+  var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  var dateStr = now.toLocaleDateString('es-CL', opts);
+  document.getElementById('heroDate').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+
+  // ── Load metrics ──
   async function loadMetric(id, url, extract) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     try {
-      const data = await apiFetch(url);
-      const val = extract(data);
+      var data = await apiFetch(url);
+      var val = extract(data);
       el.textContent = val.toLocaleString('es-CL');
-      el.classList.remove('loading');
+      el.classList.remove('loading', 'shimmer');
     } catch (err) {
       el.textContent = '--';
-      el.classList.remove('loading');
+      el.classList.remove('loading', 'shimmer');
     }
   }
 
-  loadMetric('metricBsale', '/api/bsale?endpoint=products.json&limit=1', d => d.count || 0);
-  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products.json&limit=1', d => {
+  loadMetric('metricBsale', '/api/bsale?endpoint=products.json&limit=1', function(d) { return d.count || 0; });
+  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products.json&limit=1', function(d) {
     if (Array.isArray(d)) return d.length;
     return d.count || 0;
   });
-  loadMetric('metricCritico', '/api/bsale?endpoint=stocks.json&limit=1&quantity=0', d => d.count || 0);
+  loadMetric('metricCritico', '/api/bsale?endpoint=stocks.json&limit=1&quantity=0', function(d) { return d.count || 0; });
 
-  // Sync status
+  // ── Sync status metric ──
   (async function() {
-    const el = document.getElementById('metricSync');
-    const sub = document.getElementById('syncSub');
+    var el = document.getElementById('metricSync');
+    var sub = document.getElementById('syncSub');
     try {
-      const data = await apiFetch('/api/sync?action=compare');
-      const items = Array.isArray(data) ? data : (data.items || []);
-      const diffs = items.filter(p => p.diferencia !== null && p.diferencia !== 0).length;
-      el.classList.remove('loading');
+      var data = await apiFetch('/api/sync?action=compare');
+      var items = Array.isArray(data) ? data : (data.items || []);
+      var diffs = items.filter(function(p) { return p.diferencia !== null && p.diferencia !== 0; }).length;
+      el.classList.remove('loading', 'shimmer');
       if (diffs === 0) {
         el.innerHTML = '<span class="dot dot-green"></span>';
         sub.textContent = 'Todo sincronizado';
@@ -327,27 +386,27 @@
       }
     } catch (err) {
       el.textContent = '--';
-      el.classList.remove('loading');
+      el.classList.remove('loading', 'shimmer');
       sub.textContent = 'Sin conexión';
     }
   })();
 
-  // Quick sync
-  let syncDiffs = [];
+  // ── Quick sync ──
+  var syncDiffs = [];
 
   window.quickSync = async function() {
-    const btn = document.getElementById('btnQuickSync');
-    const result = document.getElementById('syncResult');
-    const fixRow = document.getElementById('fixRow');
+    var btn = document.getElementById('btnQuickSync');
+    var result = document.getElementById('syncResult');
+    var fixRow = document.getElementById('fixRow');
     btn.disabled = true;
     btn.textContent = 'Comparando...';
     result.textContent = '';
     fixRow.style.display = 'none';
 
     try {
-      const data = await apiFetch('/api/sync?action=compare');
-      const items = Array.isArray(data) ? data : (data.items || []);
-      syncDiffs = items.filter(p => p.diferencia !== null && p.diferencia !== 0);
+      var data = await apiFetch('/api/sync?action=compare');
+      var items = Array.isArray(data) ? data : (data.items || []);
+      syncDiffs = items.filter(function(p) { return p.diferencia !== null && p.diferencia !== 0; });
 
       if (syncDiffs.length === 0) {
         result.innerHTML = '<span class="dot dot-green"></span> <strong>Todo sincronizado</strong> — no hay diferencias.';
@@ -359,22 +418,22 @@
       result.textContent = 'Error: ' + err.message;
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Sincronizar ahora';
+      btn.textContent = 'Comparar ahora';
     }
   };
 
   window.fixAll = async function() {
     if (syncDiffs.length === 0) return;
-    const btn = document.getElementById('btnFixAll');
-    const result = document.getElementById('syncResult');
+    var btn = document.getElementById('btnFixAll');
+    var result = document.getElementById('syncResult');
     btn.disabled = true;
     btn.textContent = 'Corrigiendo...';
 
-    let done = 0;
-    let errors = 0;
-    for (const item of syncDiffs) {
+    var done = 0;
+    var errors = 0;
+    for (var i = 0; i < syncDiffs.length; i++) {
       try {
-        await apiFetch('/api/sync?action=fix&sku=' + encodeURIComponent(item.sku));
+        await apiFetch('/api/sync?action=fix&sku=' + encodeURIComponent(syncDiffs[i].sku));
       } catch (e) { errors++; }
       done++;
     }
@@ -386,28 +445,22 @@
     }
     document.getElementById('fixRow').style.display = 'none';
     btn.disabled = false;
-    btn.textContent = 'Corregir todas';
+    btn.textContent = 'Corregir todas las diferencias';
     syncDiffs = [];
   };
 
-  // Navbar scroll effect
-  window.addEventListener('scroll', function() {
-    const nav = document.querySelector('.navbar');
-    if (window.scrollY > 200) {
-      nav.style.background = 'rgba(255,255,255,0.95)';
-      nav.style.borderBottomColor = 'var(--border)';
-      nav.querySelectorAll('.navbar-brand').forEach(el => el.style.color = 'var(--text)');
-      nav.querySelectorAll('.navbar-links a').forEach(el => {
-        el.style.color = el.classList.contains('active') ? 'var(--accent)' : 'var(--text-muted)';
-      });
-    } else {
-      nav.style.background = 'rgba(26,26,24,0.7)';
-      nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
-      nav.querySelectorAll('.navbar-brand').forEach(el => el.style.color = '#fff');
-      nav.querySelectorAll('.navbar-links a').forEach(el => {
-        el.style.color = el.classList.contains('active') ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)';
-      });
-    }
+  // ── Fade-up observer ──
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(function(el) {
+    observer.observe(el);
   });
 })();
 </script>

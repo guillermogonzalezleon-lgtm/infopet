@@ -3,84 +3,81 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Carga masiva Jumpseller — Infopet</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Carga masiva — InfoPet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
 .page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
-.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+.page-header { margin-bottom: 32px; }
+.page-header h1 { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: var(--text, #1D1D1F); margin-bottom: 6px; }
+.page-header p { font-size: 15px; color: var(--text-muted, #6E6E73); }
 
 /* Drop zone */
 .drop-zone {
-  border: 2px dashed var(--border); border-radius: var(--radius); padding: 48px 24px;
-  text-align: center; background: var(--surface); transition: all var(--transition);
-  cursor: pointer; margin-bottom: 24px;
+  border: 2px dashed var(--border, #E5E3DA); border-radius: var(--radius, 16px);
+  padding: 64px 24px; text-align: center;
+  background: var(--surface, rgba(255,255,255,0.80));
+  transition: all 0.2s ease; cursor: pointer; margin-bottom: 28px;
 }
 .drop-zone:hover, .drop-zone.dragover {
-  border-color: var(--accent); background: var(--accent-bg);
+  border-color: var(--accent, #2D6A4F); background: rgba(45,106,79,0.04);
 }
-.drop-zone .drop-icon { font-size: 36px; color: var(--text-light); margin-bottom: 12px; }
-.drop-zone .drop-text { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
-.drop-zone .drop-hint { font-size: 12px; color: var(--text-light); }
+.drop-zone .drop-icon { font-size: 48px; color: var(--text-muted, #6E6E73); margin-bottom: 16px; line-height: 1; }
+.drop-zone .drop-text { font-size: 15px; color: var(--text, #1D1D1F); font-weight: 500; margin-bottom: 6px; }
+.drop-zone .drop-hint { font-size: 13px; color: var(--text-muted, #6E6E73); }
 .drop-zone input[type="file"] { display: none; }
 
-/* Summary counters */
-.counters {
-  display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+/* Summary pills */
+.summary-pills { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 100px; font-size: 14px; font-weight: 600;
+  font-family: 'Inter', sans-serif;
 }
-.counter-chip {
-  display: flex; align-items: center; gap: 6px; padding: 6px 14px;
-  border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid var(--border);
-  background: var(--surface);
-}
-.counter-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.counter-chip .dot-green { background: var(--green); }
-.counter-chip .dot-yellow { background: #E9A820; }
-.counter-chip .dot-red { background: var(--red); }
+.pill-green { background: rgba(45,106,79,0.1); color: var(--green, #2D6A4F); }
+.pill-amber { background: rgba(155,107,10,0.1); color: #9B6B0A; }
+.pill-red { background: rgba(192,57,43,0.1); color: var(--red, #C0392B); }
 
-/* Filters */
-.filter-bar {
-  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+/* Filter pills */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-pill {
+  padding: 7px 18px; border: 1px solid var(--border, #E5E3DA); border-radius: 100px;
+  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-muted, #6E6E73);
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
-.filter-btn {
-  padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px;
-  background: var(--surface); color: var(--text-muted); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all var(--transition); font-family: var(--font-body);
+.filter-pill:hover { border-color: var(--accent, #2D6A4F); color: var(--accent, #2D6A4F); }
+.filter-pill.active { background: var(--accent, #2D6A4F); color: #fff; border-color: var(--accent, #2D6A4F); }
+
+/* Status pills in table */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 12px; border-radius: 100px; font-size: 12px; font-weight: 600;
 }
-.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.status-pill.s-ok { background: rgba(45,106,79,0.1); color: var(--green, #2D6A4F); }
+.status-pill.s-warning { background: rgba(155,107,10,0.1); color: #9B6B0A; }
+.status-pill.s-error { background: rgba(192,57,43,0.1); color: var(--red, #C0392B); }
 
 /* Table */
-.table-container { margin-bottom: 24px; }
-.table-container .table-wrap { border-radius: var(--radius); }
-.status-cell { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-.row-ok {}
-.row-warning { background: #FFF8E1; }
-.row-error { background: #FFEBEE; }
-.editable { cursor: text; min-width: 60px; }
-.editable:focus { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 2px; }
-.btn-sm { padding: 6px 14px; font-size: 12px; }
+.table-section { margin-bottom: 24px; }
 
 /* Export bar */
 .export-bar {
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; background: var(--surface, rgba(255,255,255,0.80));
+  border: 1px solid var(--border, #E5E3DA); border-radius: var(--radius, 16px);
 }
-.export-bar .export-info { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+.export-bar .export-info { font-size: 13px; color: var(--text-muted, #6E6E73); margin-left: auto; }
 
 /* Alert */
 #alert { margin-bottom: 16px; }
-
-/* Empty state */
-.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
 
 /* Hidden */
 .hidden { display: none !important; }
 
 @media (max-width: 768px) {
   .page-wrap { padding: 70px 12px 32px; }
-  .counters { flex-direction: column; }
+  .summary-pills { flex-direction: column; }
 }
 </style>
 </head>
@@ -88,7 +85,11 @@
 
 <!-- Navbar -->
 <nav class="navbar">
-  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <a href="index.html" class="navbar-brand">
+    <img src="assets/logo.jpeg" alt="InfoPet"/>
+    <span>InfoPet</span>
+    <span class="badge">panel</span>
+  </a>
   <div class="navbar-links">
     <a href="index.html">Inicio</a>
     <a href="carga-producto.html">Carga</a>
@@ -100,8 +101,10 @@
 </nav>
 
 <main class="page-wrap">
-  <h1 class="page-title">Carga masiva Jumpseller</h1>
-  <p class="page-subtitle">Sube tu Carga Maestra CSV &rarr; genera CSV Jumpseller</p>
+  <div class="page-header">
+    <h1>Carga masiva</h1>
+    <p>Sube tu Carga Maestra CSV &rarr; genera CSV Jumpseller</p>
+  </div>
 
   <div id="alert" class="alert"></div>
 
@@ -109,45 +112,46 @@
   <div class="drop-zone" id="dropZone">
     <div class="drop-icon">&uarr;</div>
     <div class="drop-text">Arrastra tu CSV aqu&iacute; o haz clic para seleccionar</div>
-    <div class="drop-hint">Carga Maestra de Google Sheets (.csv)</div>
+    <div class="drop-hint">Carga Maestra desde Google Sheets (.csv)</div>
     <input type="file" id="fileInput" accept=".csv"/>
   </div>
 
-  <!-- Results section (hidden until file loaded) -->
+  <!-- Results section -->
   <div id="resultsSection" class="hidden">
-    <!-- Counters -->
-    <div class="counters">
-      <div class="counter-chip"><span class="dot dot-green"></span> <span id="countOk">0</span> OK</div>
-      <div class="counter-chip"><span class="dot dot-yellow"></span> <span id="countWarn">0</span> Warnings</div>
-      <div class="counter-chip"><span class="dot dot-red"></span> <span id="countErr">0</span> Errores</div>
+    <!-- Summary pills -->
+    <div class="summary-pills">
+      <span class="pill pill-green"><span id="countOk">0</span> OK</span>
+      <span class="pill pill-amber"><span id="countWarn">0</span> Warnings</span>
+      <span class="pill pill-red"><span id="countErr">0</span> Errores</span>
     </div>
 
     <!-- Filters -->
     <div class="filter-bar">
-      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
-      <button class="filter-btn" data-filter="ok" onclick="setFilter('ok', this)">OK</button>
-      <button class="filter-btn" data-filter="warning" onclick="setFilter('warning', this)">Warning</button>
-      <button class="filter-btn" data-filter="error" onclick="setFilter('error', this)">Error</button>
+      <button class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
+      <button class="filter-pill" data-filter="ok" onclick="setFilter('ok', this)">OK</button>
+      <button class="filter-pill" data-filter="warning" onclick="setFilter('warning', this)">Warning</button>
+      <button class="filter-pill" data-filter="error" onclick="setFilter('error', this)">Error</button>
     </div>
 
     <!-- Table -->
-    <div class="table-container">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Estado</th>
-              <th>Nombre</th>
-              <th>SKU</th>
-              <th>Precio</th>
-              <th>Categor&iacute;a</th>
-              <th>Marca</th>
-              <th>C&oacute;digo Barra</th>
-              <th>Detalle</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
+    <div class="table-section">
+      <div class="card" style="padding:0;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Estado</th>
+                <th>Nombre</th>
+                <th>SKU</th>
+                <th>Precio</th>
+                <th>Categor&iacute;a</th>
+                <th>Marca</th>
+                <th>C&oacute;digo Barra</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -163,13 +167,13 @@
 <script src="assets/utils.js"></script>
 <script>
 (function() {
-  let rows = [];
-  let currentFilter = 'all';
-  const alertEl = document.getElementById('alert');
-  const tbody = document.getElementById('tbody');
-  const dropZone = document.getElementById('dropZone');
-  const fileInput = document.getElementById('fileInput');
-  const resultsSection = document.getElementById('resultsSection');
+  var rows = [];
+  var currentFilter = 'all';
+  var alertEl = document.getElementById('alert');
+  var tbody = document.getElementById('tbody');
+  var dropZone = document.getElementById('dropZone');
+  var fileInput = document.getElementById('fileInput');
+  var resultsSection = document.getElementById('resultsSection');
 
   // Drop zone events
   dropZone.addEventListener('click', function() { fileInput.click(); });
@@ -178,8 +182,7 @@
   dropZone.addEventListener('drop', function(e) {
     e.preventDefault();
     dropZone.classList.remove('dragover');
-    var files = e.dataTransfer.files;
-    if (files.length > 0) processFile(files[0]);
+    if (e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
   });
   fileInput.addEventListener('change', function() {
     if (fileInput.files.length > 0) processFile(fileInput.files[0]);
@@ -191,9 +194,7 @@
       return;
     }
     var reader = new FileReader();
-    reader.onload = function(e) {
-      parseCSV(e.target.result);
-    };
+    reader.onload = function(e) { parseCSV(e.target.result); };
     reader.readAsText(file, 'UTF-8');
   }
 
@@ -206,16 +207,15 @@
 
     var headers = splitCSVLine(lines[0]).map(function(h) { return h.trim().toLowerCase(); });
 
-    // Auto-detect columns
     var colMap = {
-      name: findCol(headers, ['nombre', 'name', 'producto', 'descripcion', 'descripción']),
-      sku: findCol(headers, ['sku', 'codigo', 'código', 'code']),
+      name: findCol(headers, ['nombre', 'name', 'producto', 'descripcion', 'descripci\u00f3n']),
+      sku: findCol(headers, ['sku', 'codigo', 'c\u00f3digo', 'code']),
       price: findCol(headers, ['precio', 'price', 'valor']),
-      category: findCol(headers, ['categoria', 'categoría', 'category', 'categories']),
+      category: findCol(headers, ['categoria', 'categor\u00eda', 'category', 'categories']),
       brand: findCol(headers, ['marca', 'brand']),
-      barcode: findCol(headers, ['codigo barra', 'código barra', 'barcode', 'ean', 'upc', 'codigo_barra']),
+      barcode: findCol(headers, ['codigo barra', 'c\u00f3digo barra', 'barcode', 'ean', 'upc', 'codigo_barra']),
       stock: findCol(headers, ['stock', 'cantidad', 'quantity']),
-      description: findCol(headers, ['descripcion', 'descripción', 'description', 'detalle'])
+      description: findCol(headers, ['descripcion', 'descripci\u00f3n', 'description', 'detalle'])
     };
 
     rows = [];
@@ -295,27 +295,21 @@
 
   function renderCounters() {
     var ok = 0, warn = 0, err = 0;
-    rows.forEach(function(r) {
-      if (r.status === 'ok') ok++;
-      else if (r.status === 'warning') warn++;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i].status === 'ok') ok++;
+      else if (rows[i].status === 'warning') warn++;
       else err++;
-    });
+    }
     document.getElementById('countOk').textContent = ok;
     document.getElementById('countWarn').textContent = warn;
     document.getElementById('countErr').textContent = err;
-    document.getElementById('exportInfo').textContent = ok + ' productos listos para exportar';
+    document.getElementById('exportInfo').textContent = (ok + warn) + ' productos listos para exportar';
   }
 
-  function getDotClass(status) {
-    if (status === 'error') return 'dot dot-red';
-    if (status === 'warning') return 'dot dot-yellow';
-    return 'dot dot-green';
-  }
-
-  function getStatusLabel(status) {
-    if (status === 'error') return 'Error';
-    if (status === 'warning') return 'Warning';
-    return 'OK';
+  function getStatusPill(status) {
+    if (status === 'error') return '<span class="status-pill s-error">Error</span>';
+    if (status === 'warning') return '<span class="status-pill s-warning">Warning</span>';
+    return '<span class="status-pill s-ok">OK</span>';
   }
 
   function renderTable() {
@@ -326,74 +320,40 @@
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">Sin resultados para este filtro.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted)">Sin resultados para este filtro.</td></tr>';
       return;
     }
 
-    filtered.forEach(function(r, idx) {
-      var realIdx = rows.indexOf(r);
-      var rowClass = r.status === 'error' ? 'row-error' : (r.status === 'warning' ? 'row-warning' : 'row-ok');
+    for (var i = 0; i < filtered.length; i++) {
+      var r = filtered[i];
       var tr = document.createElement('tr');
-      tr.className = rowClass;
       tr.innerHTML =
-        '<td><span class="status-cell"><span class="' + getDotClass(r.status) + '"></span> ' + getStatusLabel(r.status) + '</span></td>' +
-        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="name">' + escHtml(r.name) + '</td>' +
-        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="sku"><code>' + escHtml(r.sku) + '</code></td>' +
-        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="price">' + escHtml(r.price) + '</td>' +
-        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="category">' + escHtml(r.category) + '</td>' +
-        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="brand">' + escHtml(r.brand) + '</td>' +
-        '<td contenteditable="true" class="editable" data-idx="' + realIdx + '" data-field="barcode">' + escHtml(r.barcode) + '</td>' +
-        '<td>' + (r.issues.length > 0 ? r.issues.join(', ') : '-') + '</td>';
+        '<td>' + getStatusPill(r.status) + '</td>' +
+        '<td>' + escHtml(r.name) + (r.issues.length > 0 ? ' <small style="color:var(--text-muted)">(' + escHtml(r.issues.join(', ')) + ')</small>' : '') + '</td>' +
+        '<td><code>' + escHtml(r.sku) + '</code></td>' +
+        '<td>' + escHtml(r.price) + '</td>' +
+        '<td>' + escHtml(r.category) + '</td>' +
+        '<td>' + escHtml(r.brand) + '</td>' +
+        '<td>' + escHtml(r.barcode) + '</td>';
       tbody.appendChild(tr);
-    });
-
-    // Listen for edits
-    tbody.querySelectorAll('.editable').forEach(function(cell) {
-      cell.addEventListener('blur', function() {
-        var idx = parseInt(this.getAttribute('data-idx'));
-        var field = this.getAttribute('data-field');
-        rows[idx][field] = this.textContent.trim();
-        revalidate();
-      });
-    });
+    }
   }
 
   function escHtml(s) {
-    var div = document.createElement('div');
-    div.textContent = s;
-    return div.innerHTML;
-  }
-
-  function revalidate() {
-    var skus = {};
-    rows.forEach(function(r) {
-      r.status = 'ok';
-      r.issues = [];
-      if (!r.name) { r.status = 'error'; r.issues.push('Falta nombre'); }
-      if (!r.price) { r.status = 'error'; r.issues.push('Falta precio'); }
-      if (r.sku && skus[r.sku]) {
-        if (r.status !== 'error') r.status = 'warning';
-        r.issues.push('SKU duplicado');
-      }
-      if (!r.barcode && r.status !== 'error') {
-        if (r.status !== 'error') r.status = 'warning';
-        r.issues.push('C\u00f3digo barra vac\u00edo');
-      }
-      if (r.sku) skus[r.sku] = true;
-    });
-    renderCounters();
-    renderTable();
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
   }
 
   // Filter
   window.setFilter = function(filter, btn) {
     currentFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     renderTable();
   };
 
-  // Export CSV
+  // Export CSV Jumpseller
   window.exportCSV = function() {
     var exportRows = rows.filter(function(r) { return r.status === 'ok' || r.status === 'warning'; });
     if (exportRows.length === 0) {
@@ -404,15 +364,9 @@
     var headers = ['Name', 'SKU', 'Categories', 'Price', 'Stock', 'Description', 'Brand', 'Barcode', 'Status'];
     var csvRows = exportRows.map(function(r) {
       return [
-        csvCell(r.name),
-        csvCell(r.sku),
-        csvCell(r.category),
-        csvCell(r.price),
-        csvCell(r.stock),
-        csvCell(r.description),
-        csvCell(r.brand),
-        csvCell(r.barcode),
-        csvCell('active')
+        csvCell(r.name), csvCell(r.sku), csvCell(r.category),
+        csvCell(r.price), csvCell(r.stock), csvCell(r.description),
+        csvCell(r.brand), csvCell(r.barcode), csvCell('active')
       ].join(',');
     });
 
@@ -425,7 +379,6 @@
     a.download = 'jumpseller_import_' + fecha + '.csv';
     a.click();
     URL.revokeObjectURL(url);
-
     showAlert(alertEl, 'ok', 'CSV Jumpseller exportado con ' + exportRows.length + ' productos.');
   };
 

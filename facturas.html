@@ -3,156 +3,305 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Infopet — Facturas de proveedores</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Facturas — Infopet</title>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-/* ── Layout ── */
-.page-wrap{max-width:1100px;margin:0 auto;padding:80px 24px 48px}
-h1.page-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--text);margin-bottom:24px}
+  .page { max-width: 1060px; margin: 0 auto; padding: 32px 24px; }
 
-/* ── Tabs ── */
-.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px}
-.tab-btn{padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;background:none;border:none;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
-.tab-btn:hover{color:var(--text)}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { margin-bottom: 4px; }
+  .page-header p { color: var(--text-muted); font-size: 14px; }
 
-/* ── Cards ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
-.card h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text)}
+  /* ── Tabs (pills) ── */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+  .tab-btn {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    transition: all 0.25s var(--ease);
+  }
+  .tab-btn:hover { color: var(--text); background: var(--border); }
+  .tab-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
 
-/* ── Form rows ── */
-.form-row{display:flex;gap:12px;align-items:end;margin-bottom:16px;flex-wrap:wrap}
-.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:180px}
-.form-group label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
-.form-group input,.form-group select{padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);transition:border-color .2s}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent)}
+  /* ── Search bar ── */
+  .search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .search-row .form-input { flex: 1; }
 
-/* ── Buttons ── */
-.btn{padding:10px 20px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:var(--accent-hover)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.btn-secondary{background:var(--surface-2);color:var(--text)}
-.btn-secondary:hover{background:var(--border)}
+  /* ── Status pills ── */
+  .pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .pill-blue { background: var(--blue-bg); color: var(--blue); }
+  .pill-grey { background: var(--surface-2); color: var(--text-muted); }
 
-/* ── Dropzone ── */
-.dropzone{border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
-.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-bg)}
-.dropzone p{color:var(--text-muted);font-size:14px;margin-bottom:8px}
-.dropzone small{color:var(--text-light);font-size:12px}
-.dropzone input[type=file]{display:none}
+  /* ── Table buttons ── */
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+  }
 
-/* ── Preview ── */
-.img-preview{max-width:100%;max-height:300px;border-radius:8px;margin-top:12px;display:none;border:1px solid var(--border)}
+  /* ── Detail expand row ── */
+  .detail-row td {
+    padding: 16px;
+    background: var(--surface-2);
+  }
+  .detail-row .detail-products {
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .detail-row .detail-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+  }
 
-/* ── Table ── */
-.data-table{width:100%;border-collapse:collapse;font-size:13px}
-.data-table th{text-align:left;padding:8px 10px;font-weight:600;color:var(--text-muted);border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-.data-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text)}
-.data-table td input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;background:transparent;color:var(--text)}
-.data-table td input:focus{outline:none;border-color:var(--accent)}
+  /* ── Dropzone ── */
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s var(--ease);
+    background: var(--surface);
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .dropzone p { color: var(--text-muted); font-size: 14px; margin-bottom: 6px; }
+  .dropzone small { color: var(--text-light); font-size: 12px; }
+  .dropzone input[type=file] { display: none; }
 
-/* ── Alert ── */
-.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
-.alert.ok{display:block;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent)}
-.alert.err{display:block;background:var(--red-bg,rgba(212,92,74,.1));color:var(--red,#D45C4A);border:1px solid var(--red,#D45C4A)}
+  /* ── Image preview ── */
+  .img-preview {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    margin-top: 16px;
+    display: none;
+    border: 1px solid var(--border);
+  }
 
-/* ── Spinner ── */
-.spinner{display:none;align-items:center;gap:10px;padding:16px 0;color:var(--text-muted);font-size:14px}
-.spinner.show{display:flex}
-.spinner::before{content:'';width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+  /* ── Shimmer loading ── */
+  .shimmer-wrap { display: none; margin: 16px 0; }
+  .shimmer-wrap.visible { display: block; }
+  .shimmer {
+    height: 16px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease infinite;
+    margin-bottom: 10px;
+  }
+  .shimmer:nth-child(2) { width: 75%; }
+  .shimmer:nth-child(3) { width: 50%; }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .shimmer-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: 12px;
+  }
 
-/* ── Totals ── */
-.totals{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px}
-.total-item{display:flex;flex-direction:column;gap:2px}
-.total-item span:first-child{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
-.total-item span:last-child{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--text)}
+  /* ── OCR form grid ── */
+  .ocr-header-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+    margin-bottom: 20px;
+  }
 
-/* ── Responsive ── */
-@media(max-width:640px){
-  .page-wrap{padding:70px 12px 32px}
-  .form-row{flex-direction:column}
-  .tabs{overflow-x:auto}
-  .tab-btn{white-space:nowrap;font-size:13px;padding:8px 14px}
-  .totals{flex-direction:column;gap:12px}
-}
+  /* ── Editable table inputs ── */
+  .edit-table td input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-body);
+    background: transparent;
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+  .edit-table td input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-bg);
+  }
+
+  /* ── Totals ── */
+  .totals {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .total-item { display: flex; flex-direction: column; gap: 2px; }
+  .total-item span:first-child {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .total-item span:last-child {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ── Action row ── */
+  .action-row {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ── Spinner inline ── */
+  .spinner-inline {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  .spinner-inline.show { display: flex; }
+  .spinner-inline::before {
+    content: '';
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Responsive ── */
+  @media (max-width: 860px) {
+    .page { padding: 20px 16px; }
+    .ocr-header-grid { grid-template-columns: 1fr; }
+    .search-row { flex-direction: column; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .totals { flex-direction: column; gap: 12px; }
+    .tabs { flex-wrap: wrap; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ── Navbar ── -->
+<!-- Navbar -->
 <nav class="navbar">
-  <div class="nav-brand">Infopet</div>
-  <div class="nav-links">
-    <a href="index.html" class="nav-link">Inicio</a>
-    <a href="carga-producto.html" class="nav-link">Carga producto</a>
-    <a href="facturas.html" class="nav-link active">Facturas</a>
-    <a href="stock-dashboard.html" class="nav-link">Stock</a>
-    <a href="jumpseller-bulk.html" class="nav-link">Jumpseller</a>
-    <a href="sync-stock.html" class="nav-link">Sync</a>
+  <a href="index.html" class="navbar-brand">
+    <img src="assets/logo.jpeg" alt="InfoPet"/>
+    <span>InfoPet</span>
+    <span class="badge">panel</span>
+  </a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="carga-producto.html">Carga</a>
+    <a href="facturas.html" class="active">Facturas</a>
+    <a href="stock-dashboard.html">Stock</a>
+    <a href="jumpseller-bulk.html">Bulk</a>
+    <a href="sync-stock.html">Sync</a>
   </div>
 </nav>
 
-<main class="page-wrap">
-  <h1 class="page-title">Facturas de proveedores</h1>
+<main class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Facturas</h1>
+    <p>Facturas digitales de Bsale + OCR de facturas f&iacute;sicas</p>
+  </div>
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" data-tab="digital">Factura digital (Bsale)</button>
-    <button class="tab-btn" data-tab="fisica">Factura f&iacute;sica (foto)</button>
+    <button class="tab-btn active" data-tab="digital">Digital (Bsale)</button>
+    <button class="tab-btn" data-tab="fisica">F&iacute;sica (foto)</button>
   </div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- TAB 1 — Factura digital                 -->
-  <!-- ════════════════════════════════════════ -->
+  <!-- ════════════════════════════════════
+       TAB 1 — Factura digital (Bsale)
+       ════════════════════════════════════ -->
   <div id="tab-digital" class="tab-panel active">
     <div class="card">
-      <h2>Buscar factura en Bsale</h2>
-      <div class="form-row">
-        <div class="form-group">
-          <label>N&uacute;mero de factura o RUT</label>
-          <input type="text" id="bsale-query" placeholder="Ej: 12345 o 76.123.456-7"/>
-        </div>
-        <button class="btn btn-primary" id="btn-buscar-bsale">Buscar en Bsale</button>
+      <div class="search-row">
+        <input type="text" id="bsale-query" class="form-input" placeholder="Buscar por N&deg; factura o RUT"/>
+        <button class="btn btn-primary" id="btn-buscar-bsale">Buscar</button>
       </div>
       <div id="bsale-alert" class="alert"></div>
-      <div id="bsale-spinner" class="spinner">Buscando en Bsale...</div>
+      <div id="bsale-spinner" class="spinner-inline">Buscando en Bsale...</div>
     </div>
 
     <div class="card" id="bsale-results" style="display:none">
-      <h2>Productos de la factura</h2>
-      <div style="overflow-x:auto">
-        <table class="data-table">
+      <div class="table-wrap">
+        <table>
           <thead>
             <tr>
-              <th>Producto</th>
-              <th>Variante</th>
-              <th>Cantidad</th>
-              <th>Precio unit.</th>
+              <th>N&deg;</th>
+              <th>Fecha</th>
+              <th>Proveedor</th>
               <th>Total</th>
+              <th>Estado</th>
+              <th>Acci&oacute;n</th>
             </tr>
           </thead>
           <tbody id="bsale-tbody"></tbody>
         </table>
       </div>
-      <div style="margin-top:16px;text-align:right">
-        <button class="btn btn-primary" id="btn-cargar-bsale">Cargar productos al sistema</button>
+
+      <div class="action-row">
+        <button class="btn btn-primary" id="btn-cargar-bsale">Cargar productos</button>
       </div>
+      <div id="bsale-cargar-alert" class="alert"></div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- TAB 2 — Factura física                  -->
-  <!-- ════════════════════════════════════════ -->
+  <!-- ════════════════════════════════════
+       TAB 2 — Factura fisica (foto + OCR)
+       ════════════════════════════════════ -->
   <div id="tab-fisica" class="tab-panel">
 
     <!-- Upload -->
     <div class="card">
-      <h2>Subir foto de factura</h2>
       <div class="dropzone" id="dropzone">
         <p>Arrastra la foto aqu&iacute; o haz clic para seleccionar</p>
         <small>Formatos: JPG, PNG, HEIC</small>
@@ -162,40 +311,48 @@ h1.page-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color
       <div style="margin-top:16px">
         <button class="btn btn-primary" id="btn-ocr" disabled>Procesar con OCR</button>
       </div>
-      <div id="ocr-spinner" class="spinner">Procesando factura con IA...</div>
+
+      <!-- Shimmer loading -->
+      <div class="shimmer-wrap" id="ocr-loading">
+        <div class="shimmer" style="width:100%"></div>
+        <div class="shimmer"></div>
+        <div class="shimmer"></div>
+        <div class="shimmer-text">Procesando factura...</div>
+      </div>
+
       <div id="ocr-alert" class="alert"></div>
     </div>
 
     <!-- OCR Results -->
     <div class="card" id="ocr-results" style="display:none">
-      <h2>Datos extra&iacute;dos</h2>
+      <h3 style="margin-bottom:16px">Datos extra&iacute;dos</h3>
 
-      <div class="form-row">
+      <div class="ocr-header-grid">
         <div class="form-group">
-          <label>RUT Proveedor</label>
-          <input type="text" id="ocr-rut"/>
+          <label class="form-label">RUT Proveedor</label>
+          <input type="text" id="ocr-rut" class="form-input"/>
         </div>
         <div class="form-group">
-          <label>Proveedor</label>
-          <input type="text" id="ocr-proveedor"/>
+          <label class="form-label">Proveedor</label>
+          <input type="text" id="ocr-proveedor" class="form-input"/>
         </div>
         <div class="form-group">
-          <label>Fecha</label>
-          <input type="date" id="ocr-fecha"/>
+          <label class="form-label">Fecha</label>
+          <input type="date" id="ocr-fecha" class="form-input"/>
         </div>
         <div class="form-group">
-          <label>N&deg; Factura</label>
-          <input type="text" id="ocr-numero"/>
+          <label class="form-label">N&deg; Factura</label>
+          <input type="text" id="ocr-numero" class="form-input"/>
         </div>
       </div>
 
-      <div style="overflow-x:auto">
-        <table class="data-table">
+      <div class="table-wrap">
+        <table class="edit-table">
           <thead>
             <tr>
-              <th>Producto</th>
+              <th>Nombre</th>
               <th>Cantidad</th>
-              <th>Precio unit.</th>
+              <th>Precio</th>
               <th>C&oacute;digo barra</th>
             </tr>
           </thead>
@@ -218,19 +375,22 @@ h1.page-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color
         </div>
       </div>
 
-      <div style="margin-top:20px;text-align:right">
+      <div class="action-row">
         <button class="btn btn-primary" id="btn-confirmar">Confirmar y cargar</button>
       </div>
-      <div id="confirm-spinner" class="spinner">Subiendo imagen y cargando productos...</div>
+      <div id="confirm-spinner" class="spinner-inline">Subiendo imagen y cargando productos...</div>
       <div id="confirm-alert" class="alert"></div>
     </div>
   </div>
+
 </main>
 
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
 <script>
-/* ── Tabs ── */
+/* ══════════════════════════════════════
+   Tabs
+   ══════════════════════════════════════ */
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -240,30 +400,37 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-/* ══════════════════════════════════════════
+/* ══════════════════════════════════════
    TAB 1 — Factura digital (Bsale)
-   ══════════════════════════════════════════ */
+   ══════════════════════════════════════ */
 const bsaleQuery = document.getElementById('bsale-query');
 const bsaleAlert = document.getElementById('bsale-alert');
 const bsaleSpinner = document.getElementById('bsale-spinner');
 const bsaleResults = document.getElementById('bsale-results');
 const bsaleTbody = document.getElementById('bsale-tbody');
+const bsaleCargarAlert = document.getElementById('bsale-cargar-alert');
 
-let bsaleItems = [];
+let bsaleDocs = [];
+let bsaleDetailItems = {};
+
+// Search enter key
+bsaleQuery.addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-buscar-bsale').click();
+});
 
 document.getElementById('btn-buscar-bsale').addEventListener('click', async () => {
   const q = bsaleQuery.value.trim();
-  if (!q) { showAlert(bsaleAlert, 'err', 'Ingresa un número de factura o RUT'); return; }
+  if (!q) { showAlert(bsaleAlert, 'err', 'Ingresa un n\u00famero de factura o RUT'); return; }
 
-  bsaleAlert.className = 'alert';
+  bsaleAlert.classList.remove('visible');
   bsaleSpinner.classList.add('show');
   bsaleResults.style.display = 'none';
-  bsaleItems = [];
+  bsaleDocs = [];
+  bsaleDetailItems = {};
 
   try {
     const res = await fetch('/api/bsale?endpoint=documents.json&number=' + encodeURIComponent(q));
     const data = await res.json();
-
     if (!res.ok) throw new Error(data.error || 'Error de Bsale');
 
     const docs = data.items || [];
@@ -273,36 +440,27 @@ document.getElementById('btn-buscar-bsale').addEventListener('click', async () =
       return;
     }
 
-    // Obtener detalles del primer documento
-    const doc = docs[0];
-    const detailUrl = doc.details?.href;
-    if (detailUrl) {
-      const endpoint = detailUrl.replace('https://api.bsale.cl/v1/', '');
-      const detRes = await fetch('/api/bsale?endpoint=' + encodeURIComponent(endpoint));
-      const detData = await detRes.json();
-      bsaleItems = (detData.items || []).map(d => ({
-        nombre: d.variant?.description || d.description || '',
-        variante: d.variant?.code || '',
-        cantidad: d.quantity || 0,
-        precio: d.netUnitValue || 0,
-        total: d.totalAmount || 0
-      }));
-    }
-
+    bsaleDocs = docs;
     bsaleTbody.innerHTML = '';
-    bsaleItems.forEach(item => {
+
+    docs.forEach((doc, i) => {
+      const date = doc.generationDate ? new Date(doc.generationDate * 1000).toLocaleDateString('es-CL') : '-';
+      const total = doc.totalAmount || doc.netAmount || 0;
+      const hasUrl = !!doc.urlPdf;
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${item.nombre}</td>
-        <td>${item.variante}</td>
-        <td>${item.cantidad}</td>
-        <td>${fmt(item.precio)}</td>
-        <td>${fmt(item.total)}</td>`;
+        <td>${doc.number || '-'}</td>
+        <td>${date}</td>
+        <td>${doc.client?.company || doc.client?.firstName || '-'}</td>
+        <td style="font-family:var(--font-mono)">${fmt(total)}</td>
+        <td><span class="pill ${hasUrl ? 'pill-blue' : 'pill-grey'}">${hasUrl ? 'Digital' : 'No disponible'}</span></td>
+        <td><button class="btn btn-secondary btn-sm" data-doc="${i}">Ver detalle</button></td>`;
       bsaleTbody.appendChild(tr);
     });
 
     bsaleResults.style.display = 'block';
-    showAlert(bsaleAlert, 'ok', 'Se encontraron ' + bsaleItems.length + ' productos');
+    showAlert(bsaleAlert, 'ok', docs.length + ' documento(s) encontrado(s)');
   } catch (err) {
     showAlert(bsaleAlert, 'err', err.message);
   } finally {
@@ -310,11 +468,72 @@ document.getElementById('btn-buscar-bsale').addEventListener('click', async () =
   }
 });
 
+// Ver detalle: expand row
+bsaleTbody.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-doc]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.doc);
+  const doc = bsaleDocs[idx];
+  const parentTr = btn.closest('tr');
+
+  // Toggle: if detail row already exists, remove it
+  const existing = parentTr.nextElementSibling;
+  if (existing && existing.classList.contains('detail-row')) {
+    existing.remove();
+    return;
+  }
+
+  // Fetch detail if not cached
+  if (!bsaleDetailItems[idx]) {
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+    try {
+      const detailUrl = doc.details?.href;
+      if (detailUrl) {
+        const endpoint = detailUrl.replace('https://api.bsale.cl/v1/', '');
+        const detRes = await fetch('/api/bsale?endpoint=' + encodeURIComponent(endpoint));
+        const detData = await detRes.json();
+        bsaleDetailItems[idx] = (detData.items || []).map(d => ({
+          nombre: d.variant?.description || d.description || '',
+          variante: d.variant?.code || '',
+          cantidad: d.quantity || 0,
+          precio: d.netUnitValue || 0,
+          total: d.totalAmount || 0
+        }));
+      } else {
+        bsaleDetailItems[idx] = [];
+      }
+    } catch (err) {
+      showAlert(bsaleAlert, 'err', 'Error cargando detalle: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = 'Ver detalle';
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = 'Ver detalle';
+  }
+
+  const items = bsaleDetailItems[idx] || [];
+  const detailTr = document.createElement('tr');
+  detailTr.className = 'detail-row';
+  const linesHtml = items.length > 0
+    ? items.map(it => `<div class="detail-line"><span>${it.nombre} (x${it.cantidad})</span><span style="font-family:var(--font-mono)">${fmt(it.total)}</span></div>`).join('')
+    : '<div style="color:var(--text-muted);font-size:13px">Sin l\u00edneas de detalle</div>';
+  detailTr.innerHTML = `<td colspan="6"><div class="detail-products">${linesHtml}</div></td>`;
+  parentTr.after(detailTr);
+});
+
+// Cargar productos a sheets
 document.getElementById('btn-cargar-bsale').addEventListener('click', async () => {
-  if (bsaleItems.length === 0) return;
+  // Collect all detail items
+  const allItems = Object.values(bsaleDetailItems).flat();
+  if (allItems.length === 0) {
+    showAlert(bsaleCargarAlert, 'err', 'Primero haz clic en "Ver detalle" para cargar las l\u00edneas de producto.');
+    return;
+  }
 
   try {
-    for (const item of bsaleItems) {
+    for (const item of allItems) {
       await fetch('/api/sheets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -326,20 +545,20 @@ document.getElementById('btn-cargar-bsale').addEventListener('click', async () =
         })
       });
     }
-    showAlert(bsaleAlert, 'ok', bsaleItems.length + ' productos cargados al sistema correctamente');
+    showAlert(bsaleCargarAlert, 'ok', allItems.length + ' productos cargados al sistema correctamente');
   } catch (err) {
-    showAlert(bsaleAlert, 'err', 'Error cargando productos: ' + err.message);
+    showAlert(bsaleCargarAlert, 'err', 'Error cargando productos: ' + err.message);
   }
 });
 
-/* ══════════════════════════════════════════
-   TAB 2 — Factura física (foto + OCR)
-   ══════════════════════════════════════════ */
+/* ══════════════════════════════════════
+   TAB 2 — Factura fisica (foto + OCR)
+   ══════════════════════════════════════ */
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
 const imgPreview = document.getElementById('img-preview');
 const btnOcr = document.getElementById('btn-ocr');
-const ocrSpinner = document.getElementById('ocr-spinner');
+const ocrLoading = document.getElementById('ocr-loading');
 const ocrAlert = document.getElementById('ocr-alert');
 const ocrResults = document.getElementById('ocr-results');
 const ocrTbody = document.getElementById('ocr-tbody');
@@ -347,7 +566,6 @@ const ocrTbody = document.getElementById('ocr-tbody');
 let uploadedFile = null;
 let uploadedBase64 = null;
 let uploadedMediaType = null;
-let ocrData = null;
 
 // Drag and drop
 dropzone.addEventListener('click', () => fileInput.click());
@@ -364,7 +582,7 @@ fileInput.addEventListener('change', () => {
 
 function handleFile(file) {
   if (!file.type.startsWith('image/')) {
-    showAlert(ocrAlert, 'err', 'Solo se aceptan imágenes');
+    showAlert(ocrAlert, 'err', 'Solo se aceptan im\u00e1genes');
     return;
   }
   uploadedFile = file;
@@ -384,8 +602,8 @@ function handleFile(file) {
 btnOcr.addEventListener('click', async () => {
   if (!uploadedBase64) return;
 
-  ocrAlert.className = 'alert';
-  ocrSpinner.classList.add('show');
+  ocrAlert.classList.remove('visible');
+  ocrLoading.classList.add('visible');
   ocrResults.style.display = 'none';
   btnOcr.disabled = true;
 
@@ -399,14 +617,13 @@ btnOcr.addEventListener('click', async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error de OCR');
 
-    ocrData = data;
     fillOcrForm(data);
     ocrResults.style.display = 'block';
-    showAlert(ocrAlert, 'ok', 'Factura procesada correctamente. Revisa los datos antes de confirmar.');
+    showAlert(ocrAlert, 'ok', 'Factura procesada. Revisa los datos antes de confirmar.');
   } catch (err) {
     showAlert(ocrAlert, 'err', err.message);
   } finally {
-    ocrSpinner.classList.remove('show');
+    ocrLoading.classList.remove('visible');
     btnOcr.disabled = false;
   }
 });
@@ -439,7 +656,7 @@ function esc(s) { return (s || '').replace(/"/g, '&quot;'); }
 document.getElementById('btn-confirmar').addEventListener('click', async () => {
   const confirmSpinner = document.getElementById('confirm-spinner');
   const confirmAlert = document.getElementById('confirm-alert');
-  confirmAlert.className = 'alert';
+  confirmAlert.classList.remove('visible');
   confirmSpinner.classList.add('show');
 
   try {
@@ -480,20 +697,13 @@ document.getElementById('btn-confirmar').addEventListener('click', async () => {
     }
 
     showAlert(confirmAlert, 'ok',
-      loaded + ' productos cargados. Imagen guardada en Drive: ' +
-      '<a href="' + (driveData.webViewLink || '#') + '" target="_blank">Ver archivo</a>');
+      loaded + ' productos cargados. Imagen guardada en Drive.');
   } catch (err) {
     showAlert(confirmAlert, 'err', err.message);
   } finally {
     confirmSpinner.classList.remove('show');
   }
 });
-
-/* ── Helpers ── */
-function showAlert(el, type, msg) {
-  el.className = 'alert ' + type;
-  el.innerHTML = msg;
-}
 </script>
 </body>
 </html>

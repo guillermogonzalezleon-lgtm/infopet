@@ -3,75 +3,90 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Dashboard de compras — Infopet</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Dashboard de compras — InfoPet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
 .page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
-.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+.page-header { margin-bottom: 32px; }
+.page-header h1 { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: var(--text, #1D1D1F); margin-bottom: 6px; }
+.page-header p { font-size: 15px; color: var(--text-muted, #6E6E73); }
 
 /* Top bar */
 .top-bar {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   margin-bottom: 24px; padding: 14px 20px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface, rgba(255,255,255,0.80)); border: 1px solid var(--border, #E5E3DA);
+  border-radius: var(--radius, 16px);
 }
 .top-bar input[type="text"] {
-  flex: 1; min-width: 200px; padding: 8px 14px; border: 1px solid var(--border);
-  border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font-body);
-  background: var(--bg); color: var(--text); outline: none; transition: border-color var(--transition);
+  flex: 1; min-width: 200px; padding: 10px 16px; border: 1px solid var(--border, #E5E3DA);
+  border-radius: var(--radius-sm, 10px); font-size: 14px; font-family: 'Inter', sans-serif;
+  background: var(--bg, #F5F5F7); color: var(--text, #1D1D1F); outline: none;
+  transition: border-color 0.2s ease;
 }
-.top-bar input[type="text"]:focus { border-color: var(--accent); }
+.top-bar input[type="text"]:focus { border-color: var(--accent, #2D6A4F); box-shadow: 0 0 0 3px rgba(45,106,79,0.08); }
+.top-bar input[type="text"]::placeholder { color: var(--text-muted, #6E6E73); }
+
+/* Filter pills */
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-pill {
+  padding: 7px 18px; border: 1px solid var(--border, #E5E3DA); border-radius: 100px;
+  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-muted, #6E6E73);
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+.filter-pill:hover { border-color: var(--accent, #2D6A4F); color: var(--accent, #2D6A4F); }
+.filter-pill.active { background: var(--accent, #2D6A4F); color: #fff; border-color: var(--accent, #2D6A4F); }
 
 /* Summary cards */
 .summary-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
 }
 .summary-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 20px 24px; text-align: center; transition: all var(--transition);
+  background: var(--surface, rgba(255,255,255,0.80)); border: 1px solid var(--border, #E5E3DA);
+  border-radius: var(--radius, 16px); padding: 22px 24px; text-align: center;
+  transition: all 0.2s ease;
 }
-.summary-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow); }
-.summary-card .label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
-.summary-card .value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; }
-.summary-card.card-red { border-left: 4px solid var(--red); }
-.summary-card.card-red .value { color: var(--red); }
-.summary-card.card-yellow { border-left: 4px solid #E9A820; }
-.summary-card.card-yellow .value { color: #E9A820; }
-.summary-card.card-green { border-left: 4px solid var(--green); }
-.summary-card.card-green .value { color: var(--green); }
+.summary-card:hover { border-color: var(--border-hover, #D0CEC4); box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
+.summary-card .card-label {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 12px; font-weight: 600; color: var(--text-muted, #6E6E73);
+  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+}
+.summary-card .card-value { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 700; }
+.summary-card.card-red { border-left: 4px solid var(--red, #C0392B); }
+.summary-card.card-red .card-value { color: var(--red, #C0392B); }
+.summary-card.card-amber { border-left: 4px solid var(--yellow, #9B6B0A); }
+.summary-card.card-amber .card-value { color: var(--yellow, #9B6B0A); }
+.summary-card.card-green { border-left: 4px solid var(--green, #2D6A4F); }
+.summary-card.card-green .card-value { color: var(--green, #2D6A4F); }
 
-/* Filters */
-.filter-bar {
-  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
-}
-.filter-btn {
-  padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px;
-  background: var(--surface); color: var(--text-muted); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all var(--transition); font-family: var(--font-body);
-}
-.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+/* Dot indicators */
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.dot-red { background: var(--red, #C0392B); }
+.dot-amber { background: #D4A843; }
+.dot-green { background: var(--green, #2D6A4F); }
+.dot-pulse { animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
 /* Table */
-.table-container { margin-bottom: 24px; }
-.table-container .table-wrap { border-radius: var(--radius); }
-.status-cell { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-.btn-sm { padding: 6px 14px; font-size: 12px; }
+.table-section { margin-bottom: 24px; }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm, 10px); }
 
 /* Order bar */
 .order-bar {
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; background: var(--surface, rgba(255,255,255,0.80));
+  border: 1px solid var(--border, #E5E3DA); border-radius: var(--radius, 16px);
 }
-.order-bar .order-info { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+.order-bar .order-info { font-size: 13px; color: var(--text-muted, #6E6E73); margin-left: auto; }
 
 /* Alert */
 #alert { margin-bottom: 16px; }
 
 /* Empty state */
-.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted, #6E6E73); font-size: 14px; }
 
 @media (max-width: 768px) {
   .page-wrap { padding: 70px 12px 32px; }
@@ -84,7 +99,11 @@
 
 <!-- Navbar -->
 <nav class="navbar">
-  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <a href="index.html" class="navbar-brand">
+    <img src="assets/logo.jpeg" alt="InfoPet"/>
+    <span>InfoPet</span>
+    <span class="badge">panel</span>
+  </a>
   <div class="navbar-links">
     <a href="index.html">Inicio</a>
     <a href="carga-producto.html">Carga</a>
@@ -96,66 +115,68 @@
 </nav>
 
 <main class="page-wrap">
-  <h1 class="page-title">Dashboard de compras</h1>
-  <p class="page-subtitle">Stock sem&aacute;foro &mdash; qu&eacute; comprar, cu&aacute;nto y a qui&eacute;n</p>
+  <div class="page-header">
+    <h1>Dashboard de compras</h1>
+    <p>Stock sem&aacute;foro &mdash; qu&eacute; comprar, cu&aacute;nto y a qui&eacute;n</p>
+  </div>
 
   <div id="alert" class="alert"></div>
 
   <!-- Top bar -->
   <div class="top-bar">
     <input type="text" id="searchInput" placeholder="Buscar producto o SKU..." oninput="filterTable()"/>
-    <button class="btn btn-primary btn-sm" id="btnRefresh" onclick="loadStock()">Actualizar stock</button>
+    <button class="btn btn-primary" id="btnRefresh" onclick="loadStock()">Actualizar</button>
+    <div class="filter-bar">
+      <button class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
+      <button class="filter-pill" data-filter="red" onclick="setFilter('red', this)">Urgente</button>
+      <button class="filter-pill" data-filter="amber" onclick="setFilter('amber', this)">Posible</button>
+      <button class="filter-pill" data-filter="green" onclick="setFilter('green', this)">Full</button>
+    </div>
   </div>
 
   <!-- Summary cards -->
   <div class="summary-grid">
     <div class="summary-card card-red">
-      <div class="label">Urgente (stock=0)</div>
-      <div class="value" id="countUrgent">--</div>
+      <div class="card-label"><span class="dot dot-red dot-pulse"></span> Urgente</div>
+      <div class="card-value" id="countUrgent">--</div>
     </div>
-    <div class="summary-card card-yellow">
-      <div class="label">Posible compra</div>
-      <div class="value" id="countWarning">--</div>
+    <div class="summary-card card-amber">
+      <div class="card-label"><span class="dot dot-amber"></span> Posible</div>
+      <div class="card-value" id="countWarning">--</div>
     </div>
     <div class="summary-card card-green">
-      <div class="label">Full stock</div>
-      <div class="value" id="countOk">--</div>
+      <div class="card-label"><span class="dot dot-green"></span> Full</div>
+      <div class="card-value" id="countOk">--</div>
     </div>
-  </div>
-
-  <!-- Filters -->
-  <div class="filter-bar">
-    <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
-    <button class="filter-btn" data-filter="red" onclick="setFilter('red', this)">Urgente</button>
-    <button class="filter-btn" data-filter="yellow" onclick="setFilter('yellow', this)">Posible</button>
-    <button class="filter-btn" data-filter="green" onclick="setFilter('green', this)">Full</button>
   </div>
 
   <!-- Table -->
-  <div class="table-container">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Estado</th>
-            <th>Producto</th>
-            <th>SKU</th>
-            <th>Stock actual</th>
-            <th>Stock m&iacute;nimo</th>
-            <th>Cantidad a pedir</th>
-            <th>Costo estimado</th>
-            <th>Acci&oacute;n</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+  <div class="table-section">
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Producto</th>
+              <th>SKU</th>
+              <th>Stock</th>
+              <th>M&iacute;nimo</th>
+              <th>Pedir</th>
+              <th>Costo est.</th>
+              <th>Acci&oacute;n</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
     </div>
     <div class="empty-state" id="emptyState">Cargando productos...</div>
   </div>
 
   <!-- Order bar -->
   <div class="order-bar">
-    <button class="btn btn-primary" id="btnOrder" onclick="generateOrder()" disabled>Generar orden de compra</button>
+    <button class="btn btn-primary" id="btnOrder" onclick="generateOrder()" disabled>Generar orden de compra (CSV)</button>
     <span class="order-info" id="orderInfo"></span>
   </div>
 </main>
@@ -164,30 +185,28 @@
 <script src="assets/utils.js"></script>
 <script>
 (function() {
-  let products = [];
-  let currentFilter = 'all';
-  const alertEl = document.getElementById('alert');
-  const tbody = document.getElementById('tbody');
-  const emptyState = document.getElementById('emptyState');
-
-  // Stock minimum defaults
-  const DEFAULT_MIN = 5;
+  var products = [];
+  var currentFilter = 'all';
+  var alertEl = document.getElementById('alert');
+  var tbody = document.getElementById('tbody');
+  var emptyState = document.getElementById('emptyState');
+  var DEFAULT_MIN = 5;
 
   function getStatus(stock, minStock) {
     if (stock === 0 || stock < minStock * 0.5) return 'red';
-    if (stock <= minStock * 1.2) return 'yellow';
+    if (stock <= minStock * 1.2) return 'amber';
     return 'green';
   }
 
-  function getDotClass(status) {
-    if (status === 'red') return 'dot dot-red dot-pulse';
-    if (status === 'yellow') return 'dot dot-yellow dot-pulse';
-    return 'dot dot-green';
+  function getDotHtml(status) {
+    if (status === 'red') return '<span class="dot dot-red dot-pulse"></span>';
+    if (status === 'amber') return '<span class="dot dot-amber"></span>';
+    return '<span class="dot dot-green"></span>';
   }
 
   // Load stock from Bsale
   window.loadStock = async function() {
-    const btn = document.getElementById('btnRefresh');
+    var btn = document.getElementById('btnRefresh');
     btn.disabled = true;
     btn.textContent = 'Cargando...';
     emptyState.textContent = 'Cargando productos desde Bsale...';
@@ -196,43 +215,38 @@
     products = [];
 
     try {
-      const data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&expand=[variants]');
-      const items = data.items || [];
+      var data = await apiFetch('/api/bsale?endpoint=products.json&limit=50&expand=[variants]');
+      var items = data.items || [];
 
-      for (const prod of items) {
-        const variants = prod.variants && prod.variants.items ? prod.variants.items : (prod.variants || []);
+      for (var i = 0; i < items.length; i++) {
+        var prod = items[i];
+        var variants = prod.variants && prod.variants.items ? prod.variants.items : (prod.variants || []);
         if (variants.length === 0) {
           products.push({
             name: prod.name || prod.description || '--',
-            sku: '--',
-            stock: 0,
-            minStock: DEFAULT_MIN,
-            cost: 0,
-            status: 'red'
+            sku: '--', stock: 0, minStock: DEFAULT_MIN,
+            cost: 0, status: 'red'
           });
           continue;
         }
-        for (const v of variants) {
-          const stock = typeof v.quantity === 'number' ? v.quantity : (v.stock || 0);
-          const cost = v.cost || v.costPrice || 0;
-          const minStock = DEFAULT_MIN;
-          const status = getStatus(stock, minStock);
-          const toOrder = status !== 'green' ? Math.max(0, minStock - stock) : 0;
+        for (var v = 0; v < variants.length; v++) {
+          var vr = variants[v];
+          var stock = typeof vr.quantity === 'number' ? vr.quantity : (vr.stock || 0);
+          var cost = vr.cost || vr.costPrice || 0;
+          var minStock = DEFAULT_MIN;
+          var status = getStatus(stock, minStock);
+          var toOrder = status !== 'green' ? Math.max(0, minStock - stock) : 0;
           products.push({
             name: prod.name || prod.description || '--',
-            sku: v.sku || v.code || '--',
-            stock: stock,
-            minStock: minStock,
-            toOrder: toOrder,
-            cost: cost,
-            estimatedCost: toOrder * cost,
-            status: status
+            sku: vr.sku || vr.code || '--',
+            stock: stock, minStock: minStock,
+            toOrder: toOrder, cost: cost,
+            estimatedCost: toOrder * cost, status: status
           });
         }
       }
 
-      // Sort: red first, then yellow, then green
-      const order = { red: 0, yellow: 1, green: 2 };
+      var order = { red: 0, amber: 1, green: 2 };
       products.sort(function(a, b) { return order[a.status] - order[b.status]; });
 
       renderSummary();
@@ -242,19 +256,22 @@
       emptyState.textContent = 'Error al cargar datos. Intenta nuevamente.';
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Actualizar stock';
+      btn.textContent = 'Actualizar';
     }
   };
 
   function renderSummary() {
-    const urgent = products.filter(function(p) { return p.status === 'red'; }).length;
-    const warning = products.filter(function(p) { return p.status === 'yellow'; }).length;
-    const ok = products.filter(function(p) { return p.status === 'green'; }).length;
+    var urgent = 0, warning = 0, ok = 0;
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].status === 'red') urgent++;
+      else if (products[i].status === 'amber') warning++;
+      else ok++;
+    }
     document.getElementById('countUrgent').textContent = urgent;
     document.getElementById('countWarning').textContent = warning;
     document.getElementById('countOk').textContent = ok;
 
-    const actionable = urgent + warning;
+    var actionable = urgent + warning;
     document.getElementById('btnOrder').disabled = actionable === 0;
     document.getElementById('orderInfo').textContent = actionable > 0
       ? actionable + ' productos para incluir en orden de compra'
@@ -262,7 +279,7 @@
   }
 
   function getFiltered() {
-    const search = (document.getElementById('searchInput').value || '').toLowerCase();
+    var search = (document.getElementById('searchInput').value || '').toLowerCase();
     return products.filter(function(p) {
       if (currentFilter !== 'all' && p.status !== currentFilter) return false;
       if (search && p.name.toLowerCase().indexOf(search) === -1 && p.sku.toLowerCase().indexOf(search) === -1) return false;
@@ -281,47 +298,56 @@
     }
     emptyState.style.display = 'none';
 
-    filtered.forEach(function(p) {
+    for (var i = 0; i < filtered.length; i++) {
+      var p = filtered[i];
       var toOrder = p.status !== 'green' ? Math.max(0, p.minStock - p.stock) : 0;
       var estCost = toOrder * p.cost;
       var tr = document.createElement('tr');
       tr.setAttribute('data-status', p.status);
       tr.innerHTML =
-        '<td><span class="status-cell"><span class="' + getDotClass(p.status) + '"></span></span></td>' +
-        '<td>' + p.name + '</td>' +
-        '<td><code>' + p.sku + '</code></td>' +
+        '<td>' + getDotHtml(p.status) + '</td>' +
+        '<td>' + escHtml(p.name) + '</td>' +
+        '<td><code>' + escHtml(p.sku) + '</code></td>' +
         '<td class="mono">' + p.stock + '</td>' +
         '<td class="mono">' + p.minStock + '</td>' +
         '<td class="mono">' + (toOrder > 0 ? toOrder : '-') + '</td>' +
         '<td class="mono">' + (estCost > 0 ? '$' + estCost.toLocaleString('es-CL') : '-') + '</td>' +
-        '<td>' + (p.status !== 'green' ? '<button class="btn btn-primary btn-sm" onclick="addToOrder(\'' + p.sku.replace(/'/g, "\\'") + '\')">Agregar</button>' : '<span style="color:var(--text-light);font-size:12px">OK</span>') + '</td>';
+        '<td>' + (p.status !== 'green'
+          ? '<button class="btn btn-primary btn-sm" onclick="requestOrder(\'' + escAttr(p.sku) + '\')">Pedir</button>'
+          : '<span style="color:var(--text-muted);font-size:12px">OK</span>') + '</td>';
       tbody.appendChild(tr);
-    });
+    }
   }
 
-  // Filter
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function escAttr(s) {
+    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  // Filters
   window.setFilter = function(filter, btn) {
     currentFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     renderTable();
   };
 
-  window.filterTable = function() {
-    renderTable();
-  };
+  window.filterTable = function() { renderTable(); };
 
-  // Add to order (visual feedback)
-  window.addToOrder = function(sku) {
+  // Request order feedback
+  window.requestOrder = function(sku) {
     var p = products.find(function(item) { return item.sku === sku; });
-    if (p) {
-      showAlert(alertEl, 'ok', p.name + ' agregado a la orden de compra.');
-    }
+    if (p) showAlert(alertEl, 'ok', p.name + ' agregado a la orden de compra.');
   };
 
   // Generate CSV order
   window.generateOrder = function() {
-    var toOrder = products.filter(function(p) { return p.status === 'red' || p.status === 'yellow'; });
+    var toOrder = products.filter(function(p) { return p.status === 'red' || p.status === 'amber'; });
     if (toOrder.length === 0) {
       showAlert(alertEl, 'warn', 'No hay productos que necesiten reposici\u00f3n.');
       return;
@@ -351,7 +377,6 @@
     a.download = 'orden_compra_' + fecha + '.csv';
     a.click();
     URL.revokeObjectURL(url);
-
     showAlert(alertEl, 'ok', 'Orden de compra generada con ' + toOrder.length + ' productos.');
   };
 
