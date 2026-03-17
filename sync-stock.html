@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Sincronización de stock — Infopet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
+.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+/* Top bar */
+.top-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 24px; padding: 14px 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.top-bar .last-update { font-size: 13px; color: var(--text-muted); margin-right: auto; }
+.top-bar .last-update strong { color: var(--text); font-weight: 600; }
+
+/* Summary cards */
+.summary-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
+}
+.summary-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 24px; text-align: center; transition: all var(--transition);
+}
+.summary-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow); }
+.summary-card .label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+.summary-card .value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; }
+.summary-card.green .value { color: var(--green); }
+.summary-card.red .value { color: var(--red); }
+
+/* Table */
+.table-container { margin-bottom: 24px; }
+.table-container .table-wrap { border-radius: var(--radius); }
+.status-cell { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.diff-negative { color: var(--red); font-weight: 600; }
+.diff-zero { color: var(--green); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* Sync all bar */
+.sync-all-bar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.sync-all-bar .progress-wrap { flex: 1; min-width: 200px; display: none; }
+.sync-all-bar .progress-wrap.visible { display: block; }
+.sync-all-bar .sync-status { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+/* Alert */
+#alert { margin-bottom: 16px; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+
+@media (max-width: 768px) {
+  .page-wrap { padding: 70px 12px 32px; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .top-bar { flex-direction: column; align-items: stretch; }
+  .top-bar .last-update { margin-right: 0; margin-bottom: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <div class="navbar-links">
+    <a href="index.html">Inicio</a>
+    <a href="carga-producto.html">Carga</a>
+    <a href="facturas.html">Facturas</a>
+    <a href="stock-dashboard.html">Stock</a>
+    <a href="jumpseller-bulk.html">Bulk</a>
+    <a href="sync-stock.html" class="active">Sync</a>
+  </div>
+</nav>
+
+<main class="page-wrap">
+  <h1 class="page-title">Sincronizaci&oacute;n de stock</h1>
+  <p class="page-subtitle">Comparador Bsale &harr; Jumpseller en tiempo real</p>
+
+  <div id="alert" class="alert"></div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <span class="last-update">&Uacute;ltima actualizaci&oacute;n: <strong id="lastUpdate">--</strong></span>
+    <button class="btn btn-primary btn-sm" id="btnSync" onclick="loadComparison()">Sincronizar ahora</button>
+    <button class="btn btn-secondary btn-sm" id="btnEmail" onclick="sendAlert()">Enviar alerta por email</button>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="label">Total productos</div>
+      <div class="value" id="totalCount">--</div>
+    </div>
+    <div class="summary-card green">
+      <div class="label">Sincronizados</div>
+      <div class="value" id="syncedCount">--</div>
+    </div>
+    <div class="summary-card red">
+      <div class="label">Con diferencia</div>
+      <div class="value" id="diffCount">--</div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>SKU</th>
+            <th>Stock Bsale</th>
+            <th>Stock Jumpseller</th>
+            <th>Diferencia</th>
+            <th>Estado</th>
+            <th>Acci&oacute;n</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyState">Cargando datos de comparaci&oacute;n...</div>
+  </div>
+
+  <!-- Sync all bar -->
+  <div class="sync-all-bar">
+    <button class="btn btn-primary" id="btnSyncAll" onclick="syncAll()" disabled>Sincronizar todo</button>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress">
+        <div class="progress-bar" id="progressBar" style="width:0%"></div>
+      </div>
+    </div>
+    <span class="sync-status" id="syncStatus"></span>
+  </div>
+</main>
+
+<script src="assets/utils.js"></script>
+<script>
+(function() {
+  let comparisonData = [];
+  let lastUpdateTime = null;
+  const alertEl = document.getElementById('alert');
+  const tbody = document.getElementById('tbody');
+  const emptyState = document.getElementById('emptyState');
+
+  // Update "hace X min"
+  function updateTimestamp() {
+    const el = document.getElementById('lastUpdate');
+    if (!lastUpdateTime) { el.textContent = '--'; return; }
+    const mins = Math.round((Date.now() - lastUpdateTime) / 60000);
+    el.textContent = mins < 1 ? 'ahora' : 'hace ' + mins + ' min';
+  }
+  setInterval(updateTimestamp, 30000);
+
+  // Load comparison data
+  window.loadComparison = async function() {
+    const btn = document.getElementById('btnSync');
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+    emptyState.textContent = 'Cargando datos de comparaci\u00f3n...';
+    emptyState.style.display = 'block';
+    tbody.innerHTML = '';
+
+    try {
+      const data = await apiFetch('/api/sync?action=compare');
+      comparisonData = data.items || data || [];
+      lastUpdateTime = Date.now();
+      updateTimestamp();
+      renderTable();
+      renderSummary();
+    } catch (err) {
+      showAlert(alertEl, 'err', 'Error al cargar comparaci\u00f3n: ' + err.message);
+      emptyState.textContent = 'Error al cargar datos. Intenta nuevamente.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sincronizar ahora';
+    }
+  };
+
+  function renderSummary() {
+    const total = comparisonData.length;
+    const synced = comparisonData.filter(p => p.difference === 0).length;
+    const diff = total - synced;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('syncedCount').textContent = synced;
+    document.getElementById('diffCount').textContent = diff;
+    document.getElementById('btnSyncAll').disabled = diff === 0;
+  }
+
+  function getStatusDot(item) {
+    if (item.difference === 0) return '<span class="dot dot-green"></span> Igual';
+    const bsale = item.stock_bsale || 0;
+    const pct = bsale > 0 ? Math.abs(item.difference) / bsale : 1;
+    if (pct <= 0.05) return '<span class="dot dot-yellow dot-pulse"></span> Leve';
+    return '<span class="dot dot-red dot-pulse"></span> Cr\u00edtico';
+  }
+
+  function renderTable() {
+    tbody.innerHTML = '';
+    if (comparisonData.length === 0) {
+      emptyState.textContent = 'No se encontraron productos para comparar.';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    comparisonData.forEach(item => {
+      const diff = item.difference || 0;
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + (item.name || item.producto || '--') + '</td>' +
+        '<td><code>' + (item.sku || '--') + '</code></td>' +
+        '<td class="mono">' + (item.stock_bsale != null ? item.stock_bsale : '--') + '</td>' +
+        '<td class="mono">' + (item.stock_jumpseller != null ? item.stock_jumpseller : '--') + '</td>' +
+        '<td class="mono ' + (diff === 0 ? 'diff-zero' : 'diff-negative') + '">' + (diff > 0 ? '+' : '') + diff + '</td>' +
+        '<td><span class="status-cell">' + getStatusDot(item) + '</span></td>' +
+        '<td>' + (diff !== 0 ? '<button class="btn btn-primary btn-sm" onclick="syncOne(\'' + (item.sku || '').replace(/'/g, "\\'") + '\', this)">Sync</button>' : '<span style="color:var(--text-light);font-size:12px">OK</span>') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Sync one product
+  window.syncOne = async function(sku, btn) {
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      await apiFetch('/api/sync?action=fix&sku=' + encodeURIComponent(sku));
+      btn.textContent = 'OK';
+      btn.className = 'btn btn-secondary btn-sm';
+      // Update local data
+      const item = comparisonData.find(p => p.sku === sku);
+      if (item) { item.stock_jumpseller = item.stock_bsale; item.difference = 0; }
+      renderSummary();
+    } catch (err) {
+      btn.textContent = 'Error';
+      btn.disabled = false;
+      showAlert(alertEl, 'err', 'Error sincronizando ' + sku + ': ' + err.message);
+    }
+  };
+
+  // Sync all
+  window.syncAll = async function() {
+    const toSync = comparisonData.filter(p => p.difference !== 0);
+    if (toSync.length === 0) return;
+
+    const btnAll = document.getElementById('btnSyncAll');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressBar = document.getElementById('progressBar');
+    const syncStatus = document.getElementById('syncStatus');
+
+    btnAll.disabled = true;
+    progressWrap.classList.add('visible');
+    progressBar.style.width = '0%';
+
+    let done = 0;
+    let errors = 0;
+
+    for (const item of toSync) {
+      try {
+        await apiFetch('/api/sync?action=fix&sku=' + encodeURIComponent(item.sku));
+        item.stock_jumpseller = item.stock_bsale;
+        item.difference = 0;
+      } catch (e) {
+        errors++;
+      }
+      done++;
+      const pct = Math.round((done / toSync.length) * 100);
+      progressBar.style.width = pct + '%';
+      syncStatus.textContent = done + ' / ' + toSync.length;
+    }
+
+    progressWrap.classList.remove('visible');
+    renderTable();
+    renderSummary();
+
+    if (errors === 0) {
+      showAlert(alertEl, 'ok', toSync.length + ' productos sincronizados correctamente.');
+    } else {
+      showAlert(alertEl, 'warn', 'Sincronizaci\u00f3n completada con ' + errors + ' errores de ' + toSync.length + ' productos.');
+    }
+    btnAll.disabled = false;
+    syncStatus.textContent = '';
+  };
+
+  // Send email alert
+  window.sendAlert = async function() {
+    const btn = document.getElementById('btnEmail');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    try {
+      const diff = comparisonData.filter(p => p.difference !== 0);
+      await apiFetch('/api/gmail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: 'Alerta de stock — ' + diff.length + ' diferencias detectadas',
+          body: 'Se detectaron ' + diff.length + ' productos con diferencias de stock entre Bsale y Jumpseller.\n\n' +
+            diff.map(p => '- ' + (p.name || p.sku) + ': Bsale=' + p.stock_bsale + ' / Jumpseller=' + p.stock_jumpseller).join('\n')
+        })
+      });
+      showAlert(alertEl, 'ok', 'Alerta enviada por email correctamente.');
+    } catch (err) {
+      showAlert(alertEl, 'err', 'Error enviando email: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Enviar alerta por email';
+    }
+  };
+
+  // Auto-refresh every 5 minutes
+  setInterval(function() { window.loadComparison(); }, 5 * 60 * 1000);
+
+  // Initial load
+  loadComparison();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Infopet — Panel de gesti&oacute;n</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<style>
+.page-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 24px 48px; }
+
+/* Header */
+.page-header { margin-bottom: 32px; }
+.page-title { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.page-date { font-size: 14px; color: var(--text-muted); }
+
+/* Metric cards */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px;
+}
+.metric-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 24px; transition: all var(--transition);
+  opacity: 0; animation: fadeIn 0.5s ease forwards;
+}
+.metric-card:nth-child(1) { animation-delay: 0.05s; }
+.metric-card:nth-child(2) { animation-delay: 0.1s; }
+.metric-card:nth-child(3) { animation-delay: 0.15s; }
+.metric-card:nth-child(4) { animation-delay: 0.2s; }
+.metric-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow); }
+.metric-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+.metric-value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; color: var(--text); }
+.metric-value.loading { color: var(--text-light); font-size: 14px; font-family: var(--font-body); }
+.metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+
+/* Section titles */
+.section-title {
+  font-family: var(--font-heading); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 16px;
+}
+
+/* Quick actions */
+.actions-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 36px;
+}
+.action-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; text-decoration: none; color: var(--text);
+  font-weight: 600; font-size: 14px; transition: all var(--transition);
+  opacity: 0; animation: fadeIn 0.5s ease forwards;
+}
+.action-card:nth-child(1) { animation-delay: 0.1s; }
+.action-card:nth-child(2) { animation-delay: 0.15s; }
+.action-card:nth-child(3) { animation-delay: 0.2s; }
+.action-card:nth-child(4) { animation-delay: 0.25s; }
+.action-card:nth-child(5) { animation-delay: 0.3s; }
+.action-card:hover {
+  border-color: var(--accent); background: var(--accent-bg);
+  color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow);
+}
+.action-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  background: var(--accent-bg); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+
+/* Sync widget */
+.sync-widget {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px; opacity: 0; animation: fadeIn 0.5s ease 0.35s forwards;
+}
+.sync-widget h3 { font-family: var(--font-heading); font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.sync-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sync-result { font-size: 14px; color: var(--text-muted); }
+.sync-result strong { color: var(--text); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .page-wrap { padding: 70px 12px 32px; }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .actions-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">Infopet <span class="badge">panel</span></a>
+  <div class="navbar-links">
+    <a href="index.html" class="active">Inicio</a>
+    <a href="carga-producto.html">Carga</a>
+    <a href="facturas.html">Facturas</a>
+    <a href="stock-dashboard.html">Stock</a>
+    <a href="jumpseller-bulk.html">Bulk</a>
+    <a href="sync-stock.html">Sync</a>
+  </div>
+</nav>
+
+<main class="page-wrap">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Infopet &middot; Panel de gesti&oacute;n</h1>
+    <p class="page-date" id="currentDate"></p>
+  </div>
+
+  <!-- Metric cards -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Productos Bsale</div>
+      <div class="metric-value loading" id="metricBsale">Cargando...</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Productos Jumpseller</div>
+      <div class="metric-value loading" id="metricJumpseller">Cargando...</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Stock cr&iacute;tico</div>
+      <div class="metric-value loading" id="metricCritico">Cargando...</div>
+      <div class="metric-sub">Productos con stock 0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Sync status</div>
+      <div class="metric-value loading" id="metricSync">Cargando...</div>
+      <div class="metric-sub" id="syncSub"></div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <h2 class="section-title">Acciones r&aacute;pidas</h2>
+  <div class="actions-grid">
+    <a href="carga-producto.html" class="action-card">
+      <span class="action-icon">+</span>
+      Cargar producto
+    </a>
+    <a href="jumpseller-bulk.html" class="action-card">
+      <span class="action-icon">&uarr;</span>
+      Carga masiva CSV
+    </a>
+    <a href="facturas.html" class="action-card">
+      <span class="action-icon">#</span>
+      Facturas
+    </a>
+    <a href="stock-dashboard.html" class="action-card">
+      <span class="action-icon">&equiv;</span>
+      Dashboard compras
+    </a>
+    <a href="sync-stock.html" class="action-card">
+      <span class="action-icon">&harr;</span>
+      Sincronizar stock
+    </a>
+  </div>
+
+  <!-- Sync widget -->
+  <div class="sync-widget">
+    <h3>Sincronizaci&oacute;n r&aacute;pida</h3>
+    <div class="sync-row">
+      <button class="btn btn-primary" id="btnQuickSync" onclick="quickSync()">Sincronizar ahora</button>
+      <span class="sync-result" id="syncResult"></span>
+    </div>
+    <div style="margin-top:12px;display:none" id="fixRow">
+      <button class="btn btn-danger" id="btnFixAll" onclick="fixAll()">Corregir todas</button>
+    </div>
+  </div>
+</main>
+
+<script src="assets/utils.js"></script>
+<script>
+(function() {
+  // Current date
+  const now = new Date();
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('currentDate').textContent =
+    now.toLocaleDateString('es-CL', opts).replace(/^\w/, c => c.toUpperCase());
+
+  // Load metrics in parallel
+  async function loadMetric(id, url, extract) {
+    const el = document.getElementById(id);
+    try {
+      const data = await apiFetch(url);
+      const val = extract(data);
+      el.textContent = val.toLocaleString('es-CL');
+      el.classList.remove('loading');
+    } catch (err) {
+      el.textContent = '--';
+      el.classList.remove('loading');
+    }
+  }
+
+  loadMetric('metricBsale', '/api/bsale?endpoint=products.json&limit=1', d => d.count || 0);
+  loadMetric('metricJumpseller', '/api/jumpseller?endpoint=products.json&limit=1', d => d.count || 0);
+  loadMetric('metricCritico', '/api/bsale?endpoint=stocks.json&limit=1&quantity=0', d => d.count || 0);
+
+  // Sync status
+  (async function() {
+    const el = document.getElementById('metricSync');
+    const sub = document.getElementById('syncSub');
+    try {
+      const data = await apiFetch('/api/sync?action=compare');
+      const items = data.items || data || [];
+      const diffs = items.filter(p => p.difference !== 0).length;
+      el.classList.remove('loading');
+      if (diffs === 0) {
+        el.innerHTML = '<span class="dot dot-green"></span>';
+        sub.textContent = 'Todo sincronizado';
+      } else {
+        el.innerHTML = '<span class="dot dot-red dot-pulse"></span>';
+        sub.textContent = diffs + ' diferencias';
+      }
+    } catch (err) {
+      el.textContent = '--';
+      el.classList.remove('loading');
+      sub.textContent = 'Sin conexi\u00f3n';
+    }
+  })();
+
+  // Quick sync
+  let syncDiffs = [];
+
+  window.quickSync = async function() {
+    const btn = document.getElementById('btnQuickSync');
+    const result = document.getElementById('syncResult');
+    const fixRow = document.getElementById('fixRow');
+    btn.disabled = true;
+    btn.textContent = 'Comparando...';
+    result.textContent = '';
+    fixRow.style.display = 'none';
+
+    try {
+      const data = await apiFetch('/api/sync?action=compare');
+      const items = data.items || data || [];
+      syncDiffs = items.filter(p => p.difference !== 0);
+
+      if (syncDiffs.length === 0) {
+        result.innerHTML = '<span class="dot dot-green"></span> <strong>Todo sincronizado</strong> &mdash; no hay diferencias.';
+      } else {
+        result.innerHTML = '<span class="dot dot-red dot-pulse"></span> <strong>' + syncDiffs.length + ' diferencias</strong> encontradas entre Bsale y Jumpseller.';
+        fixRow.style.display = 'block';
+      }
+    } catch (err) {
+      result.textContent = 'Error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sincronizar ahora';
+    }
+  };
+
+  window.fixAll = async function() {
+    if (syncDiffs.length === 0) return;
+    const btn = document.getElementById('btnFixAll');
+    const result = document.getElementById('syncResult');
+    btn.disabled = true;
+    btn.textContent = 'Corrigiendo...';
+
+    let done = 0;
+    let errors = 0;
+    for (const item of syncDiffs) {
+      try {
+        await apiFetch('/api/sync?action=fix&sku=' + encodeURIComponent(item.sku));
+      } catch (e) { errors++; }
+      done++;
+    }
+
+    if (errors === 0) {
+      result.innerHTML = '<span class="dot dot-green"></span> <strong>' + done + ' productos corregidos</strong> exitosamente.';
+    } else {
+      result.innerHTML = '<strong>' + (done - errors) + '/' + done + '</strong> corregidos. ' + errors + ' errores.';
+    }
+    document.getElementById('fixRow').style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = 'Corregir todas';
+    syncDiffs = [];
+  };
+})();
+</script>
+</body>
+</html>
