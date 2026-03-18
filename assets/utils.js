@@ -140,11 +140,11 @@ async function checkEnvironment() {
     const info = await res.json();
     if (info.banner) {
       const banner = document.createElement('div');
-      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#D4A843;color:#1A1A18;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;font-family:DM Sans,sans-serif;';
+      banner.style.cssText = 'position:fixed;top:48px;left:0;right:0;z-index:99;background:rgba(255,159,10,0.95);color:#1A1A18;text-align:center;padding:6px 16px;font-size:11px;font-weight:600;font-family:Inter,sans-serif;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);';
       banner.textContent = info.banner;
       document.body.prepend(banner);
-      // Ajustar padding del body para que no tape el contenido
-      document.body.style.paddingTop = '36px';
+      // Empujar todo el contenido debajo del banner
+      document.body.style.paddingTop = '30px';
     }
     return info;
   } catch (e) {
