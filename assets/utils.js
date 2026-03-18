@@ -121,7 +121,6 @@ async function parallelTasks(tasks, onProgress) {
 var _dashboardCache = null;
 var _dashboardCacheTs = 0;
 async function getDashboardData() {
-  // Cache local 2 min para no llamar ni al CDN innecesariamente
   if (_dashboardCache && (Date.now() - _dashboardCacheTs < 120000)) {
     return _dashboardCache;
   }
@@ -129,6 +128,22 @@ async function getDashboardData() {
   _dashboardCache = data;
   _dashboardCacheTs = Date.now();
   return data;
+}
+
+/** Forzar recarga — limpia caché local y del navegador, recarga la página */
+function forceRefresh() {
+  // Limpiar caché local
+  _dashboardCache = null;
+  _dashboardCacheTs = 0;
+  _cache = {};
+  // Limpiar caché del navegador para esta página
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      names.forEach(function(name) { caches.delete(name); });
+    });
+  }
+  // Recargar sin caché
+  window.location.reload(true);
 }
 
 /** Muestra banner de ambiente si no es producción.
