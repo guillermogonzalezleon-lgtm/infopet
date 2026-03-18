@@ -184,7 +184,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
       <div class="hero-stats">
         <div class="hero-stat">
           <div class="hero-stat-val ld" id="hBsale">&nbsp;</div>
-          <div class="hero-stat-label">Bsale</div>
+          <div class="hero-stat-label">Con stock</div>
         </div>
         <div class="hero-stat">
           <div class="hero-stat-val ld" id="hJump">&nbsp;</div>
@@ -192,7 +192,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
         </div>
         <div class="hero-stat">
           <div class="hero-stat-val ld" id="hCrit">&nbsp;</div>
-          <div class="hero-stat-label">Críticos</div>
+          <div class="hero-stat-label">Sin stock</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val ld" id="hUnits">&nbsp;</div>
+          <div class="hero-stat-label">Unidades</div>
         </div>
       </div>
     </div>
@@ -201,9 +205,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
     <div class="section-label">Métricas en vivo</div>
     <div class="metrics">
       <div class="glass m-card">
-        <div class="m-label">Productos Bsale</div>
+        <div class="m-label">Bsale con stock</div>
         <div class="m-val ld" id="mBsale">&nbsp;</div>
-        <div class="m-sub"><span class="dot dot-g"></span>Total en catálogo</div>
+        <div class="m-sub"><span class="dot dot-g"></span>Productos disponibles</div>
       </div>
       <div class="glass m-card">
         <div class="m-label">Productos Jumpseller</div>
@@ -270,31 +274,23 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
       var m = data.metrics;
 
       // Hero stats
-      var hB = document.getElementById('hBsale');
-      var hJ = document.getElementById('hJump');
-      var hC = document.getElementById('hCrit');
-      hB.textContent = m.bsale_products.toLocaleString('es-CL');
-      hB.classList.remove('ld');
-      hJ.textContent = m.jumpseller_products.toLocaleString('es-CL');
-      hJ.classList.remove('ld');
-      hC.textContent = m.stock_critico.toLocaleString('es-CL');
-      hC.classList.remove('ld');
+      function setVal(id, val) {
+        var el = document.getElementById(id);
+        if (el) { el.textContent = val.toLocaleString('es-CL'); el.classList.remove('ld'); }
+      }
+      setVal('hBsale', m.bsale_products);
+      setVal('hJump', m.jumpseller_products);
+      setVal('hCrit', m.stock_critico);
+      setVal('hUnits', m.total_unidades || 0);
 
       // Metric cards
-      var mB = document.getElementById('mBsale');
-      var mJ = document.getElementById('mJump');
-      var mC = document.getElementById('mCrit');
-      mB.textContent = m.bsale_products.toLocaleString('es-CL');
-      mB.classList.remove('ld');
-      mJ.textContent = m.jumpseller_products.toLocaleString('es-CL');
-      mJ.classList.remove('ld');
-      mC.textContent = m.stock_critico.toLocaleString('es-CL');
-      mC.classList.remove('ld');
+      setVal('mBsale', m.bsale_products);
+      setVal('mJump', m.jumpseller_products);
+      setVal('mCrit', m.stock_critico);
     } catch(e) {
-      ['hBsale','hJump','hCrit','mBsale','mJump','mCrit'].forEach(function(id){
+      ['hBsale','hJump','hCrit','hUnits','mBsale','mJump','mCrit'].forEach(function(id){
         var el = document.getElementById(id);
-        el.textContent = '—';
-        el.classList.remove('ld');
+        if (el) { el.textContent = '—'; el.classList.remove('ld'); }
       });
     }
   })();
