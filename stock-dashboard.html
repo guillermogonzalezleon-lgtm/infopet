@@ -7,19 +7,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
+body {
+  background: #0C1210;
+  color: #fff;
+}
+.page-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('assets/banner-forest.jpg') center/cover no-repeat;
+}
+.page-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(12, 18, 16, 0.88);
+}
+.page-content { position: relative; z-index: 1; }
+
 .page-wrap { max-width: 1120px; margin: 0 auto; padding: 80px 24px 48px; }
 
 /* Header */
 .page-header { margin-bottom: 28px; }
 .page-header h1 {
-  font-size: 28px; font-weight: 700; color: var(--text);
+  font-size: 28px; font-weight: 700; color: rgba(255,255,255,0.9);
   letter-spacing: -0.03em; margin-bottom: 4px;
 }
-.page-header p { font-size: 14px; color: var(--text-3); }
+.page-header p { font-size: 14px; color: rgba(255,255,255,0.4); }
 .page-header .timestamp {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; color: var(--text-3); margin-top: 8px;
-  background: rgba(0,0,0,0.03); padding: 4px 12px; border-radius: 100px;
+  font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 8px;
+  background: rgba(255,255,255,0.06); padding: 4px 12px; border-radius: 100px;
 }
 .page-header .timestamp .pulse-dot {
   width: 6px; height: 6px; border-radius: 50%; background: var(--green);
@@ -30,18 +44,19 @@
 .top-bar {
   display: flex; align-items: center; gap: 12px;
   margin-bottom: 20px; padding: 12px 16px;
-  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
-  border-radius: var(--radius);
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   transition: box-shadow 0.2s var(--ease);
 }
-.top-bar:focus-within { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.top-bar:focus-within { box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .search-input {
-  flex: 1; min-width: 0; padding: 9px 14px; border: 0.5px solid rgba(0,0,0,0.08);
+  flex: 1; min-width: 0; padding: 9px 14px;
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius-sm); font-size: 14px; font-family: 'Inter', sans-serif;
-  background: var(--bg); color: var(--text); outline: none; transition: all 0.15s;
+  background: rgba(255,255,255,0.06); color: #fff; outline: none; transition: all 0.15s;
 }
-.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
-.search-input::placeholder { color: var(--text-3); }
+.search-input:focus { border-color: rgba(45,106,79,0.6); box-shadow: 0 0 0 3px rgba(45,106,79,0.15); }
+.search-input::placeholder { color: rgba(255,255,255,0.3); }
 
 /* Filter pills */
 .filter-bar {
@@ -50,34 +65,35 @@
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-pill {
-  padding: 6px 16px; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 100px;
-  background: #fff; color: var(--text-3); font-size: 12px; font-weight: 500;
+  padding: 6px 16px; border: 1px solid rgba(255,255,255,0.08); border-radius: 100px;
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500;
   cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
   white-space: nowrap; flex-shrink: 0;
 }
-.filter-pill:hover { border-color: var(--accent); color: var(--accent); }
-.filter-pill.active { background: var(--text); color: #fff; border-color: var(--text); }
+.filter-pill:hover { border-color: rgba(45,106,79,0.6); color: rgba(255,255,255,0.7); }
+.filter-pill.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.12); }
 
 /* Summary cards */
 .summary-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
 .summary-card {
-  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
-  border-radius: var(--radius); padding: 20px; text-align: center;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 20px; text-align: center;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   transition: all 0.2s var(--ease); position: relative; overflow: hidden;
 }
 .summary-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
 }
-.summary-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.07); }
+.summary-card:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.12); }
 .summary-card .card-icon {
   width: 36px; height: 36px; border-radius: 10px;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 16px; margin-bottom: 10px;
 }
 .summary-card .card-label {
-  font-size: 11px; font-weight: 600; color: var(--text-3);
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.35);
   text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
 }
 .summary-card .card-value {
@@ -85,23 +101,23 @@
   letter-spacing: -0.02em; line-height: 1;
 }
 .summary-card .card-sub {
-  font-size: 11px; color: var(--text-3); margin-top: 6px;
+  font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px;
 }
 
 /* Red card */
 .card-red::before { background: var(--red); }
-.card-red .card-icon { background: var(--red-bg); color: var(--red); }
-.card-red .card-value { color: var(--red); }
+.card-red .card-icon { background: rgba(192,57,43,0.15); color: var(--red); }
+.card-red .card-value { color: #FF6961; }
 
 /* Amber card */
 .card-amber::before { background: var(--amber); }
-.card-amber .card-icon { background: var(--amber-bg); color: var(--amber); }
-.card-amber .card-value { color: var(--amber); }
+.card-amber .card-icon { background: rgba(155,107,10,0.15); color: var(--amber); }
+.card-amber .card-value { color: #FFB347; }
 
 /* Green card */
 .card-green::before { background: var(--green); }
-.card-green .card-icon { background: var(--green-bg); color: var(--green); }
-.card-green .card-value { color: var(--green); }
+.card-green .card-icon { background: rgba(45,106,79,0.15); color: #5EBD8A; }
+.card-green .card-value { color: #5EBD8A; }
 
 /* Dots */
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
@@ -113,22 +129,40 @@
 /* Table */
 .table-section { margin-bottom: 20px; }
 .table-card {
-  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
-  border-radius: var(--radius); overflow: hidden;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; overflow: hidden;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .table-wrap table { min-width: 480px; }
+.table-wrap table thead { background: rgba(255,255,255,0.04); }
+.table-wrap table th {
+  color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.table-wrap table td {
+  color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.table-wrap table tr:hover td { background: rgba(255,255,255,0.04); }
 .btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 8px; }
 .mono { font-variant-numeric: tabular-nums; font-family: 'Inter', sans-serif; }
+
+/* Buttons override */
+.btn-primary {
+  background: rgba(255,255,255,0.1) !important; color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+.btn-primary:hover { background: rgba(255,255,255,0.16) !important; }
 
 /* Order bar */
 .order-bar {
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-  padding: 14px 18px; background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.08); border-radius: var(--radius);
+  padding: 14px 18px; background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 .order-bar .order-info {
-  font-size: 12px; color: var(--text-3); margin-left: auto;
+  font-size: 12px; color: rgba(255,255,255,0.4); margin-left: auto;
 }
 
 /* Alert */
@@ -136,7 +170,7 @@
 
 /* Empty / Loading */
 .empty-state {
-  text-align: center; padding: 48px 24px; color: var(--text-3); font-size: 14px;
+  text-align: center; padding: 48px 24px; color: rgba(255,255,255,0.4); font-size: 14px;
 }
 .loading-spinner {
   display: inline-block; width: 14px; height: 14px;
@@ -149,7 +183,7 @@
 /* Shimmer placeholders */
 .shimmer-value {
   display: inline-block; width: 48px; height: 32px;
-  background: linear-gradient(90deg, #F5F5F7 25%, #ECECEE 50%, #F5F5F7 75%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
   background-size: 200% 100%; animation: shimmer 1.5s infinite;
   border-radius: 6px;
 }
@@ -170,22 +204,25 @@
 </head>
 <body>
 
+<div class="page-bg"></div>
+<div class="page-content">
+
 <!-- Navbar -->
-<nav class="navbar">
-  <a href="index.html" class="navbar-brand">
+<nav class="navbar" style="background:rgba(12,18,16,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,0.06)">
+  <a href="index.html" class="navbar-brand" style="color:#fff">
     <img src="assets/logo.jpeg" alt="InfoPet"/>
-    <span>InfoPet</span>
+    <span style="color:#fff">InfoPet</span>
     <span class="badge">panel</span>
   </a>
   <div class="navbar-links">
-    <a href="index.html">Inicio</a>
-    <a href="carga-producto.html">Carga</a>
-    <a href="facturas.html">Facturas</a>
-    <a href="stock-dashboard.html" class="active">Stock</a>
-    <a href="jumpseller-bulk.html">Bulk</a>
-    <a href="sync-stock.html">Sync</a>
+    <a href="index.html" style="color:rgba(255,255,255,0.4)">Inicio</a>
+    <a href="carga-producto.html" style="color:rgba(255,255,255,0.4)">Carga</a>
+    <a href="facturas.html" style="color:rgba(255,255,255,0.4)">Facturas</a>
+    <a href="stock-dashboard.html" class="active" style="color:#fff">Stock</a>
+    <a href="jumpseller-bulk.html" style="color:rgba(255,255,255,0.4)">Bulk</a>
+    <a href="sync-stock.html" style="color:rgba(255,255,255,0.4)">Sync</a>
   </div>
-  <button class="hamburger" onclick="document.querySelector('.navbar-links').classList.toggle('open')">&#9776;</button>
+  <button class="hamburger" style="color:#fff" onclick="document.querySelector('.navbar-links').classList.toggle('open')">&#9776;</button>
 </nav>
 
 <main class="page-wrap">
@@ -272,6 +309,8 @@
     <span class="order-info" id="orderInfo"></span>
   </div>
 </main>
+
+</div>
 
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
@@ -400,7 +439,7 @@
         '<td class="mono">' + p.stock + '</td>' +
         '<td>' + (p.status !== 'green'
           ? '<button class="btn btn-primary btn-sm" onclick="requestOrder()">Pedir</button>'
-          : '<span style="color:var(--text-3);font-size:12px">OK</span>') + '</td>';
+          : '<span style="color:rgba(255,255,255,0.4);font-size:12px">OK</span>') + '</td>';
       tbody.appendChild(tr);
     }
   }

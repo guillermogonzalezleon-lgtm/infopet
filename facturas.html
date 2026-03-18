@@ -7,25 +7,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-body { padding-top: 60px; }
+body {
+  background: #0C1210;
+  color: #fff;
+  padding-top: 60px;
+}
+.page-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('assets/banner-forest.jpg') center/cover no-repeat;
+}
+.page-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(12, 18, 16, 0.88);
+}
+.page-content { position: relative; z-index: 1; }
 
 .page { max-width: 960px; margin: 0 auto; padding: 36px 24px 64px; }
 
-/* ── Header ── */
+/* Header */
 .page-header { margin-bottom: 28px; }
 .page-header h1 {
   font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
-  color: var(--text); margin-bottom: 6px;
+  color: rgba(255,255,255,0.9); margin-bottom: 6px;
 }
-.page-header p { font-size: 14px; color: var(--text-3); }
+.page-header p { font-size: 14px; color: rgba(255,255,255,0.4); }
 
-/* ── Pill tabs ── */
+/* Pill tabs */
 .pill-tabs {
   display: inline-flex;
-  background: #F0F0F2;
+  background: rgba(255,255,255,0.06);
   border-radius: 12px;
   padding: 3px;
   margin-bottom: 28px;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .pill-tab {
   padding: 10px 24px;
@@ -36,18 +50,18 @@ body { padding-top: 60px; }
   font-weight: 500;
   cursor: pointer;
   background: transparent;
-  color: #6E6E73;
+  color: rgba(255,255,255,0.4);
   transition: all 0.2s var(--ease);
   white-space: nowrap;
 }
-.pill-tab:hover { color: var(--text); }
+.pill-tab:hover { color: rgba(255,255,255,0.7); }
 .pill-tab.active {
-  background: #1D1D1F;
+  background: rgba(255,255,255,0.1);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* ── Tab panels ── */
+/* Tab panels */
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fadeUp 0.3s var(--ease); }
 @keyframes fadeUp {
@@ -55,16 +69,17 @@ body { padding-top: 60px; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── White card ── */
+/* Glass card */
 .w-card {
-  background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.08);
-  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
   padding: 24px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 .w-card + .w-card { margin-top: 16px; }
 
-/* ── Search bar ── */
+/* Search bar */
 .search-row {
   display: flex;
   gap: 10px;
@@ -73,30 +88,30 @@ body { padding-top: 60px; }
 .search-row .s-input {
   flex: 1;
   padding: 11px 14px;
-  background: #F0F0F2;
-  border: 0.5px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  color: var(--text);
+  color: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .search-row .s-input:focus {
   outline: none;
-  border-color: #2D6A4F;
-  box-shadow: 0 0 0 3px rgba(45,106,79,0.10);
+  border-color: rgba(45,106,79,0.6);
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.15);
 }
-.search-row .s-input::placeholder { color: #A1A1A6; }
+.search-row .s-input::placeholder { color: rgba(255,255,255,0.3); }
 
-/* ── Buttons ── */
+/* Buttons */
 .btn-dark {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 11px 20px;
-  background: #1D1D1F;
+  background: rgba(255,255,255,0.1);
   color: #fff;
-  border: none;
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 13px;
@@ -105,7 +120,7 @@ body { padding-top: 60px; }
   transition: background 0.15s;
   white-space: nowrap;
 }
-.btn-dark:hover { background: #333; }
+.btn-dark:hover { background: rgba(255,255,255,0.16); }
 .btn-dark:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn-ghost {
@@ -114,8 +129,8 @@ body { padding-top: 60px; }
   gap: 6px;
   padding: 9px 16px;
   background: transparent;
-  color: var(--text-3);
-  border: 0.5px solid rgba(0,0,0,0.08);
+  color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 13px;
@@ -123,14 +138,14 @@ body { padding-top: 60px; }
   cursor: pointer;
   transition: all 0.15s;
 }
-.btn-ghost:hover { background: rgba(0,0,0,0.03); color: var(--text); }
+.btn-ghost:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
 
-/* ── Spinner inline ── */
+/* Spinner inline */
 .spin-row {
   display: none;
   align-items: center;
   gap: 10px;
-  color: var(--text-3);
+  color: rgba(255,255,255,0.4);
   font-size: 13px;
   padding: 8px 0;
 }
@@ -138,15 +153,15 @@ body { padding-top: 60px; }
 .spin-row::before {
   content: '';
   width: 18px; height: 18px;
-  border: 2px solid rgba(0,0,0,0.08);
-  border-top-color: #2D6A4F;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #5EBD8A;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
   flex-shrink: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Table ── */
+/* Table */
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -24px; padding: 0 24px; }
 .tbl {
   width: 100%; border-collapse: collapse; font-size: 13px;
@@ -159,72 +174,72 @@ body { padding-top: 60px; }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #6E6E73;
-  border-bottom: 0.5px solid rgba(0,0,0,0.08);
-  background: #FAFAFA;
+  color: rgba(255,255,255,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.04);
 }
 .tbl td {
   padding: 10px 14px;
-  border-bottom: 0.5px solid rgba(0,0,0,0.04);
-  color: var(--text);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.7);
   vertical-align: middle;
 }
 .tbl tbody tr:last-child td { border-bottom: none; }
-.tbl tbody tr:hover td { background: rgba(0,0,0,0.015); }
+.tbl tbody tr:hover td { background: rgba(255,255,255,0.04); }
 
-/* ── Status badges ── */
-.badge-ok { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--green-bg); color: var(--green); }
-.badge-grey { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: #F0F0F2; color: #6E6E73; }
+/* Status badges */
+.badge-ok { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: rgba(45,106,79,0.15); color: #5EBD8A; }
+.badge-grey { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
 
-/* ── Detail expand ── */
-.detail-row td { padding: 16px; background: #FAFAFA; }
+/* Detail expand */
+.detail-row td { padding: 16px; background: rgba(255,255,255,0.03); }
 .detail-products { display: grid; gap: 6px; font-size: 13px; }
 .detail-line {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 14px; background: #fff; border-radius: 8px;
-  border: 0.5px solid rgba(0,0,0,0.04);
+  padding: 8px 14px; background: rgba(255,255,255,0.04); border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
-.detail-line .dl-price { font-variant-numeric: tabular-nums; color: var(--text-2); }
+.detail-line .dl-price { font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.5); }
 
-/* ── Dropzone ── */
+/* Dropzone */
 .dropzone {
-  border: 2px dashed rgba(0,0,0,0.12);
+  border: 2px dashed rgba(255,255,255,0.12);
   border-radius: 16px;
   padding: 48px 24px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s var(--ease);
-  background: #FAFAFA;
+  background: rgba(255,255,255,0.03);
 }
 .dropzone:hover, .dropzone.dragover {
-  border-color: #2D6A4F;
-  background: rgba(45,106,79,0.03);
+  border-color: rgba(45,106,79,0.6);
+  background: rgba(45,106,79,0.06);
 }
 .dz-icon {
   width: 56px; height: 56px; margin: 0 auto 16px;
   border-radius: 14px;
-  background: rgba(45,106,79,0.08);
+  background: rgba(45,106,79,0.12);
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px; color: #2D6A4F;
+  font-size: 24px; color: #5EBD8A;
 }
-.dz-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-.dz-hint { font-size: 13px; color: #A1A1A6; }
+.dz-text { font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.9); margin-bottom: 4px; }
+.dz-hint { font-size: 13px; color: rgba(255,255,255,0.3); }
 .dropzone input[type=file] { display: none; }
 
-/* ── Image preview ── */
+/* Image preview */
 .img-preview {
   max-width: 100%; max-height: 320px;
   border-radius: 12px; margin-top: 16px;
-  display: none; border: 0.5px solid rgba(0,0,0,0.08);
+  display: none; border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* ── Action row ── */
+/* Action row */
 .action-row {
   display: flex; align-items: center; gap: 10px;
   margin-top: 20px; flex-wrap: wrap;
 }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 640px) {
   .page { padding: 24px 16px 48px; }
   .w-card { padding: 20px 16px; }
@@ -241,20 +256,23 @@ body { padding-top: 60px; }
 </head>
 <body>
 
+<div class="page-bg"></div>
+<div class="page-content">
+
 <!-- Navbar -->
-<nav class="navbar">
-  <a href="index.html" class="navbar-brand">
+<nav class="navbar" style="background:rgba(12,18,16,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,0.06)">
+  <a href="index.html" class="navbar-brand" style="color:#fff">
     <img src="assets/logo.jpeg" alt="InfoPet"/>
-    <span>InfoPet</span>
+    <span style="color:#fff">InfoPet</span>
     <span class="badge">panel</span>
   </a>
   <div class="navbar-links">
-    <a href="index.html">Inicio</a>
-    <a href="carga-producto.html">Carga</a>
-    <a href="facturas.html" class="active">Facturas</a>
-    <a href="stock-dashboard.html">Stock</a>
-    <a href="jumpseller-bulk.html">Bulk</a>
-    <a href="sync-stock.html">Sync</a>
+    <a href="index.html" style="color:rgba(255,255,255,0.4)">Inicio</a>
+    <a href="carga-producto.html" style="color:rgba(255,255,255,0.4)">Carga</a>
+    <a href="facturas.html" class="active" style="color:#fff">Facturas</a>
+    <a href="stock-dashboard.html" style="color:rgba(255,255,255,0.4)">Stock</a>
+    <a href="jumpseller-bulk.html" style="color:rgba(255,255,255,0.4)">Bulk</a>
+    <a href="sync-stock.html" style="color:rgba(255,255,255,0.4)">Sync</a>
   </div>
 </nav>
 
@@ -272,9 +290,7 @@ body { padding-top: 60px; }
     <button class="pill-tab" data-tab="fisica">F&iacute;sica (foto)</button>
   </div>
 
-  <!-- ═══════════════════════════════
-       TAB 1 — Digital (Bsale)
-       ═══════════════════════════════ -->
+  <!-- TAB 1 — Digital (Bsale) -->
   <div id="tab-digital" class="tab-panel active">
     <div class="w-card">
       <div class="search-row">
@@ -309,9 +325,7 @@ body { padding-top: 60px; }
     </div>
   </div>
 
-  <!-- ═══════════════════════════════
-       TAB 2 — Fisica (foto + OCR)
-       ═══════════════════════════════ -->
+  <!-- TAB 2 — Fisica (foto + OCR) -->
   <div id="tab-fisica" class="tab-panel">
 
     <!-- Upload -->
@@ -331,7 +345,7 @@ body { padding-top: 60px; }
 
     <!-- OCR Results (hidden until processed) -->
     <div class="w-card" id="ocr-results" style="display:none">
-      <h3 style="margin-bottom:16px;font-size:17px;font-weight:600">Datos extra&iacute;dos</h3>
+      <h3 style="margin-bottom:16px;font-size:17px;font-weight:600;color:rgba(255,255,255,0.9)">Datos extra&iacute;dos</h3>
       <div class="action-row" style="margin-top:0">
         <button class="btn-dark" id="btn-confirmar">Confirmar y cargar</button>
       </div>
@@ -341,12 +355,12 @@ body { padding-top: 60px; }
 
 </main>
 
+</div>
+
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
 <script>
-/* ══════════════════════════════════════
-   Tabs
-   ══════════════════════════════════════ */
+/* Tabs */
 document.querySelectorAll('.pill-tab').forEach(function(btn) {
   btn.addEventListener('click', function() {
     document.querySelectorAll('.pill-tab').forEach(function(b) { b.classList.remove('active'); });
@@ -356,9 +370,7 @@ document.querySelectorAll('.pill-tab').forEach(function(btn) {
   });
 });
 
-/* ══════════════════════════════════════
-   TAB 1 — Factura digital (Bsale)
-   ══════════════════════════════════════ */
+/* TAB 1 — Factura digital (Bsale) */
 var bsaleQuery = document.getElementById('bsale-query');
 var bsaleAlert = document.getElementById('bsale-alert');
 var bsaleSpinner = document.getElementById('bsale-spinner');
@@ -471,7 +483,7 @@ bsaleTbody.addEventListener('click', async function(e) {
   detailTr.className = 'detail-row';
   var linesHtml = items.length > 0
     ? items.map(function(it) { return '<div class="detail-line"><span>' + it.nombre + ' (x' + it.cantidad + ')</span><span class="dl-price">' + fmt(it.total) + '</span></div>'; }).join('')
-    : '<div style="color:#6E6E73;font-size:13px;padding:8px 0">Sin l\u00edneas de detalle</div>';
+    : '<div style="color:rgba(255,255,255,0.4);font-size:13px;padding:8px 0">Sin l\u00edneas de detalle</div>';
   detailTr.innerHTML = '<td colspan="6"><div class="detail-products">' + linesHtml + '</div></td>';
   parentTr.after(detailTr);
 });
@@ -481,9 +493,7 @@ document.getElementById('btn-cargar-bsale').addEventListener('click', function()
   alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas');
 });
 
-/* ══════════════════════════════════════
-   TAB 2 — Factura fisica (foto + OCR)
-   ══════════════════════════════════════ */
+/* TAB 2 — Factura fisica (foto + OCR) */
 var dropzone = document.getElementById('dropzone');
 var fileInput = document.getElementById('file-input');
 var imgPreview = document.getElementById('img-preview');

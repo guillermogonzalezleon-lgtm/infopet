@@ -225,3 +225,67 @@
   `;
   document.head.appendChild(shakeStyle);
 })();
+
+// ── Logo paw animation on button clicks ──
+(function() {
+  // Create the floating logo element (hidden by default)
+  var logoOverlay = document.createElement('div');
+  logoOverlay.id = 'paw-loader';
+  logoOverlay.innerHTML = '<img src="assets/logo.jpeg" style="height:48px;border-radius:12px;animation:pawBounce 0.6s ease">';
+  logoOverlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10000;display:none;pointer-events:none;';
+
+  var pawStyle = document.createElement('style');
+  pawStyle.textContent = `
+    @keyframes pawBounce {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes pawFade {
+      0% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scale(0.8); }
+    }
+    @keyframes pawDots {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(45,106,79,0.4); }
+      50% { box-shadow: 0 0 0 20px rgba(45,106,79,0); }
+    }
+    #paw-loader.active {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: rgba(12,18,16,0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 20px;
+      width: 88px;
+      height: 88px;
+      animation: pawDots 1s ease infinite;
+    }
+    #paw-loader.fadeout {
+      animation: pawFade 0.3s ease forwards;
+    }
+  `;
+  document.head.appendChild(pawStyle);
+  document.body.appendChild(logoOverlay);
+
+  // Show paw animation on any button/link click that triggers an action
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('button, .btn, .a-card, .action-card');
+    if (!btn) return;
+
+    // Don't animate nav links or filter pills
+    if (btn.closest('.navbar, .nav, .filter-bar, .filter-pill, .tab')) return;
+
+    logoOverlay.className = '';
+    logoOverlay.classList.add('active');
+
+    setTimeout(function() {
+      logoOverlay.classList.add('fadeout');
+      setTimeout(function() {
+        logoOverlay.classList.remove('active', 'fadeout');
+        logoOverlay.style.display = 'none';
+      }, 300);
+    }, 600);
+  });
+})();

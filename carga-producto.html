@@ -7,27 +7,41 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-body { padding-top: 60px; }
+body {
+  background: #0C1210;
+  color: #fff;
+  padding-top: 60px;
+}
+.page-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('assets/banner-forest.jpg') center/cover no-repeat;
+}
+.page-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(12, 18, 16, 0.88);
+}
+.page-content { position: relative; z-index: 1; }
 
 .page { max-width: 860px; margin: 0 auto; padding: 36px 24px 64px; }
 
-/* ── Header ── */
+/* Header */
 .page-header { margin-bottom: 32px; }
 .page-header h1 {
   font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
-  color: var(--text); margin-bottom: 6px;
+  color: rgba(255,255,255,0.9); margin-bottom: 6px;
 }
-.page-header p { font-size: 14px; color: var(--text-3); line-height: 1.5; }
+.page-header p { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.5; }
 
-/* ── Form card ── */
+/* Form card */
 .form-card {
-  background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.08);
-  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
   padding: 28px 24px 24px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 
-/* ── Form grid ── */
+/* Form grid */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -35,7 +49,7 @@ body { padding-top: 60px; }
 }
 .form-grid .full { grid-column: 1 / -1; }
 
-/* ── Form group ── */
+/* Form group */
 .fg { margin-bottom: 16px; }
 .fg-label {
   display: block;
@@ -43,46 +57,47 @@ body { padding-top: 60px; }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #6E6E73;
+  color: rgba(255,255,255,0.35);
   margin-bottom: 6px;
 }
 .fg-input {
   width: 100%;
   padding: 11px 14px;
-  background: #F0F0F2;
-  border: 0.5px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  color: var(--text);
+  color: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
   appearance: none;
 }
 .fg-input:focus {
   outline: none;
-  border-color: #2D6A4F;
-  box-shadow: 0 0 0 3px rgba(45,106,79,0.10);
+  border-color: rgba(45,106,79,0.6);
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.15);
 }
-.fg-input::placeholder { color: #A1A1A6; }
+.fg-input::placeholder { color: rgba(255,255,255,0.3); }
 textarea.fg-input { resize: vertical; min-height: 88px; line-height: 1.5; }
 select.fg-input { cursor: pointer; }
+select.fg-input option { background: #1a1f1d; color: #fff; }
 
-/* ── Validation ── */
+/* Validation */
 .fg-input.invalid {
-  border-color: var(--red);
-  box-shadow: 0 0 0 3px var(--red-bg);
+  border-color: #FF6961;
+  box-shadow: 0 0 0 3px rgba(255,59,48,0.15);
 }
 .fg-error {
   display: none;
   font-size: 11px;
-  color: var(--red);
+  color: #FF6961;
   margin-top: 5px;
   font-weight: 500;
 }
 .fg-input.invalid ~ .fg-error { display: block; }
 
-/* ── Submit button ── */
+/* Submit button */
 .btn-submit {
   display: flex;
   align-items: center;
@@ -91,9 +106,9 @@ select.fg-input { cursor: pointer; }
   width: 100%;
   padding: 14px 24px;
   margin-top: 8px;
-  background: #1D1D1F;
+  background: rgba(255,255,255,0.1);
   color: #fff;
-  border: none;
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 15px;
@@ -101,13 +116,13 @@ select.fg-input { cursor: pointer; }
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
 }
-.btn-submit:hover { background: #333; }
+.btn-submit:hover { background: rgba(255,255,255,0.16); }
 .btn-submit:active { transform: scale(0.99); }
 
-/* ── Alert ── */
+/* Alert */
 #alert { margin-bottom: 20px; }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 640px) {
   .page { padding: 24px 16px 48px; }
   .form-card { padding: 20px 16px; }
@@ -121,20 +136,23 @@ select.fg-input { cursor: pointer; }
 </head>
 <body>
 
+<div class="page-bg"></div>
+<div class="page-content">
+
 <!-- Navbar -->
-<nav class="navbar">
-  <a href="index.html" class="navbar-brand">
+<nav class="navbar" style="background:rgba(12,18,16,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,0.06)">
+  <a href="index.html" class="navbar-brand" style="color:#fff">
     <img src="assets/logo.jpeg" alt="InfoPet"/>
-    <span>InfoPet</span>
+    <span style="color:#fff">InfoPet</span>
     <span class="badge">panel</span>
   </a>
   <div class="navbar-links">
-    <a href="index.html">Inicio</a>
-    <a href="carga-producto.html" class="active">Carga</a>
-    <a href="facturas.html">Facturas</a>
-    <a href="stock-dashboard.html">Stock</a>
-    <a href="jumpseller-bulk.html">Bulk</a>
-    <a href="sync-stock.html">Sync</a>
+    <a href="index.html" style="color:rgba(255,255,255,0.4)">Inicio</a>
+    <a href="carga-producto.html" class="active" style="color:#fff">Carga</a>
+    <a href="facturas.html" style="color:rgba(255,255,255,0.4)">Facturas</a>
+    <a href="stock-dashboard.html" style="color:rgba(255,255,255,0.4)">Stock</a>
+    <a href="jumpseller-bulk.html" style="color:rgba(255,255,255,0.4)">Bulk</a>
+    <a href="sync-stock.html" style="color:rgba(255,255,255,0.4)">Sync</a>
   </div>
 </nav>
 
@@ -215,6 +233,8 @@ select.fg-input { cursor: pointer; }
   </div>
 
 </main>
+
+</div>
 
 <script src="auth.js"></script>
 <script src="assets/utils.js"></script>
