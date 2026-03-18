@@ -19,12 +19,6 @@
     { "source": "/api/sync", "destination": "/api/sync.js" },
     { "source": "/api/gmail", "destination": "/api/gmail.js" },
     { "source": "/api/dashboard-data", "destination": "/api/dashboard-data.js" },
-    { "source": "/api/cron-sync", "destination": "/api/cron-sync.py" },
-    { "source": "/api/reports", "destination": "/api/reports.py" },
-    { "source": "/api/analyze", "destination": "/api/analyze.py" },
-    { "source": "/api/ocr-free", "destination": "/api/ocr-free.py" }
-  ],
-  "crons": [
-    { "path": "/api/cron-sync", "schedule": "0 8 * * *" }
+    { "source": "/api/dashboard-data-py", "destination": "/api/dashboard-data-py.py" }
   ]
 }
