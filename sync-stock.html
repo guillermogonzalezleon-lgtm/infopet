@@ -7,74 +7,153 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-.page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
-.page-header { margin-bottom: 32px; }
-.page-header h1 { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: var(--text, #1D1D1F); margin-bottom: 6px; }
-.page-header p { font-size: 15px; color: var(--text-muted, #6E6E73); }
+.page-wrap { max-width: 1120px; margin: 0 auto; padding: 72px 24px 48px; }
+
+/* Header */
+.page-header { margin-bottom: 28px; }
+.page-header h1 {
+  font-size: 28px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.03em; margin-bottom: 4px;
+}
+.page-header p { font-size: 14px; color: var(--text-3); }
 
 /* Top bar */
 .top-bar {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  margin-bottom: 24px; padding: 14px 20px;
-  background: var(--surface, rgba(255,255,255,0.80)); border: 1px solid var(--border, #E5E3DA);
-  border-radius: var(--radius, 16px);
+  margin-bottom: 20px; padding: 14px 18px;
+  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
 }
-.top-bar .last-update { font-size: 13px; color: var(--text-muted, #6E6E73); margin-right: auto; }
-.top-bar .last-update strong { color: var(--text, #1D1D1F); font-weight: 600; }
+.last-update {
+  font-size: 13px; color: var(--text-3); margin-right: auto;
+  display: flex; align-items: center; gap: 8px;
+}
+.last-update strong { color: var(--text); font-weight: 600; }
+.last-update .status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); animation: dotPulse 1.8s infinite;
+}
 
 /* Summary cards */
 .summary-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
 .summary-card {
-  background: var(--surface, rgba(255,255,255,0.80)); border: 1px solid var(--border, #E5E3DA);
-  border-radius: var(--radius, 16px); padding: 22px 24px; text-align: center;
-  transition: all 0.2s ease;
+  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius); padding: 20px; text-align: center;
+  transition: all 0.2s var(--ease); position: relative; overflow: hidden;
 }
-.summary-card:hover { border-color: var(--border-hover, #D0CEC4); box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
+.summary-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.summary-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.07); }
+.summary-card .card-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 10px;
+}
 .summary-card .card-label {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  font-size: 12px; font-weight: 600; color: var(--text-muted, #6E6E73);
-  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
 }
-.summary-card .card-value { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 700; }
-.summary-card.card-green .card-value { color: var(--green, #2D6A4F); }
-.summary-card.card-red .card-value { color: var(--red, #C0392B); }
+.summary-card .card-value {
+  font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1;
+}
+.summary-card .card-sub {
+  font-size: 11px; color: var(--text-3); margin-top: 6px;
+}
 
-/* Dot indicators */
+/* Card colors */
+.card-blue::before { background: var(--blue); }
+.card-blue .card-icon { background: var(--blue-bg); color: var(--blue); }
+.card-blue .card-value { color: var(--blue); }
+
+.card-green::before { background: var(--green); }
+.card-green .card-icon { background: var(--green-bg); color: var(--green); }
+.card-green .card-value { color: var(--green); }
+
+.card-red::before { background: var(--red); }
+.card-red .card-icon { background: var(--red-bg); color: var(--red); }
+.card-red .card-value { color: var(--red); }
+
+/* Dots */
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-.dot-red { background: var(--red, #C0392B); }
-.dot-amber { background: #D4A843; }
-.dot-green { background: var(--green, #2D6A4F); }
-.dot-pulse { animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.dot-red { background: var(--red); }
+.dot-amber { background: var(--amber); }
+.dot-green { background: var(--green); }
+.dot-pulse { animation: dotPulse 1.8s infinite; }
 
 /* Table */
-.table-section { margin-bottom: 24px; }
-.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm, 10px); }
-.diff-pos { color: var(--green, #2D6A4F); font-weight: 600; }
-.diff-neg { color: var(--red, #C0392B); font-weight: 600; }
-.diff-zero { color: var(--text-muted, #6E6E73); }
-
-/* Sync all bar */
-.sync-bar {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 16px 20px; background: var(--surface, rgba(255,255,255,0.80));
-  border: 1px solid var(--border, #E5E3DA); border-radius: var(--radius, 16px);
+.table-section { margin-bottom: 20px; }
+.table-card {
+  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius); overflow: hidden;
 }
-.sync-bar .sync-status { font-size: 13px; color: var(--text-muted, #6E6E73); margin-left: auto; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-wrap table { min-width: 700px; }
+.btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 8px; }
+.mono { font-variant-numeric: tabular-nums; font-family: 'Inter', sans-serif; }
+
+/* Diff colors */
+.diff-pos { color: var(--green); font-weight: 600; }
+.diff-neg { color: var(--red); font-weight: 600; }
+.diff-zero { color: var(--text-3); }
+
+/* Sync bar */
+.sync-bar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 14px 18px; background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08); border-radius: var(--radius);
+}
+.sync-bar .sync-status {
+  font-size: 12px; color: var(--text-3); margin-left: auto;
+}
 
 /* Alert */
-#alert { margin-bottom: 16px; }
+#alert { margin-bottom: 14px; }
 
-/* Empty state */
-.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted, #6E6E73); font-size: 14px; }
+/* Empty / Loading */
+.empty-state {
+  text-align: center; padding: 48px 24px; color: var(--text-3); font-size: 14px;
+}
+.loading-spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+  margin-right: 6px; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@media (max-width: 860px) {
-  .page-wrap { padding: 70px 12px 32px; }
-  .summary-grid { grid-template-columns: 1fr; }
-  .top-bar { flex-direction: column; align-items: stretch; }
-  .top-bar .last-update { margin-right: 0; margin-bottom: 8px; }
+/* Shimmer */
+.shimmer-value {
+  display: inline-block; width: 48px; height: 32px;
+  background: linear-gradient(90deg, #F5F5F7 25%, #ECECEE 50%, #F5F5F7 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* Compare prompt */
+.compare-prompt {
+  text-align: center; padding: 40px 24px; color: var(--text-3);
+}
+.compare-prompt .prompt-icon {
+  font-size: 40px; margin-bottom: 12px; opacity: 0.4;
+}
+.compare-prompt p { font-size: 14px; margin-bottom: 4px; }
+.compare-prompt .prompt-sub { font-size: 12px; color: var(--text-3); opacity: 0.7; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .page-wrap { padding: 62px 14px 32px; }
+  .page-header h1 { font-size: 22px; }
+  .summary-grid { grid-template-columns: 1fr; gap: 10px; }
+  .summary-card { padding: 16px; }
+  .summary-card .card-value { font-size: 28px; }
+  .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .last-update { margin-right: 0; }
+  .sync-bar { flex-direction: column; align-items: stretch; text-align: center; }
+  .sync-bar .sync-status { margin-left: 0; }
 }
 </style>
 </head>
@@ -95,50 +174,66 @@
     <a href="jumpseller-bulk.html">Bulk</a>
     <a href="sync-stock.html" class="active">Sync</a>
   </div>
+  <button class="hamburger" onclick="document.querySelector('.navbar-links').classList.toggle('open')">&#9776;</button>
 </nav>
 
 <main class="page-wrap">
   <div class="page-header">
     <h1>Sincronizaci&oacute;n</h1>
-    <p>Comparador Bsale &harr; Jumpseller en tiempo real</p>
+    <p>Comparador Bsale &harr; Jumpseller &mdash; detecta diferencias de stock</p>
   </div>
 
   <div id="alert" class="alert"></div>
 
   <!-- Top bar -->
   <div class="top-bar">
-    <span class="last-update">&Uacute;ltima actualizaci&oacute;n: <strong id="lastUpdate">--</strong></span>
-    <button class="btn btn-primary" id="btnCompare" onclick="loadComparison()">Comparar ahora</button>
-    <button class="btn btn-secondary" id="btnEmail" onclick="sendAlert()">Enviar alerta email</button>
+    <div class="last-update">
+      <span class="status-dot" id="statusDot"></span>
+      &Uacute;ltima actualizaci&oacute;n: <strong id="lastUpdate">--</strong>
+    </div>
+    <button class="btn btn-primary" id="btnCompare" onclick="loadComparison()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Comparar ahora
+    </button>
+    <button class="btn btn-secondary" onclick="sendAlert()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Enviar alerta
+    </button>
   </div>
 
   <!-- Summary cards -->
   <div class="summary-grid">
-    <div class="summary-card">
-      <div class="card-label">Total</div>
-      <div class="card-value" id="totalCount">--</div>
+    <div class="summary-card card-blue">
+      <div class="card-icon">&#9679;</div>
+      <div class="card-label">Total productos</div>
+      <div class="card-value" id="totalCount"><span class="shimmer-value"></span></div>
+      <div class="card-sub">Productos en Bsale</div>
     </div>
     <div class="summary-card card-green">
-      <div class="card-label"><span class="dot dot-green"></span> Sincronizados</div>
-      <div class="card-value" id="syncedCount">--</div>
+      <div class="card-icon">&#10003;</div>
+      <div class="card-label">Sincronizados</div>
+      <div class="card-value" id="syncedCount"><span class="shimmer-value"></span></div>
+      <div class="card-sub">Stock coincide en ambas plataformas</div>
     </div>
     <div class="summary-card card-red">
-      <div class="card-label"><span class="dot dot-red"></span> Con diferencia</div>
-      <div class="card-value" id="diffCount">--</div>
+      <div class="card-icon">&#9888;</div>
+      <div class="card-label">Con diferencia</div>
+      <div class="card-value" id="diffCount"><span class="shimmer-value"></span></div>
+      <div class="card-sub">Requieren sincronizaci&oacute;n</div>
     </div>
   </div>
 
   <!-- Table -->
   <div class="table-section">
-    <div class="card" style="padding:0;">
+    <div class="table-card">
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Producto</th>
               <th>SKU</th>
-              <th>Stock Bsale</th>
-              <th>Stock Jumpseller</th>
+              <th>Bsale</th>
+              <th>Jumpseller</th>
               <th>Diferencia</th>
               <th>Estado</th>
               <th>Acci&oacute;n</th>
@@ -148,12 +243,21 @@
         </table>
       </div>
     </div>
-    <div class="empty-state" id="emptyState">Cargando datos de comparaci&oacute;n...</div>
+    <div class="empty-state" id="emptyState">
+      <div class="compare-prompt">
+        <div class="prompt-icon">&#8644;</div>
+        <p>Presiona <strong>Comparar ahora</strong> para ver diferencias</p>
+        <div class="prompt-sub">Esto consulta ambas APIs &mdash; se muestra bajo demanda para ahorrar llamadas</div>
+      </div>
+    </div>
   </div>
 
   <!-- Sync all bar -->
   <div class="sync-bar">
-    <button class="btn btn-primary" id="btnSyncAll" onclick="syncAll()" disabled>Sincronizar todo</button>
+    <button class="btn btn-primary" id="btnSyncAll" onclick="syncAll()" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sincronizar todo
+    </button>
     <span class="sync-status" id="syncStatus"></span>
   </div>
 </main>
@@ -168,24 +272,56 @@
   var tbody = document.getElementById('tbody');
   var emptyState = document.getElementById('emptyState');
 
-  // Update timestamp display
+  // Timestamp relativo
   function updateTimestamp() {
     var el = document.getElementById('lastUpdate');
+    var dot = document.getElementById('statusDot');
     if (!lastUpdateTime) { el.textContent = '--'; return; }
     var mins = Math.round((Date.now() - lastUpdateTime) / 60000);
-    if (mins < 1) { el.textContent = 'ahora'; return; }
-    if (mins < 60) { el.textContent = 'hace ' + mins + ' min'; return; }
-    var h = Math.floor(mins / 60);
-    el.textContent = 'hace ' + h + 'h ' + (mins % 60) + 'min';
+    if (mins < 1) { el.textContent = 'ahora'; }
+    else if (mins < 60) { el.textContent = 'hace ' + mins + ' min'; }
+    else {
+      var h = Math.floor(mins / 60);
+      el.textContent = 'hace ' + h + 'h ' + (mins % 60) + 'min';
+    }
+    // Dot color: green < 5min, amber < 30min, red > 30min
+    if (mins < 5) dot.style.background = 'var(--green)';
+    else if (mins < 30) dot.style.background = 'var(--amber)';
+    else dot.style.background = 'var(--red)';
   }
   setInterval(updateTimestamp, 30000);
 
-  // Load comparison
+  // Carga inicial: solo summary desde getDashboardData (no llama a sync API)
+  async function loadInitial() {
+    try {
+      var data = await getDashboardData();
+
+      // Usar metrics para summary inicial
+      if (data.metrics) {
+        document.getElementById('totalCount').textContent = data.metrics.bsale_products || '--';
+        // No tenemos datos de sync todavía, mostrar placeholder
+        document.getElementById('syncedCount').textContent = '--';
+        document.getElementById('diffCount').textContent = '--';
+      }
+
+      // Mostrar timestamp del dashboard
+      if (data.timestamp) {
+        lastUpdateTime = new Date(data.timestamp).getTime();
+        updateTimestamp();
+      }
+    } catch (err) {
+      document.getElementById('totalCount').textContent = '--';
+      document.getElementById('syncedCount').textContent = '--';
+      document.getElementById('diffCount').textContent = '--';
+    }
+  }
+
+  // Comparar ahora — llama a /api/sync?action=compare
   window.loadComparison = async function() {
     var btn = document.getElementById('btnCompare');
     btn.disabled = true;
-    btn.textContent = 'Cargando...';
-    emptyState.textContent = 'Cargando datos de comparaci\u00f3n...';
+    btn.innerHTML = '<span class="loading-spinner"></span>Comparando...';
+    emptyState.innerHTML = '<div class="compare-prompt"><div class="prompt-icon" style="animation:spin 1s linear infinite;display:inline-block">&#8635;</div><p>Consultando Bsale y Jumpseller...</p></div>';
     emptyState.style.display = 'block';
     tbody.innerHTML = '';
 
@@ -194,14 +330,21 @@
       comparisonData = data.items || data || [];
       lastUpdateTime = Date.now();
       updateTimestamp();
-      renderTable();
       renderSummary();
+      renderTable();
+      if (comparisonData.length > 0) {
+        var diff = 0;
+        for (var i = 0; i < comparisonData.length; i++) {
+          if (comparisonData[i].difference !== 0) diff++;
+        }
+        showAlert(alertEl, 'ok', comparisonData.length + ' productos comparados · ' + diff + ' con diferencias.');
+      }
     } catch (err) {
-      showAlert(alertEl, 'err', 'Error al cargar comparaci\u00f3n: ' + err.message);
-      emptyState.textContent = 'Error al cargar datos. Intenta nuevamente.';
+      showAlert(alertEl, 'err', 'Error al comparar: ' + err.message);
+      emptyState.innerHTML = '<div class="compare-prompt"><div class="prompt-icon">&#9888;</div><p>Error al cargar datos</p><div class="prompt-sub">' + escHtml(err.message) + '</div></div>';
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Comparar ahora';
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Comparar ahora';
     }
   };
 
@@ -216,13 +359,16 @@
     document.getElementById('syncedCount').textContent = synced;
     document.getElementById('diffCount').textContent = diff;
     document.getElementById('btnSyncAll').disabled = diff === 0;
+    document.getElementById('syncStatus').textContent = diff > 0
+      ? diff + ' producto' + (diff === 1 ? '' : 's') + ' necesitan sincronización'
+      : 'Todo sincronizado';
   }
 
   function getStatusDot(item) {
     var absDiff = Math.abs(item.difference || 0);
-    if (absDiff === 0) return '<span class="dot dot-green"></span> Igual';
-    if (absDiff <= 5) return '<span class="dot dot-amber"></span> Leve';
-    return '<span class="dot dot-red dot-pulse"></span> Cr\u00edtico';
+    if (absDiff === 0) return '<span class="dot dot-green"></span> <span style="font-size:12px;color:var(--green)">Igual</span>';
+    if (absDiff <= 5) return '<span class="dot dot-amber"></span> <span style="font-size:12px;color:var(--amber)">Leve</span>';
+    return '<span class="dot dot-red dot-pulse"></span> <span style="font-size:12px;color:var(--red)">Cr&iacute;tico</span>';
   }
 
   function getDiffClass(diff) {
@@ -233,7 +379,7 @@
   function renderTable() {
     tbody.innerHTML = '';
     if (comparisonData.length === 0) {
-      emptyState.textContent = 'No se encontraron productos para comparar.';
+      emptyState.innerHTML = '<div class="compare-prompt"><div class="prompt-icon">&#128269;</div><p>No se encontraron productos para comparar</p></div>';
       emptyState.style.display = 'block';
       return;
     }
@@ -245,14 +391,14 @@
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td>' + escHtml(item.name || item.producto || '--') + '</td>' +
-        '<td><code>' + escHtml(item.sku || '--') + '</code></td>' +
+        '<td><code style="font-size:12px;background:rgba(0,0,0,0.04);padding:2px 6px;border-radius:4px">' + escHtml(item.sku || '--') + '</code></td>' +
         '<td class="mono">' + (item.stock_bsale != null ? item.stock_bsale : '--') + '</td>' +
         '<td class="mono">' + (item.stock_jumpseller != null ? item.stock_jumpseller : '--') + '</td>' +
         '<td class="mono ' + getDiffClass(diff) + '">' + (diff > 0 ? '+' : '') + diff + '</td>' +
         '<td>' + getStatusDot(item) + '</td>' +
         '<td>' + (diff !== 0
-          ? '<button class="btn btn-primary btn-sm" onclick="syncOne(this)">Sync</button>'
-          : '<span style="color:var(--text-muted);font-size:12px">OK</span>') + '</td>';
+          ? '<button class="btn btn-primary btn-sm" onclick="syncOne()">Sync</button>'
+          : '<span style="color:var(--text-3);font-size:11px">OK</span>') + '</td>';
       tbody.appendChild(tr);
     }
   }
@@ -263,26 +409,23 @@
     return d.innerHTML;
   }
 
-  // Sync one product — writes blocked
-  window.syncOne = function(btn) {
-    alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas');
+  // Sync one — writes blocked
+  window.syncOne = function() {
+    alert('Función no activa aún — activa WRITE_MODE');
   };
 
   // Sync all — writes blocked
   window.syncAll = function() {
-    alert('Funci\u00f3n no activa a\u00fan \u2014 activa WRITE_MODE primero');
+    alert('Función no activa aún');
   };
 
-  // Send email alert — not active
+  // Send alert — not active
   window.sendAlert = function() {
-    alert('Funci\u00f3n no activa a\u00fan');
+    alert('Función no activa aún');
   };
 
-  // Auto-refresh every 5 minutes
-  setInterval(function() { window.loadComparison(); }, 5 * 60 * 1000);
-
-  // Initial load
-  loadComparison();
+  // Carga inicial (solo summary, NO comparación automática)
+  loadInitial();
 })();
 </script>
 </body>

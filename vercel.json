@@ -17,6 +17,7 @@
     { "source": "/api/drive", "destination": "/api/drive.js" },
     { "source": "/api/ocr", "destination": "/api/ocr.js" },
     { "source": "/api/sync", "destination": "/api/sync.js" },
-    { "source": "/api/gmail", "destination": "/api/gmail.js" }
+    { "source": "/api/gmail", "destination": "/api/gmail.js" },
+    { "source": "/api/dashboard-data", "destination": "/api/dashboard-data.js" }
   ]
 }

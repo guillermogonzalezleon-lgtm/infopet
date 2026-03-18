@@ -3,140 +3,120 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Cargar producto — Infopet</title>
+<title>Cargar producto — InfoPet</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-  :root {
-    --text-muted: #6E6E73;
-    --text-light: #A1A1A6;
-    --surface-2: #F0F0F2;
-    --font-body: 'Inter', sans-serif;
-    --font-mono: 'SF Mono', 'Fira Code', monospace;
-  }
+body { padding-top: 52px; }
 
-  body { padding-top: 52px; }
+.page { max-width: 860px; margin: 0 auto; padding: 36px 24px 64px; }
 
-  .page { max-width: 860px; margin: 0 auto; padding: 32px 24px; }
+/* ── Header ── */
+.page-header { margin-bottom: 32px; }
+.page-header h1 {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 6px;
+}
+.page-header p { font-size: 14px; color: var(--text-3); line-height: 1.5; }
 
-  .page-header { margin-bottom: 32px; }
-  .page-header h1 { margin-bottom: 4px; }
-  .page-header p { color: var(--text-muted); font-size: 14px; }
+/* ── Form card ── */
+.form-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 28px 24px 24px;
+}
 
-  /* ── Stepper ── */
-  .stepper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 32px;
-  }
-  .step {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text-muted);
-    font-weight: 500;
-    transition: color 0.3s var(--ease);
-  }
-  .step-circle {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-    border: 2px solid var(--border);
-    color: var(--text-muted);
-    background: var(--surface);
-    transition: all 0.3s var(--ease);
-  }
-  .step.active .step-circle {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-  .step.active { color: var(--text); }
-  .step.done .step-circle {
-    background: var(--green);
-    border-color: var(--green);
-    color: #fff;
-  }
-  .step-line {
-    width: 48px;
-    height: 2px;
-    background: var(--border);
-    margin: 0 12px;
-    transition: background 0.3s var(--ease);
-  }
-  .step-line.done { background: var(--green); }
+/* ── Form grid ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 20px;
+}
+.form-grid .full { grid-column: 1 / -1; }
 
-  /* ── Form grid ── */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 20px;
-  }
-  .form-grid .full { grid-column: 1 / -1; }
-  .form-input::placeholder { color: var(--text-light); }
-  textarea.form-input { resize: vertical; min-height: 80px; }
+/* ── Form group ── */
+.fg { margin-bottom: 16px; }
+.fg-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6E6E73;
+  margin-bottom: 6px;
+}
+.fg-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: #F0F0F2;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.fg-input:focus {
+  outline: none;
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.10);
+}
+.fg-input::placeholder { color: #A1A1A6; }
+textarea.fg-input { resize: vertical; min-height: 88px; line-height: 1.5; }
+select.fg-input { cursor: pointer; }
 
-  /* ── Validation ── */
-  .form-input.invalid {
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px var(--red-bg);
-  }
-  .form-input.invalid + .field-error,
-  .field-error.visible {
-    display: block;
-  }
-  .field-error {
-    display: none;
-    font-size: 11px;
-    color: var(--red);
-    margin-top: 4px;
-  }
+/* ── Validation ── */
+.fg-input.invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px var(--red-bg);
+}
+.fg-error {
+  display: none;
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 5px;
+  font-weight: 500;
+}
+.fg-input.invalid ~ .fg-error { display: block; }
 
-  .btn-submit {
-    margin-top: 12px;
-    width: 100%;
-    justify-content: center;
-    font-size: 15px;
-    padding: 14px 24px;
-  }
+/* ── Submit button ── */
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 14px 24px;
+  margin-top: 8px;
+  background: #1D1D1F;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-submit:hover { background: #333; }
+.btn-submit:active { transform: scale(0.99); }
 
-  /* ── Progress ── */
-  .progress-wrap { display: none; margin-bottom: 16px; }
-  .progress-wrap.visible { display: block; }
+/* ── Alert ── */
+#alert { margin-bottom: 20px; }
 
-  /* ── Result pills ── */
-  .result-summary {
-    display: none;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-  .result-summary.visible { display: flex; }
-  .result-pill {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 16px;
-    border-radius: 100px;
-    letter-spacing: 0.01em;
-  }
-  .result-ok { background: var(--green-bg); color: var(--green); }
-  .result-err { background: var(--red-bg); color: var(--red); }
-
-  @media (max-width: 600px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .page { padding: 20px 16px; }
-    .stepper { gap: 0; }
-    .step span:not(.step-circle) { display: none; }
-    .step-line { width: 32px; margin: 0 6px; }
-  }
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .page { padding: 24px 16px 48px; }
+  .form-card { padding: 20px 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .fg-input { padding: 13px 14px; font-size: 16px; min-height: 48px; }
+  select.fg-input { min-height: 48px; }
+  .btn-submit { padding: 16px 24px; font-size: 16px; min-height: 52px; }
+  .page-header h1 { font-size: 24px; }
+}
 </style>
 </head>
 <body>
@@ -163,88 +143,63 @@
   <!-- Header -->
   <div class="page-header">
     <h1>Cargar producto</h1>
-    <p>Un formulario &rarr; Bsale + Jumpseller + Sheets en paralelo</p>
-  </div>
-
-  <!-- Stepper -->
-  <div class="stepper" id="stepper">
-    <div class="step active" data-step="1">
-      <span class="step-circle">1</span>
-      <span>Datos</span>
-    </div>
-    <div class="step-line" data-line="1"></div>
-    <div class="step" data-step="2">
-      <span class="step-circle">2</span>
-      <span>Revisi&oacute;n</span>
-    </div>
-    <div class="step-line" data-line="2"></div>
-    <div class="step" data-step="3">
-      <span class="step-circle">3</span>
-      <span>Resultado</span>
-    </div>
+    <p>Un formulario &rarr; Bsale + Jumpseller + Sheets</p>
   </div>
 
   <div id="alert" class="alert"></div>
 
-  <div class="result-summary" id="summary"></div>
-
-  <div class="progress-wrap" id="progressWrap">
-    <div class="progress">
-      <div class="progress-bar" id="progressBar" style="width:0%"></div>
-    </div>
-  </div>
-
-  <div class="card" id="formCard">
+  <!-- Form card -->
+  <div class="form-card">
     <form id="formProducto" autocomplete="off" novalidate>
       <div class="form-grid">
 
-        <div class="form-group">
-          <label class="form-label">Nombre *</label>
-          <input type="text" id="nombre" class="form-input" required/>
-          <span class="field-error">Este campo es obligatorio</span>
+        <div class="fg">
+          <label class="fg-label">Nombre *</label>
+          <input type="text" id="nombre" class="fg-input" required placeholder="Nombre del producto"/>
+          <span class="fg-error">Este campo es obligatorio</span>
         </div>
-        <div class="form-group">
-          <label class="form-label">SKU</label>
-          <input type="text" id="sku" class="form-input" placeholder="Se genera autom&aacute;ticamente"/>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Precio CLP *</label>
-          <input type="number" id="precio" class="form-input" min="0" required/>
-          <span class="field-error">Este campo es obligatorio</span>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Stock</label>
-          <input type="number" id="stock" class="form-input" min="0" value="0"/>
+        <div class="fg">
+          <label class="fg-label">SKU</label>
+          <input type="text" id="sku" class="fg-input" placeholder="autom&aacute;tico"/>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Categor&iacute;a *</label>
-          <input type="text" id="categoria" class="form-input" required/>
-          <span class="field-error">Este campo es obligatorio</span>
+        <div class="fg">
+          <label class="fg-label">Precio CLP *</label>
+          <input type="number" id="precio" class="fg-input" min="0" required placeholder="0"/>
+          <span class="fg-error">Este campo es obligatorio</span>
         </div>
-        <div class="form-group">
-          <label class="form-label">Marca</label>
-          <input type="text" id="marca" class="form-input"/>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Variante</label>
-          <input type="text" id="variante" class="form-input" placeholder="Ej: 4 kg, 1 unidad"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">C&oacute;digo de barra EAN</label>
-          <input type="text" id="codigoBarra" class="form-input"/>
+        <div class="fg">
+          <label class="fg-label">Stock</label>
+          <input type="number" id="stock" class="fg-input" min="0" value="0"/>
         </div>
 
-        <div class="form-group full">
-          <label class="form-label">Descripci&oacute;n web</label>
-          <textarea id="descripcion" class="form-input"></textarea>
+        <div class="fg">
+          <label class="fg-label">Categor&iacute;a *</label>
+          <input type="text" id="categoria" class="fg-input" required placeholder="Ej: Alimento perro"/>
+          <span class="fg-error">Este campo es obligatorio</span>
+        </div>
+        <div class="fg">
+          <label class="fg-label">Marca</label>
+          <input type="text" id="marca" class="fg-input" placeholder="Ej: Royal Canin"/>
         </div>
 
-        <div class="form-group full">
-          <label class="form-label">Clasificaci&oacute;n</label>
-          <select id="clasificacion" class="form-input">
+        <div class="fg">
+          <label class="fg-label">Variante</label>
+          <input type="text" id="variante" class="fg-input" placeholder="Ej: 4 kg, 1 unidad"/>
+        </div>
+        <div class="fg">
+          <label class="fg-label">C&oacute;digo de barra</label>
+          <input type="text" id="codigoBarra" class="fg-input" placeholder="EAN / UPC"/>
+        </div>
+
+        <div class="fg full">
+          <label class="fg-label">Descripci&oacute;n</label>
+          <textarea id="descripcion" class="fg-input" placeholder="Descripci&oacute;n para la tienda web"></textarea>
+        </div>
+
+        <div class="fg full">
+          <label class="fg-label">Clasificaci&oacute;n</label>
+          <select id="clasificacion" class="fg-input">
             <option value="Alimento">Alimento</option>
             <option value="Accesorio">Accesorio</option>
             <option value="Higiene">Higiene</option>
@@ -255,7 +210,7 @@
 
       </div>
 
-      <button type="submit" class="btn btn-primary btn-submit">Cargar producto &rarr;</button>
+      <button type="submit" class="btn-submit">Cargar producto &rarr;</button>
     </form>
   </div>
 
@@ -265,73 +220,39 @@
 <script src="assets/utils.js"></script>
 <script>
 (function() {
-  const form = document.getElementById('formProducto');
-  const alertEl = document.getElementById('alert');
+  var form = document.getElementById('formProducto');
+  var alertEl = document.getElementById('alert');
 
-  /* ── Stepper helpers ── */
-  function setStep(n) {
-    document.querySelectorAll('.step').forEach(s => {
-      const sn = Number(s.dataset.step);
-      s.classList.remove('active', 'done');
-      if (sn < n) s.classList.add('done');
-      if (sn === n) s.classList.add('active');
-    });
-    document.querySelectorAll('.step-line').forEach(l => {
-      const ln = Number(l.dataset.line);
-      l.classList.toggle('done', ln < n);
-    });
-  }
-
-  // Iniciar en step 1
-  setStep(1);
-
-  /* ── Clear validation on input ── */
-  form.querySelectorAll('.form-input[required]').forEach(input => {
-    input.addEventListener('input', () => {
+  /* Clear validation on input */
+  form.querySelectorAll('.fg-input[required]').forEach(function(input) {
+    input.addEventListener('input', function() {
       input.classList.remove('invalid');
-      const errorSpan = input.nextElementSibling;
-      if (errorSpan && errorSpan.classList.contains('field-error')) {
-        errorSpan.classList.remove('visible');
-      }
     });
   });
 
-  /* ── Form submit ── */
-  form.addEventListener('submit', (e) => {
+  /* Form submit */
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
-
-    // Clear previous alerts
     alertEl.classList.remove('visible');
 
-    // Validate required fields
-    const requiredFields = form.querySelectorAll('.form-input[required]');
-    let hasErrors = false;
+    var required = form.querySelectorAll('.fg-input[required]');
+    var hasErrors = false;
 
-    requiredFields.forEach(input => {
+    required.forEach(function(input) {
       input.classList.remove('invalid');
-      const errorSpan = input.nextElementSibling;
-      if (errorSpan && errorSpan.classList.contains('field-error')) {
-        errorSpan.classList.remove('visible');
-      }
-
       if (!input.value.trim()) {
         hasErrors = true;
         input.classList.add('invalid');
-        if (errorSpan && errorSpan.classList.contains('field-error')) {
-          errorSpan.classList.add('visible');
-        }
       }
     });
 
     if (hasErrors) {
       showAlert(alertEl, 'err', 'Completa los campos obligatorios: Nombre, Precio y Categor\u00eda.');
-      // Focus first invalid field
-      const firstInvalid = form.querySelector('.form-input.invalid');
-      if (firstInvalid) firstInvalid.focus();
+      var first = form.querySelector('.fg-input.invalid');
+      if (first) first.focus();
       return;
     }
 
-    // WRITE_MODE disabled — show alert
     alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas (WRITE_MODE desactivado)');
   });
 })();

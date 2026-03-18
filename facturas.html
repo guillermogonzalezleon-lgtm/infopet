@@ -3,242 +3,240 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Facturas — Infopet</title>
+<title>Facturas — InfoPet</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-  :root {
-    --text-muted: #6E6E73;
-    --text-light: #A1A1A6;
-    --surface-2: #F0F0F2;
-    --font-body: 'Inter', sans-serif;
-    --font-mono: 'SF Mono', 'Fira Code', monospace;
-  }
+body { padding-top: 52px; }
 
-  body { padding-top: 52px; }
+.page { max-width: 960px; margin: 0 auto; padding: 36px 24px 64px; }
 
-  .page { max-width: 1060px; margin: 0 auto; padding: 32px 24px; }
+/* ── Header ── */
+.page-header { margin-bottom: 28px; }
+.page-header h1 {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 6px;
+}
+.page-header p { font-size: 14px; color: var(--text-3); }
 
-  .page-header { margin-bottom: 28px; }
-  .page-header h1 { margin-bottom: 4px; }
-  .page-header p { color: var(--text-muted); font-size: 14px; }
+/* ── Pill tabs ── */
+.pill-tabs {
+  display: inline-flex;
+  background: #F0F0F2;
+  border-radius: 12px;
+  padding: 3px;
+  margin-bottom: 28px;
+}
+.pill-tab {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: #6E6E73;
+  transition: all 0.2s var(--ease);
+  white-space: nowrap;
+}
+.pill-tab:hover { color: var(--text); }
+.pill-tab.active {
+  background: #1D1D1F;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
 
-  /* ── Tabs (pills) ── */
-  .tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 28px;
-  }
-  .tab-btn {
-    padding: 9px 22px;
-    border: none;
-    border-radius: 100px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    background: var(--surface-2);
-    color: var(--text-muted);
-    transition: all 0.25s var(--ease);
-  }
-  .tab-btn:hover { color: var(--text); background: var(--border); }
-  .tab-btn.active {
-    background: var(--accent);
-    color: #fff;
-  }
-  .tab-panel {
-    display: none;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
-  }
-  .tab-panel.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .tab-panel.fade-in {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ── Tab panels ── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeUp 0.3s var(--ease); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  /* ── Search bar ── */
-  .search-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .search-row .form-input { flex: 1; }
+/* ── White card ── */
+.w-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 24px;
+}
+.w-card + .w-card { margin-top: 16px; }
 
-  /* ── Status pills ── */
-  .pill-blue { background: var(--blue-bg); color: var(--blue); }
-  .pill-grey { background: var(--surface-2); color: var(--text-muted); }
+/* ── Search bar ── */
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.search-row .s-input {
+  flex: 1;
+  padding: 11px 14px;
+  background: #F0F0F2;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-row .s-input:focus {
+  outline: none;
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.10);
+}
+.search-row .s-input::placeholder { color: #A1A1A6; }
 
-  /* ── Table buttons ── */
-  .btn-sm {
-    padding: 6px 14px;
-    font-size: 12px;
-    border-radius: var(--radius-sm);
-  }
+/* ── Buttons ── */
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 20px;
+  background: #1D1D1F;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-dark:hover { background: #333; }
+.btn-dark:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ── Detail expand row ── */
-  .detail-row td {
-    padding: 16px;
-    background: var(--surface-2);
-  }
-  .detail-row .detail-products {
-    display: grid;
-    gap: 6px;
-    font-size: 13px;
-  }
-  .detail-row .detail-line {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 12px;
-    background: var(--surface);
-    border-radius: var(--radius-sm);
-  }
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: transparent;
+  color: var(--text-3);
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { background: rgba(0,0,0,0.03); color: var(--text); }
 
-  /* ── Dropzone ── */
-  .dropzone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 40px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.25s var(--ease);
-    background: var(--surface);
-  }
-  .dropzone:hover, .dropzone.dragover {
-    border-color: var(--accent);
-    background: var(--accent-bg);
-  }
-  .dropzone p { color: var(--text-muted); font-size: 14px; margin-bottom: 6px; }
-  .dropzone small { color: var(--text-light); font-size: 12px; }
-  .dropzone input[type=file] { display: none; }
+/* ── Spinner inline ── */
+.spin-row {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-3);
+  font-size: 13px;
+  padding: 8px 0;
+}
+.spin-row.show { display: flex; }
+.spin-row::before {
+  content: '';
+  width: 18px; height: 18px;
+  border: 2px solid rgba(0,0,0,0.08);
+  border-top-color: #2D6A4F;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Image preview ── */
-  .img-preview {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 12px;
-    margin-top: 16px;
-    display: none;
-    border: 1px solid var(--border);
-  }
+/* ── Table ── */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -24px; padding: 0 24px; }
+.tbl {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  min-width: 580px;
+}
+.tbl th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6E6E73;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  background: #FAFAFA;
+}
+.tbl td {
+  padding: 10px 14px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.04);
+  color: var(--text);
+  vertical-align: middle;
+}
+.tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody tr:hover td { background: rgba(0,0,0,0.015); }
 
-  /* ── Shimmer loading ── */
-  .shimmer-wrap { display: none; margin: 16px 0; }
-  .shimmer-wrap.visible { display: block; }
-  .shimmer {
-    height: 16px;
-    border-radius: 8px;
-    background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s ease infinite;
-    margin-bottom: 10px;
-  }
-  .shimmer:nth-child(2) { width: 75%; }
-  .shimmer:nth-child(3) { width: 50%; }
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-  .shimmer-text {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-top: 12px;
-  }
+/* ── Status badges ── */
+.badge-ok { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--green-bg); color: var(--green); }
+.badge-grey { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: #F0F0F2; color: #6E6E73; }
 
-  /* ── OCR form grid ── */
-  .ocr-header-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 20px;
-    margin-bottom: 20px;
-  }
+/* ── Detail expand ── */
+.detail-row td { padding: 16px; background: #FAFAFA; }
+.detail-products { display: grid; gap: 6px; font-size: 13px; }
+.detail-line {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 14px; background: #fff; border-radius: 8px;
+  border: 0.5px solid rgba(0,0,0,0.04);
+}
+.detail-line .dl-price { font-variant-numeric: tabular-nums; color: var(--text-2); }
 
-  /* ── Editable table inputs ── */
-  .edit-table td input {
-    width: 100%;
-    padding: 7px 10px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: var(--font-body);
-    background: transparent;
-    color: var(--text);
-    transition: border-color 0.2s;
-  }
-  .edit-table td input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accent-bg);
-  }
+/* ── Dropzone ── */
+.dropzone {
+  border: 2px dashed rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  background: #FAFAFA;
+}
+.dropzone:hover, .dropzone.dragover {
+  border-color: #2D6A4F;
+  background: rgba(45,106,79,0.03);
+}
+.dz-icon {
+  width: 56px; height: 56px; margin: 0 auto 16px;
+  border-radius: 14px;
+  background: rgba(45,106,79,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #2D6A4F;
+}
+.dz-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.dz-hint { font-size: 13px; color: #A1A1A6; }
+.dropzone input[type=file] { display: none; }
 
-  /* ── Totals ── */
-  .totals {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-  }
-  .total-item { display: flex; flex-direction: column; gap: 2px; }
-  .total-item span:first-child {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .total-item span:last-child {
-    font-family: var(--font-mono);
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--text);
-  }
+/* ── Image preview ── */
+.img-preview {
+  max-width: 100%; max-height: 320px;
+  border-radius: 12px; margin-top: 16px;
+  display: none; border: 0.5px solid rgba(0,0,0,0.08);
+}
 
-  /* ── Action row ── */
-  .action-row {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    align-items: center;
-  }
+/* ── Action row ── */
+.action-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 20px; flex-wrap: wrap;
+}
 
-  /* ── Spinner inline ── */
-  .spinner-inline {
-    display: none;
-    align-items: center;
-    gap: 10px;
-    color: var(--text-muted);
-    font-size: 13px;
-    margin-top: 12px;
-  }
-  .spinner-inline.show { display: flex; }
-  .spinner-inline::before {
-    content: '';
-    width: 18px; height: 18px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Responsive ── */
-  @media (max-width: 860px) {
-    .page { padding: 20px 16px; }
-    .ocr-header-grid { grid-template-columns: 1fr; }
-    .search-row { flex-direction: column; }
-    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .totals { flex-direction: column; gap: 12px; }
-    .tabs { flex-wrap: wrap; }
-  }
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .page { padding: 24px 16px 48px; }
+  .w-card { padding: 20px 16px; }
+  .pill-tabs { display: flex; width: 100%; }
+  .pill-tab { flex: 1; text-align: center; padding: 11px 12px; font-size: 13px; }
+  .search-row { flex-direction: column; }
+  .search-row .s-input { font-size: 16px; padding: 13px 14px; min-height: 48px; }
+  .btn-dark { width: 100%; justify-content: center; min-height: 48px; font-size: 15px; }
+  .dropzone { padding: 56px 20px; }
+  .tbl-wrap { margin: 0 -16px; padding: 0 16px; }
+  .page-header h1 { font-size: 24px; }
+}
 </style>
 </head>
 <body>
@@ -268,28 +266,28 @@
     <p>Facturas digitales de Bsale + OCR de facturas f&iacute;sicas</p>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="digital">Digital (Bsale)</button>
-    <button class="tab-btn" data-tab="fisica">F&iacute;sica (foto)</button>
+  <!-- Pill tabs -->
+  <div class="pill-tabs">
+    <button class="pill-tab active" data-tab="digital">Digital (Bsale)</button>
+    <button class="pill-tab" data-tab="fisica">F&iacute;sica (foto)</button>
   </div>
 
-  <!-- ════════════════════════════════════
-       TAB 1 — Factura digital (Bsale)
-       ════════════════════════════════════ -->
-  <div id="tab-digital" class="tab-panel active fade-in">
-    <div class="card">
+  <!-- ═══════════════════════════════
+       TAB 1 — Digital (Bsale)
+       ═══════════════════════════════ -->
+  <div id="tab-digital" class="tab-panel active">
+    <div class="w-card">
       <div class="search-row">
-        <input type="text" id="bsale-query" class="form-input" placeholder="Buscar por N&deg; factura o RUT"/>
-        <button class="btn btn-primary" id="btn-buscar-bsale">Buscar</button>
+        <input type="text" id="bsale-query" class="s-input" placeholder="Buscar por N&deg; factura o RUT"/>
+        <button class="btn-dark" id="btn-buscar-bsale">Buscar en Bsale</button>
       </div>
       <div id="bsale-alert" class="alert"></div>
-      <div id="bsale-spinner" class="spinner-inline">Buscando en Bsale...</div>
+      <div id="bsale-spinner" class="spin-row">Buscando en Bsale...</div>
     </div>
 
-    <div class="card" id="bsale-results" style="display:none;margin-top:16px">
-      <div class="table-wrap">
-        <table>
+    <div class="w-card" id="bsale-results" style="display:none">
+      <div class="tbl-wrap">
+        <table class="tbl">
           <thead>
             <tr>
               <th>N&deg;</th>
@@ -305,96 +303,39 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" id="btn-cargar-bsale">Cargar productos</button>
+        <button class="btn-dark" id="btn-cargar-bsale">Cargar productos</button>
       </div>
-      <div id="bsale-cargar-alert" class="alert"></div>
+      <div id="bsale-cargar-alert" class="alert" style="margin-top:12px"></div>
     </div>
   </div>
 
-  <!-- ════════════════════════════════════
-       TAB 2 — Factura fisica (foto + OCR)
-       ════════════════════════════════════ -->
+  <!-- ═══════════════════════════════
+       TAB 2 — Fisica (foto + OCR)
+       ═══════════════════════════════ -->
   <div id="tab-fisica" class="tab-panel">
 
     <!-- Upload -->
-    <div class="card">
+    <div class="w-card">
       <div class="dropzone" id="dropzone">
-        <p>Arrastra la foto aqu&iacute; o haz clic para seleccionar</p>
-        <small>Formatos: JPG, PNG, HEIC</small>
+        <div class="dz-icon">&#128247;</div>
+        <div class="dz-text">Arrastra la foto aqu&iacute; o haz clic para seleccionar</div>
+        <div class="dz-hint">Formatos: JPG, PNG, HEIC</div>
         <input type="file" id="file-input" accept="image/*"/>
       </div>
       <img id="img-preview" class="img-preview" alt="Preview"/>
-      <div style="margin-top:16px">
-        <button class="btn btn-primary" id="btn-ocr" disabled>Procesar con OCR</button>
+      <div class="action-row">
+        <button class="btn-dark" id="btn-ocr" disabled>Procesar con OCR</button>
       </div>
-
-      <!-- Shimmer loading -->
-      <div class="shimmer-wrap" id="ocr-loading">
-        <div class="shimmer" style="width:100%"></div>
-        <div class="shimmer"></div>
-        <div class="shimmer"></div>
-        <div class="shimmer-text">Procesando factura...</div>
-      </div>
-
-      <div id="ocr-alert" class="alert"></div>
+      <div id="ocr-alert" class="alert" style="margin-top:12px"></div>
     </div>
 
-    <!-- OCR Results -->
-    <div class="card" id="ocr-results" style="display:none;margin-top:16px">
-      <h3 style="margin-bottom:16px">Datos extra&iacute;dos</h3>
-
-      <div class="ocr-header-grid">
-        <div class="form-group">
-          <label class="form-label">RUT Proveedor</label>
-          <input type="text" id="ocr-rut" class="form-input"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Proveedor</label>
-          <input type="text" id="ocr-proveedor" class="form-input"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Fecha</label>
-          <input type="date" id="ocr-fecha" class="form-input"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">N&deg; Factura</label>
-          <input type="text" id="ocr-numero" class="form-input"/>
-        </div>
+    <!-- OCR Results (hidden until processed) -->
+    <div class="w-card" id="ocr-results" style="display:none">
+      <h3 style="margin-bottom:16px;font-size:17px;font-weight:600">Datos extra&iacute;dos</h3>
+      <div class="action-row" style="margin-top:0">
+        <button class="btn-dark" id="btn-confirmar">Confirmar y cargar</button>
       </div>
-
-      <div class="table-wrap">
-        <table class="edit-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-              <th>C&oacute;digo barra</th>
-            </tr>
-          </thead>
-          <tbody id="ocr-tbody"></tbody>
-        </table>
-      </div>
-
-      <div class="totals" id="ocr-totals">
-        <div class="total-item">
-          <span>Subtotal</span>
-          <span id="ocr-subtotal">$0</span>
-        </div>
-        <div class="total-item">
-          <span>IVA (19%)</span>
-          <span id="ocr-iva">$0</span>
-        </div>
-        <div class="total-item">
-          <span>Total</span>
-          <span id="ocr-total">$0</span>
-        </div>
-      </div>
-
-      <div class="action-row">
-        <button class="btn btn-primary" id="btn-confirmar">Confirmar y cargar</button>
-      </div>
-      <div id="confirm-alert" class="alert"></div>
+      <div id="confirm-alert" class="alert" style="margin-top:12px"></div>
     </div>
   </div>
 
@@ -404,50 +345,36 @@
 <script src="assets/utils.js"></script>
 <script>
 /* ══════════════════════════════════════
-   Tabs con transicion suave
+   Tabs
    ══════════════════════════════════════ */
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Desactivar todos
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => {
-      p.classList.remove('active', 'fade-in');
-    });
-
-    // Activar el seleccionado
+document.querySelectorAll('.pill-tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pill-tab').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
     btn.classList.add('active');
-    const panel = document.getElementById('tab-' + btn.dataset.tab);
-    panel.classList.add('active');
-
-    // Trigger fade-in en el siguiente frame para que la transicion funcione
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        panel.classList.add('fade-in');
-      });
-    });
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
   });
 });
 
 /* ══════════════════════════════════════
    TAB 1 — Factura digital (Bsale)
    ══════════════════════════════════════ */
-const bsaleQuery = document.getElementById('bsale-query');
-const bsaleAlert = document.getElementById('bsale-alert');
-const bsaleSpinner = document.getElementById('bsale-spinner');
-const bsaleResults = document.getElementById('bsale-results');
-const bsaleTbody = document.getElementById('bsale-tbody');
-const bsaleCargarAlert = document.getElementById('bsale-cargar-alert');
+var bsaleQuery = document.getElementById('bsale-query');
+var bsaleAlert = document.getElementById('bsale-alert');
+var bsaleSpinner = document.getElementById('bsale-spinner');
+var bsaleResults = document.getElementById('bsale-results');
+var bsaleTbody = document.getElementById('bsale-tbody');
+var bsaleCargarAlert = document.getElementById('bsale-cargar-alert');
 
-let bsaleDocs = [];
-let bsaleDetailItems = {};
+var bsaleDocs = [];
+var bsaleDetailItems = {};
 
-// Search enter key
-bsaleQuery.addEventListener('keydown', e => {
+bsaleQuery.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('btn-buscar-bsale').click();
 });
 
-document.getElementById('btn-buscar-bsale').addEventListener('click', async () => {
-  const q = bsaleQuery.value.trim();
+document.getElementById('btn-buscar-bsale').addEventListener('click', async function() {
+  var q = bsaleQuery.value.trim();
   if (!q) { showAlert(bsaleAlert, 'err', 'Ingresa un n\u00famero de factura o RUT'); return; }
 
   bsaleAlert.classList.remove('visible');
@@ -457,11 +384,11 @@ document.getElementById('btn-buscar-bsale').addEventListener('click', async () =
   bsaleDetailItems = {};
 
   try {
-    const res = await fetch('/api/bsale?endpoint=documents.json&number=' + encodeURIComponent(q));
-    const data = await res.json();
+    var res = await fetch('/api/bsale?endpoint=documents.json&number=' + encodeURIComponent(q));
+    var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error de Bsale');
 
-    const docs = data.items || [];
+    var docs = data.items || [];
     if (docs.length === 0) {
       showAlert(bsaleAlert, 'err', 'No se encontraron documentos para "' + q + '"');
       bsaleSpinner.classList.remove('show');
@@ -471,19 +398,19 @@ document.getElementById('btn-buscar-bsale').addEventListener('click', async () =
     bsaleDocs = docs;
     bsaleTbody.innerHTML = '';
 
-    docs.forEach((doc, i) => {
-      const date = doc.generationDate ? new Date(doc.generationDate * 1000).toLocaleDateString('es-CL') : '-';
-      const total = doc.totalAmount || doc.netAmount || 0;
-      const hasUrl = !!doc.urlPdf;
+    docs.forEach(function(doc, i) {
+      var date = doc.generationDate ? new Date(doc.generationDate * 1000).toLocaleDateString('es-CL') : '-';
+      var total = doc.totalAmount || doc.netAmount || 0;
+      var hasUrl = !!doc.urlPdf;
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${doc.number || '-'}</td>
-        <td>${date}</td>
-        <td>${doc.client?.company || doc.client?.firstName || '-'}</td>
-        <td style="font-family:var(--font-mono)">${fmt(total)}</td>
-        <td><span class="pill ${hasUrl ? 'pill-blue' : 'pill-grey'}">${hasUrl ? 'Digital' : 'No disponible'}</span></td>
-        <td><button class="btn btn-secondary btn-sm" data-doc="${i}">Ver detalle</button></td>`;
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + (doc.number || '-') + '</td>' +
+        '<td>' + date + '</td>' +
+        '<td>' + (doc.client && (doc.client.company || doc.client.firstName) || '-') + '</td>' +
+        '<td style="font-variant-numeric:tabular-nums">' + fmt(total) + '</td>' +
+        '<td><span class="' + (hasUrl ? 'badge-ok' : 'badge-grey') + '">' + (hasUrl ? 'Digital' : 'No disponible') + '</span></td>' +
+        '<td><button class="btn-ghost" data-doc="' + i + '">Ver detalle</button></td>';
       bsaleTbody.appendChild(tr);
     });
 
@@ -496,38 +423,36 @@ document.getElementById('btn-buscar-bsale').addEventListener('click', async () =
   }
 });
 
-// Ver detalle: expand row
-bsaleTbody.addEventListener('click', async (e) => {
-  const btn = e.target.closest('[data-doc]');
+/* Ver detalle: expand row */
+bsaleTbody.addEventListener('click', async function(e) {
+  var btn = e.target.closest('[data-doc]');
   if (!btn) return;
-  const idx = Number(btn.dataset.doc);
-  const doc = bsaleDocs[idx];
-  const parentTr = btn.closest('tr');
+  var idx = Number(btn.dataset.doc);
+  var doc = bsaleDocs[idx];
+  var parentTr = btn.closest('tr');
 
-  // Toggle: if detail row already exists, remove it
-  const existing = parentTr.nextElementSibling;
+  var existing = parentTr.nextElementSibling;
   if (existing && existing.classList.contains('detail-row')) {
     existing.remove();
     return;
   }
 
-  // Fetch detail if not cached
   if (!bsaleDetailItems[idx]) {
     btn.disabled = true;
     btn.textContent = 'Cargando...';
     try {
-      const detailUrl = doc.details?.href;
+      var detailUrl = doc.details && doc.details.href;
       if (detailUrl) {
-        const endpoint = detailUrl.replace('https://api.bsale.cl/v1/', '');
-        const detRes = await fetch('/api/bsale?endpoint=' + encodeURIComponent(endpoint));
-        const detData = await detRes.json();
-        bsaleDetailItems[idx] = (detData.items || []).map(d => ({
-          nombre: d.variant?.description || d.description || '',
-          variante: d.variant?.code || '',
-          cantidad: d.quantity || 0,
-          precio: d.netUnitValue || 0,
-          total: d.totalAmount || 0
-        }));
+        var endpoint = detailUrl.replace('https://api.bsale.cl/v1/', '');
+        var detRes = await fetch('/api/bsale?endpoint=' + encodeURIComponent(endpoint));
+        var detData = await detRes.json();
+        bsaleDetailItems[idx] = (detData.items || []).map(function(d) {
+          return {
+            nombre: (d.variant && d.variant.description) || d.description || '',
+            cantidad: d.quantity || 0,
+            total: d.totalAmount || 0
+          };
+        });
       } else {
         bsaleDetailItems[idx] = [];
       }
@@ -541,42 +466,41 @@ bsaleTbody.addEventListener('click', async (e) => {
     btn.textContent = 'Ver detalle';
   }
 
-  const items = bsaleDetailItems[idx] || [];
-  const detailTr = document.createElement('tr');
+  var items = bsaleDetailItems[idx] || [];
+  var detailTr = document.createElement('tr');
   detailTr.className = 'detail-row';
-  const linesHtml = items.length > 0
-    ? items.map(it => `<div class="detail-line"><span>${it.nombre} (x${it.cantidad})</span><span style="font-family:var(--font-mono)">${fmt(it.total)}</span></div>`).join('')
-    : '<div style="color:var(--text-muted);font-size:13px">Sin l\u00edneas de detalle</div>';
-  detailTr.innerHTML = `<td colspan="6"><div class="detail-products">${linesHtml}</div></td>`;
+  var linesHtml = items.length > 0
+    ? items.map(function(it) { return '<div class="detail-line"><span>' + it.nombre + ' (x' + it.cantidad + ')</span><span class="dl-price">' + fmt(it.total) + '</span></div>'; }).join('')
+    : '<div style="color:#6E6E73;font-size:13px;padding:8px 0">Sin l\u00edneas de detalle</div>';
+  detailTr.innerHTML = '<td colspan="6"><div class="detail-products">' + linesHtml + '</div></td>';
   parentTr.after(detailTr);
 });
 
-// Cargar productos — WRITE bloqueado
-document.getElementById('btn-cargar-bsale').addEventListener('click', () => {
+/* Cargar productos — bloqueado */
+document.getElementById('btn-cargar-bsale').addEventListener('click', function() {
   alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas');
 });
 
 /* ══════════════════════════════════════
    TAB 2 — Factura fisica (foto + OCR)
    ══════════════════════════════════════ */
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('file-input');
-const imgPreview = document.getElementById('img-preview');
-const btnOcr = document.getElementById('btn-ocr');
-const ocrAlert = document.getElementById('ocr-alert');
+var dropzone = document.getElementById('dropzone');
+var fileInput = document.getElementById('file-input');
+var imgPreview = document.getElementById('img-preview');
+var btnOcr = document.getElementById('btn-ocr');
+var ocrAlert = document.getElementById('ocr-alert');
 
-let uploadedFile = null;
+var uploadedFile = null;
 
-// Drag and drop
-dropzone.addEventListener('click', () => fileInput.click());
-dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-dropzone.addEventListener('drop', e => {
+dropzone.addEventListener('click', function() { fileInput.click(); });
+dropzone.addEventListener('dragover', function(e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', function() { dropzone.classList.remove('dragover'); });
+dropzone.addEventListener('drop', function(e) {
   e.preventDefault();
   dropzone.classList.remove('dragover');
   if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
 });
-fileInput.addEventListener('change', () => {
+fileInput.addEventListener('change', function() {
   if (fileInput.files.length) handleFile(fileInput.files[0]);
 });
 
@@ -586,9 +510,8 @@ function handleFile(file) {
     return;
   }
   uploadedFile = file;
-
-  const reader = new FileReader();
-  reader.onload = e => {
+  var reader = new FileReader();
+  reader.onload = function(e) {
     imgPreview.src = e.target.result;
     imgPreview.style.display = 'block';
     btnOcr.disabled = false;
@@ -596,13 +519,11 @@ function handleFile(file) {
   reader.readAsDataURL(file);
 }
 
-// Procesar con OCR — creditos bloqueados
-btnOcr.addEventListener('click', () => {
-  alert('Funci\u00f3n no activa a\u00fan \u2014 carga cr\u00e9ditos en Claude API');
+btnOcr.addEventListener('click', function() {
+  alert('Funci\u00f3n no activa a\u00fan \u2014 carga cr\u00e9ditos Claude API');
 });
 
-// Confirmar y cargar — WRITE bloqueado
-document.getElementById('btn-confirmar').addEventListener('click', () => {
+document.getElementById('btn-confirmar').addEventListener('click', function() {
   alert('Funci\u00f3n no activa a\u00fan \u2014 escrituras bloqueadas');
 });
 </script>

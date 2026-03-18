@@ -7,100 +7,164 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-.page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
-.page-header { margin-bottom: 32px; }
-.page-header h1 { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: var(--text, #1D1D1F); margin-bottom: 6px; }
-.page-header p { font-size: 15px; color: var(--text-muted, #6E6E73); }
+.page-wrap { max-width: 1120px; margin: 0 auto; padding: 72px 24px 48px; }
+
+/* Header */
+.page-header { margin-bottom: 28px; }
+.page-header h1 {
+  font-size: 28px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.03em; margin-bottom: 4px;
+}
+.page-header p { font-size: 14px; color: var(--text-3); }
+.page-header .timestamp {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-3); margin-top: 8px;
+  background: rgba(0,0,0,0.03); padding: 4px 12px; border-radius: 100px;
+}
+.page-header .timestamp .pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  animation: dotPulse 1.8s infinite;
+}
 
 /* Top bar */
 .top-bar {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  margin-bottom: 24px; padding: 14px 20px;
-  background: var(--surface, rgba(255,255,255,0.80)); border: 1px solid var(--border, #E5E3DA);
-  border-radius: var(--radius, 16px);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px; padding: 12px 16px;
+  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  transition: box-shadow 0.2s var(--ease);
 }
-.top-bar input[type="text"] {
-  flex: 1; min-width: 200px; padding: 10px 16px; border: 1px solid var(--border, #E5E3DA);
-  border-radius: var(--radius-sm, 10px); font-size: 14px; font-family: 'Inter', sans-serif;
-  background: var(--bg, #F5F5F7); color: var(--text, #1D1D1F); outline: none;
-  transition: border-color 0.2s ease;
+.top-bar:focus-within { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.search-input {
+  flex: 1; min-width: 0; padding: 9px 14px; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius-sm); font-size: 14px; font-family: 'Inter', sans-serif;
+  background: var(--bg); color: var(--text); outline: none; transition: all 0.15s;
 }
-.top-bar input[type="text"]:focus { border-color: var(--accent, #2D6A4F); box-shadow: 0 0 0 3px rgba(45,106,79,0.08); }
-.top-bar input[type="text"]::placeholder { color: var(--text-muted, #6E6E73); }
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.search-input::placeholder { color: var(--text-3); }
 
 /* Filter pills */
-.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
-.filter-pill {
-  padding: 7px 18px; border: 1px solid var(--border, #E5E3DA); border-radius: 100px;
-  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-muted, #6E6E73);
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+.filter-bar {
+  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 2px 0;
 }
-.filter-pill:hover { border-color: var(--accent, #2D6A4F); color: var(--accent, #2D6A4F); }
-.filter-pill.active { background: var(--accent, #2D6A4F); color: #fff; border-color: var(--accent, #2D6A4F); }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-pill {
+  padding: 6px 16px; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 100px;
+  background: #fff; color: var(--text-3); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
+  white-space: nowrap; flex-shrink: 0;
+}
+.filter-pill:hover { border-color: var(--accent); color: var(--accent); }
+.filter-pill.active { background: var(--text); color: #fff; border-color: var(--text); }
 
 /* Summary cards */
 .summary-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
 .summary-card {
-  background: var(--surface, rgba(255,255,255,0.80)); border: 1px solid var(--border, #E5E3DA);
-  border-radius: var(--radius, 16px); padding: 22px 24px; text-align: center;
-  transition: all 0.2s ease;
+  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius); padding: 20px; text-align: center;
+  transition: all 0.2s var(--ease); position: relative; overflow: hidden;
 }
-.summary-card:hover { border-color: var(--border-hover, #D0CEC4); box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
+.summary-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.summary-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.07); }
+.summary-card .card-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 10px;
+}
 .summary-card .card-label {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  font-size: 12px; font-weight: 600; color: var(--text-muted, #6E6E73);
-  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
 }
-.summary-card .card-value { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 700; }
-.summary-card.card-red { border-left: 4px solid var(--red, #C0392B); }
-.summary-card.card-red .card-value { color: var(--red, #C0392B); }
-.summary-card.card-amber { border-left: 4px solid var(--yellow, #9B6B0A); }
-.summary-card.card-amber .card-value { color: var(--yellow, #9B6B0A); }
-.summary-card.card-green { border-left: 4px solid var(--green, #2D6A4F); }
-.summary-card.card-green .card-value { color: var(--green, #2D6A4F); }
+.summary-card .card-value {
+  font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1;
+}
+.summary-card .card-sub {
+  font-size: 11px; color: var(--text-3); margin-top: 6px;
+}
 
-/* Dot indicators */
+/* Red card */
+.card-red::before { background: var(--red); }
+.card-red .card-icon { background: var(--red-bg); color: var(--red); }
+.card-red .card-value { color: var(--red); }
+
+/* Amber card */
+.card-amber::before { background: var(--amber); }
+.card-amber .card-icon { background: var(--amber-bg); color: var(--amber); }
+.card-amber .card-value { color: var(--amber); }
+
+/* Green card */
+.card-green::before { background: var(--green); }
+.card-green .card-icon { background: var(--green-bg); color: var(--green); }
+.card-green .card-value { color: var(--green); }
+
+/* Dots */
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-.dot-red { background: var(--red, #C0392B); }
-.dot-amber { background: #D4A843; }
-.dot-green { background: var(--green, #2D6A4F); }
-.dot-pulse { animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.dot-red { background: var(--red); }
+.dot-amber { background: var(--amber); }
+.dot-green { background: var(--green); }
+.dot-pulse { animation: dotPulse 1.8s infinite; }
 
 /* Table */
-.table-section { margin-bottom: 24px; }
-.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm, 10px); }
-.mono { font-variant-numeric: tabular-nums; }
+.table-section { margin-bottom: 20px; }
+.table-card {
+  background: #fff; border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius); overflow: hidden;
+}
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-wrap table { min-width: 480px; }
+.btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 8px; }
+.mono { font-variant-numeric: tabular-nums; font-family: 'Inter', sans-serif; }
 
 /* Order bar */
 .order-bar {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 16px 20px; background: var(--surface, rgba(255,255,255,0.80));
-  border: 1px solid var(--border, #E5E3DA); border-radius: var(--radius, 16px);
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 14px 18px; background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08); border-radius: var(--radius);
 }
-.order-bar .order-info { font-size: 13px; color: var(--text-muted, #6E6E73); margin-left: auto; }
+.order-bar .order-info {
+  font-size: 12px; color: var(--text-3); margin-left: auto;
+}
 
 /* Alert */
-#alert { margin-bottom: 16px; }
+#alert { margin-bottom: 14px; }
 
-/* Empty state */
-.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted, #6E6E73); font-size: 14px; }
-
-/* Loading spinner */
+/* Empty / Loading */
+.empty-state {
+  text-align: center; padding: 48px 24px; color: var(--text-3); font-size: 14px;
+}
 .loading-spinner {
-  display: inline-block; width: 16px; height: 16px;
-  border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--accent, #2D6A4F);
-  border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle;
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+  margin-right: 6px; vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Shimmer placeholders */
+.shimmer-value {
+  display: inline-block; width: 48px; height: 32px;
+  background: linear-gradient(90deg, #F5F5F7 25%, #ECECEE 50%, #F5F5F7 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
-  .page-wrap { padding: 70px 12px 32px; }
-  .summary-grid { grid-template-columns: 1fr; }
-  .top-bar { flex-direction: column; align-items: stretch; }
+  .page-wrap { padding: 62px 14px 32px; }
+  .page-header h1 { font-size: 22px; }
+  .summary-grid { grid-template-columns: 1fr; gap: 10px; }
+  .summary-card { padding: 16px; }
+  .summary-card .card-value { font-size: 28px; }
+  .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .filter-bar { flex-wrap: nowrap; overflow-x: auto; }
+  .order-bar { flex-direction: column; align-items: stretch; text-align: center; }
+  .order-bar .order-info { margin-left: 0; }
 }
 </style>
 </head>
@@ -121,54 +185,73 @@
     <a href="jumpseller-bulk.html">Bulk</a>
     <a href="sync-stock.html">Sync</a>
   </div>
+  <button class="hamburger" onclick="document.querySelector('.navbar-links').classList.toggle('open')">&#9776;</button>
 </nav>
 
 <main class="page-wrap">
   <div class="page-header">
     <h1>Dashboard de Stock</h1>
     <p>Sem&aacute;foro de inventario &mdash; control r&aacute;pido de qu&eacute; reponer</p>
+    <div class="timestamp" id="timestampBadge" style="display:none">
+      <span class="pulse-dot"></span>
+      <span id="timestampText">--</span>
+    </div>
   </div>
 
   <div id="alert" class="alert"></div>
 
   <!-- Top bar -->
   <div class="top-bar">
-    <input type="text" id="searchInput" placeholder="Buscar producto..." oninput="filterTable()"/>
-    <button class="btn btn-primary" id="btnRefresh" onclick="loadStock()">Actualizar</button>
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar por variante ID..." oninput="filterTable()"/>
+    <button class="btn btn-primary" id="btnRefresh" onclick="refreshData()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Actualizar
+    </button>
     <div class="filter-bar">
       <button class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Todos</button>
-      <button class="filter-pill" data-filter="red" onclick="setFilter('red', this)">Urgente</button>
-      <button class="filter-pill" data-filter="amber" onclick="setFilter('amber', this)">Posible</button>
-      <button class="filter-pill" data-filter="green" onclick="setFilter('green', this)">Full</button>
+      <button class="filter-pill" data-filter="red" onclick="setFilter('red', this)">
+        <span class="dot dot-red" style="width:6px;height:6px;margin-right:2px"></span> Urgente
+      </button>
+      <button class="filter-pill" data-filter="amber" onclick="setFilter('amber', this)">
+        <span class="dot dot-amber" style="width:6px;height:6px;margin-right:2px"></span> Posible
+      </button>
+      <button class="filter-pill" data-filter="green" onclick="setFilter('green', this)">
+        <span class="dot dot-green" style="width:6px;height:6px;margin-right:2px"></span> Full
+      </button>
     </div>
   </div>
 
   <!-- Summary cards -->
   <div class="summary-grid">
     <div class="summary-card card-red">
-      <div class="card-label"><span class="dot dot-red dot-pulse"></span> Urgente (stock 0)</div>
-      <div class="card-value" id="countUrgent">--</div>
+      <div class="card-icon">&#9888;</div>
+      <div class="card-label">Urgente (stock 0)</div>
+      <div class="card-value" id="countUrgent"><span class="shimmer-value"></span></div>
+      <div class="card-sub">Requieren reposici&oacute;n inmediata</div>
     </div>
     <div class="summary-card card-amber">
-      <div class="card-label"><span class="dot dot-amber"></span> Posible (stock 1-5)</div>
-      <div class="card-value" id="countWarning">--</div>
+      <div class="card-icon">&#9679;</div>
+      <div class="card-label">Posible (stock 1-5)</div>
+      <div class="card-value" id="countWarning"><span class="shimmer-value"></span></div>
+      <div class="card-sub">Stock bajo &mdash; monitorear</div>
     </div>
     <div class="summary-card card-green">
-      <div class="card-label"><span class="dot dot-green"></span> Full (stock &gt;5)</div>
-      <div class="card-value" id="countOk">--</div>
+      <div class="card-icon">&#10003;</div>
+      <div class="card-label">Full (stock &gt;5)</div>
+      <div class="card-value" id="countOk"><span class="shimmer-value"></span></div>
+      <div class="card-sub">Abastecimiento normal</div>
     </div>
   </div>
 
   <!-- Table -->
   <div class="table-section">
-    <div class="card" style="padding:0;">
+    <div class="table-card">
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Estado</th>
-              <th>Producto</th>
-              <th>SKU</th>
+              <th>Variante ID</th>
               <th>Stock</th>
               <th>Acci&oacute;n</th>
             </tr>
@@ -177,12 +260,15 @@
         </table>
       </div>
     </div>
-    <div class="empty-state" id="emptyState">Cargando productos...</div>
+    <div class="empty-state" id="emptyState">Cargando datos del dashboard...</div>
   </div>
 
   <!-- Order bar -->
   <div class="order-bar">
-    <button class="btn btn-primary" id="btnOrder" onclick="generateOrder()">Generar orden de compra</button>
+    <button class="btn btn-primary" onclick="generateOrder()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Generar orden de compra
+    </button>
     <span class="order-info" id="orderInfo"></span>
   </div>
 </main>
@@ -191,18 +277,11 @@
 <script src="assets/utils.js"></script>
 <script>
 (function() {
-  var products = [];
+  var stockList = [];
   var currentFilter = 'all';
   var alertEl = document.getElementById('alert');
   var tbody = document.getElementById('tbody');
   var emptyState = document.getElementById('emptyState');
-
-  // Semáforo: red = 0, amber = 1-5, green = >5
-  function getStatus(stock) {
-    if (stock <= 0) return 'red';
-    if (stock <= 5) return 'amber';
-    return 'green';
-  }
 
   function getDotHtml(status) {
     if (status === 'red') return '<span class="dot dot-red dot-pulse"></span>';
@@ -216,92 +295,84 @@
     return 'OK';
   }
 
-  // Cargar stock desde Bsale
-  window.loadStock = async function() {
-    var btn = document.getElementById('btnRefresh');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span>Cargando...';
-    emptyState.textContent = 'Cargando productos desde Bsale...';
-    emptyState.style.display = 'block';
-    tbody.innerHTML = '';
-    products = [];
+  // Timestamp relativo
+  function showTimestamp(ts) {
+    if (!ts) return;
+    var badge = document.getElementById('timestampBadge');
+    var text = document.getElementById('timestampText');
+    badge.style.display = 'inline-flex';
+    var diff = Date.now() - new Date(ts).getTime();
+    var mins = Math.round(diff / 60000);
+    if (mins < 1) text.textContent = 'Datos de hace menos de 1 minuto';
+    else if (mins < 60) text.textContent = 'Datos de hace ' + mins + ' minuto' + (mins === 1 ? '' : 's');
+    else {
+      var h = Math.floor(mins / 60);
+      text.textContent = 'Datos de hace ' + h + 'h ' + (mins % 60) + 'min';
+    }
+  }
 
+  // Carga inicial con getDashboardData
+  async function loadInitial() {
     try {
-      emptyState.textContent = 'Cargando stocks de Bsale...';
+      var data = await getDashboardData();
 
-      // Solo 2 llamadas: stocks con cantidad (paginado)
-      var allStocks = [];
-      var offset = 0;
-      var limit = 50;
-      while (true) {
-        var stockData = await apiFetch('/api/bsale?endpoint=stocks.json&limit=' + limit + '&offset=' + offset);
-        if (!stockData.items || stockData.items.length === 0) break;
-        allStocks = allStocks.concat(stockData.items);
-        emptyState.textContent = 'Cargando... ' + allStocks.length + ' registros de stock';
-        if (stockData.items.length < limit) break;
-        offset += limit;
-        // Pausa para no saturar el rate limit
-        await sleep(500);
+      // Summary cards
+      if (data.stock_summary) {
+        document.getElementById('countUrgent').textContent = data.stock_summary.urgent || 0;
+        document.getElementById('countWarning').textContent = data.stock_summary.possible || 0;
+        document.getElementById('countOk').textContent = data.stock_summary.full || 0;
       }
 
-      if (allStocks.length === 0) {
-        emptyState.textContent = 'No se encontraron datos de stock.';
-        renderSummary();
-        return;
-      }
-
-      // Agrupar por variante
-      for (var i = 0; i < allStocks.length; i++) {
-        var s = allStocks[i];
-        var qty = s.quantity || 0;
-        var variantId = s.variant ? (s.variant.id || '') : '';
-        products.push({
-          name: 'Variante #' + variantId,
-          sku: variantId,
-          stock: qty,
-          status: getStatus(qty)
+      // Stock list
+      if (data.stock_list && data.stock_list.length > 0) {
+        stockList = data.stock_list.map(function(item) {
+          return {
+            variantId: item.variantId || '--',
+            stock: item.quantity != null ? item.quantity : 0,
+            status: item.status || 'green'
+          };
         });
+        // Ordenar: urgentes primero
+        var order = { red: 0, amber: 1, green: 2 };
+        stockList.sort(function(a, b) { return order[a.status] - order[b.status]; });
+        renderTable();
+      } else {
+        emptyState.textContent = 'No hay datos de stock disponibles.';
       }
 
-      // Ordenar: urgentes primero
-      var order = { red: 0, amber: 1, green: 2 };
-      products.sort(function(a, b) { return order[a.status] - order[b.status]; });
+      // Timestamp
+      showTimestamp(data.timestamp);
 
-      renderSummary();
-      renderTable();
-      showAlert(alertEl, 'ok', products.length + ' registros de stock cargados.');
+      // Order info
+      updateOrderInfo();
 
     } catch (err) {
-      showAlert(alertEl, 'err', 'Error al cargar productos: ' + err.message);
-      emptyState.textContent = 'Error al cargar datos. Intenta nuevamente.';
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Actualizar';
+      showAlert(alertEl, 'err', 'Error al cargar datos: ' + err.message);
+      emptyState.textContent = 'Error al cargar. Intenta actualizar.';
+      document.getElementById('countUrgent').textContent = '--';
+      document.getElementById('countWarning').textContent = '--';
+      document.getElementById('countOk').textContent = '--';
     }
-  };
+  }
 
-  function renderSummary() {
+  function updateOrderInfo() {
     var urgent = 0, warning = 0, ok = 0;
-    for (var i = 0; i < products.length; i++) {
-      if (products[i].status === 'red') urgent++;
-      else if (products[i].status === 'amber') warning++;
+    for (var i = 0; i < stockList.length; i++) {
+      if (stockList[i].status === 'red') urgent++;
+      else if (stockList[i].status === 'amber') warning++;
       else ok++;
     }
-    document.getElementById('countUrgent').textContent = urgent;
-    document.getElementById('countWarning').textContent = warning;
-    document.getElementById('countOk').textContent = ok;
-
-    var total = urgent + warning + ok;
+    var total = stockList.length;
     document.getElementById('orderInfo').textContent = total > 0
-      ? total + ' variantes en total · ' + urgent + ' sin stock · ' + warning + ' stock bajo'
+      ? total + ' variantes · ' + urgent + ' sin stock · ' + warning + ' stock bajo'
       : '';
   }
 
   function getFiltered() {
     var search = (document.getElementById('searchInput').value || '').toLowerCase();
-    return products.filter(function(p) {
+    return stockList.filter(function(p) {
       if (currentFilter !== 'all' && p.status !== currentFilter) return false;
-      if (search && p.name.toLowerCase().indexOf(search) === -1 && p.sku.toLowerCase().indexOf(search) === -1) return false;
+      if (search && String(p.variantId).toLowerCase().indexOf(search) === -1) return false;
       return true;
     });
   }
@@ -311,7 +382,9 @@
     var filtered = getFiltered();
 
     if (filtered.length === 0) {
-      emptyState.textContent = products.length === 0 ? 'No se encontraron productos.' : 'Sin resultados para el filtro actual.';
+      emptyState.textContent = stockList.length === 0
+        ? 'No se encontraron productos.'
+        : 'Sin resultados para el filtro actual.';
       emptyState.style.display = 'block';
       return;
     }
@@ -323,8 +396,7 @@
       tr.setAttribute('data-status', p.status);
       tr.innerHTML =
         '<td>' + getDotHtml(p.status) + '</td>' +
-        '<td>' + escHtml(p.name) + '</td>' +
-        '<td><code>' + escHtml(p.sku) + '</code></td>' +
+        '<td class="mono">' + escHtml(String(p.variantId)) + '</td>' +
         '<td class="mono">' + p.stock + '</td>' +
         '<td>' + (p.status !== 'green'
           ? '<button class="btn btn-primary btn-sm" onclick="requestOrder()">Pedir</button>'
@@ -339,6 +411,19 @@
     return d.innerHTML;
   }
 
+  // Refresh — invalida caché y recarga
+  window.refreshData = async function() {
+    var btn = document.getElementById('btnRefresh');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>Actualizando...';
+    // Invalidar caché
+    _dashboardCache = null;
+    _dashboardCacheTs = 0;
+    await loadInitial();
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Actualizar';
+  };
+
   // Filtros
   window.setFilter = function(filter, btn) {
     currentFilter = filter;
@@ -349,18 +434,16 @@
 
   window.filterTable = function() { renderTable(); };
 
-  // Botón Pedir — función no activa
   window.requestOrder = function() {
     alert('Función no activa aún');
   };
 
-  // Botón Generar orden de compra — función no activa
   window.generateOrder = function() {
-    alert('Función no activa aún — próximamente');
+    alert('Función no activa aún');
   };
 
   // Carga inicial
-  loadStock();
+  loadInitial();
 })();
 </script>
 </body>

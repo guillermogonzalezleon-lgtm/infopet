@@ -115,6 +115,22 @@ async function parallelTasks(tasks, onProgress) {
   return results;
 }
 
+/** Fetch datos del dashboard desde caché del servidor (10 min CDN cache)
+ *  Todas las páginas deben usar esto en vez de llamar a Bsale/Jumpseller directo
+ */
+var _dashboardCache = null;
+var _dashboardCacheTs = 0;
+async function getDashboardData() {
+  // Cache local 2 min para no llamar ni al CDN innecesariamente
+  if (_dashboardCache && (Date.now() - _dashboardCacheTs < 120000)) {
+    return _dashboardCache;
+  }
+  var data = await apiFetch('/api/dashboard-data');
+  _dashboardCache = data;
+  _dashboardCacheTs = Date.now();
+  return data;
+}
+
 /** Muestra banner de ambiente si no es producción.
  *  Llama a /api/env y si hay banner, lo muestra arriba de todo.
  */
@@ -134,6 +150,41 @@ async function checkEnvironment() {
   } catch (e) {
     return { environment: 'unknown', writeEnabled: false };
   }
+}
+
+/** Obtiene todas las métricas del dashboard en paralelo.
+ *  Retorna { metrics: { bsale_products, jumpseller_products, stock_critico },
+ *            stock_summary: { urgent, possible, full },
+ *            timestamp }
+ */
+async function getDashboardData() {
+  var results = await Promise.allSettled([
+    apiFetch('/api/bsale?endpoint=products.json&limit=1&state=0'),
+    apiFetch('/api/jumpseller?endpoint=products/count.json'),
+    apiFetch('/api/bsale?endpoint=stocks.json&limit=1&quantity=0')
+  ]);
+
+  var bsale = results[0].status === 'fulfilled' ? results[0].value : null;
+  var jump = results[1].status === 'fulfilled' ? results[1].value : null;
+  var crit = results[2].status === 'fulfilled' ? results[2].value : null;
+
+  var bsaleCount = bsale ? (bsale.count || 0) : 0;
+  var jumpCount = jump ? (jump.count || 0) : 0;
+  var critCount = crit ? (crit.count || 0) : 0;
+
+  return {
+    metrics: {
+      bsale_products: bsaleCount,
+      jumpseller_products: jumpCount,
+      stock_critico: critCount
+    },
+    stock_summary: {
+      urgent: critCount,
+      possible: 0,
+      full: bsaleCount - critCount
+    },
+    timestamp: new Date().toISOString()
+  };
 }
 
 // Auto-ejecutar al cargar

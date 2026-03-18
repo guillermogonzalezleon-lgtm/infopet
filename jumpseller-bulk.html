@@ -7,134 +7,198 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/style.css"/>
 <style>
-.page-wrap { max-width: 1200px; margin: 0 auto; padding: 80px 24px 48px; }
-.page-header { margin-bottom: 32px; }
-.page-header h1 { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 700; color: var(--text, #1D1D1F); margin-bottom: 6px; }
-.page-header p { font-size: 15px; color: var(--text-3, #6E6E73); }
+body { padding-top: 52px; }
 
-/* Drop zone */
+.page { max-width: 1080px; margin: 0 auto; padding: 36px 24px 64px; }
+
+/* ── Header ── */
+.page-header { margin-bottom: 32px; }
+.page-header h1 {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 6px;
+}
+.page-header p { font-size: 14px; color: var(--text-3); }
+
+/* ── Drop zone ── */
 .drop-zone {
-  border: 2px dashed var(--border-strong, #D1D1D6); border-radius: var(--radius, 16px);
-  padding: 64px 24px; text-align: center;
-  background: var(--surface, rgba(255,255,255,0.80));
-  transition: all 0.2s ease; cursor: pointer; margin-bottom: 28px;
+  border: 2px dashed rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 64px 24px;
+  text-align: center;
+  background: #FAFAFA;
+  transition: all 0.2s var(--ease);
+  cursor: pointer;
+  margin-bottom: 28px;
   position: relative;
 }
 .drop-zone:hover, .drop-zone.dragover {
-  border-color: var(--accent, #2D6A4F); background: rgba(45,106,79,0.04);
+  border-color: #2D6A4F;
+  background: rgba(45,106,79,0.03);
 }
-.drop-zone .drop-icon {
-  width: 56px; height: 56px; margin: 0 auto 16px;
-  border-radius: 14px; background: var(--accent-bg, rgba(45,106,79,0.09));
+.dz-icon {
+  width: 60px; height: 60px; margin: 0 auto 16px;
+  border-radius: 16px;
+  background: rgba(45,106,79,0.08);
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px; color: var(--accent, #2D6A4F);
+  font-size: 28px; color: #2D6A4F;
+  transition: transform 0.2s;
 }
-.drop-zone .drop-text { font-size: 15px; color: var(--text, #1D1D1F); font-weight: 500; margin-bottom: 6px; }
-.drop-zone .drop-hint { font-size: 13px; color: var(--text-3, #6E6E73); }
-.drop-zone input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.drop-zone:hover .dz-icon { transform: translateY(-2px); }
+.dz-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.dz-hint { font-size: 13px; color: #A1A1A6; }
+.drop-zone input[type="file"] {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer;
+}
 
-/* Summary pills */
-.summary-pills { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-.pill {
+/* ── Alert ── */
+#alert { margin-bottom: 20px; }
+
+/* ── Summary pills ── */
+.summary-pills {
+  display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.s-pill {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 18px; border-radius: 100px; font-size: 14px; font-weight: 600;
-  font-family: 'Inter', sans-serif; cursor: default;
-}
-.pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.pill-green { background: var(--green-bg, rgba(45,106,79,0.08)); color: var(--green, #2D6A4F); }
-.pill-green .pill-dot { background: var(--green, #2D6A4F); }
-.pill-amber { background: var(--amber-bg, rgba(155,107,10,0.08)); color: var(--amber, #9B6B0A); }
-.pill-amber .pill-dot { background: var(--amber, #9B6B0A); }
-.pill-red { background: var(--red-bg, rgba(192,57,43,0.08)); color: var(--red, #C0392B); }
-.pill-red .pill-dot { background: var(--red, #C0392B); }
-
-/* Filter pills */
-.filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-.filter-pill {
-  padding: 7px 18px; border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: 100px;
-  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-3, #6E6E73);
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+  padding: 8px 18px; border-radius: 100px;
+  font-size: 14px; font-weight: 600;
   font-family: 'Inter', sans-serif;
 }
-.filter-pill:hover { border-color: var(--accent, #2D6A4F); color: var(--accent, #2D6A4F); }
-.filter-pill.active { background: var(--accent, #2D6A4F); color: #fff; border-color: var(--accent, #2D6A4F); }
+.s-pill .s-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sp-green { background: rgba(45,106,79,0.08); color: #2D6A4F; }
+.sp-green .s-dot { background: #2D6A4F; }
+.sp-amber { background: rgba(155,107,10,0.08); color: #9B6B0A; }
+.sp-amber .s-dot { background: #9B6B0A; }
+.sp-red { background: rgba(192,57,43,0.08); color: #C0392B; }
+.sp-red .s-dot { background: #C0392B; }
 
-/* Status pills in table */
-.status-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 3px 12px; border-radius: 100px; font-size: 12px; font-weight: 600;
-  white-space: nowrap;
+/* ── Filter pills ── */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.f-pill {
+  padding: 8px 18px;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 100px;
+  background: #fff;
+  color: #6E6E73;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.status-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.status-pill.s-ok { background: var(--green-bg, rgba(45,106,79,0.08)); color: var(--green, #2D6A4F); }
-.status-pill.s-ok .dot { background: var(--green, #2D6A4F); }
-.status-pill.s-warning { background: var(--amber-bg, rgba(155,107,10,0.08)); color: var(--amber, #9B6B0A); }
-.status-pill.s-warning .dot { background: var(--amber, #9B6B0A); }
-.status-pill.s-error { background: var(--red-bg, rgba(192,57,43,0.08)); color: var(--red, #C0392B); }
-.status-pill.s-error .dot { background: var(--red, #C0392B); }
+.f-pill:hover { border-color: #2D6A4F; color: #2D6A4F; }
+.f-pill.active { background: #1D1D1F; color: #fff; border-color: #1D1D1F; }
 
-/* Table */
-.table-section { margin-bottom: 24px; }
-.table-section .card { padding: 0; background: var(--surface-solid, #fff); border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: var(--radius, 16px); overflow: hidden; }
-.table-wrap { overflow-x: auto; }
-.table-wrap table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.table-wrap thead th {
-  text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3, #6E6E73);
-  border-bottom: 1px solid var(--border, rgba(0,0,0,0.07)); background: var(--bg, #F5F5F7);
-}
-.table-wrap tbody td {
-  padding: 10px 16px; border-bottom: 1px solid var(--border, rgba(0,0,0,0.04));
-  color: var(--text, #1D1D1F); vertical-align: middle;
-}
-.table-wrap tbody tr:last-child td { border-bottom: none; }
-.table-wrap tbody tr:hover { background: rgba(45,106,79,0.02); }
-.table-wrap code { font-size: 12px; background: var(--bg, #F5F5F7); padding: 2px 6px; border-radius: 4px; }
-.table-wrap .issue-hint { font-size: 12px; color: var(--text-3, #6E6E73); display: block; margin-top: 2px; }
-
-/* Export bar */
-.export-bar {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 16px 20px; background: var(--surface-solid, #fff);
-  border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: var(--radius, 16px);
-}
-.export-bar .export-info { font-size: 13px; color: var(--text-3, #6E6E73); margin-left: auto; }
-
-/* Detected columns info */
+/* ── Detected columns ── */
 .detected-cols {
   display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
-  padding: 12px 16px; background: var(--surface-solid, #fff);
-  border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: var(--radius-sm, 10px);
-  font-size: 13px; color: var(--text-3, #6E6E73);
+  padding: 14px 16px;
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  font-size: 13px; color: #6E6E73;
 }
-.detected-cols strong { color: var(--text, #1D1D1F); font-weight: 600; margin-right: 4px; }
-.detected-cols .col-tag {
+.detected-cols strong { color: var(--text); font-weight: 600; margin-right: 4px; }
+.col-tag {
   display: inline-flex; align-items: center; gap: 4px;
-  background: var(--accent-bg, rgba(45,106,79,0.09)); color: var(--accent, #2D6A4F);
-  padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 500;
+  background: rgba(45,106,79,0.08); color: #2D6A4F;
+  padding: 2px 10px; border-radius: 100px;
+  font-size: 12px; font-weight: 500;
 }
-.detected-cols .col-miss {
-  background: var(--red-bg, rgba(192,57,43,0.08)); color: var(--red, #C0392B);
-}
+.col-miss { background: rgba(192,57,43,0.08); color: #C0392B; }
 
-/* Reset button */
-.btn-reset {
-  padding: 7px 16px; border: 1px solid var(--border, rgba(0,0,0,0.07)); border-radius: 100px;
-  background: var(--surface, rgba(255,255,255,0.80)); color: var(--text-3, #6E6E73);
-  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+/* ── Table ── */
+.tbl-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  min-width: 720px;
+}
+.tbl th {
+  text-align: left; padding: 12px 14px;
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: #6E6E73;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  background: #FAFAFA;
+}
+.tbl td {
+  padding: 10px 14px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.04);
+  color: var(--text); vertical-align: middle;
+}
+.tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody tr:hover td { background: rgba(0,0,0,0.015); }
+.tbl code { font-size: 12px; background: #F5F5F7; padding: 2px 6px; border-radius: 4px; }
+.tbl .issue-hint { font-size: 11px; color: #6E6E73; display: block; margin-top: 3px; }
+
+/* ── Status dots in table ── */
+.st-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.st-pill .st-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.st-ok { background: rgba(45,106,79,0.08); color: #2D6A4F; }
+.st-ok .st-dot { background: #2D6A4F; }
+.st-warning { background: rgba(155,107,10,0.08); color: #9B6B0A; }
+.st-warning .st-dot { background: #9B6B0A; }
+.st-error { background: rgba(192,57,43,0.08); color: #C0392B; }
+.st-error .st-dot { background: #C0392B; }
+
+/* ── Export bar ── */
+.export-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 16px 20px;
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+}
+.export-info { font-size: 13px; color: #6E6E73; margin-left: auto; }
+
+.btn-dark {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 20px;
+  background: #1D1D1F; color: #fff;
+  border: none; border-radius: 10px;
   font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s;
+  white-space: nowrap;
 }
-.btn-reset:hover { border-color: var(--red, #C0392B); color: var(--red, #C0392B); }
+.btn-dark:hover { background: #333; }
 
-/* Alert */
-#alert { margin-bottom: 16px; }
+.btn-reset {
+  padding: 9px 18px;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: 100px;
+  background: #fff; color: #6E6E73;
+  font-size: 13px; font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-reset:hover { border-color: #C0392B; color: #C0392B; }
 
-/* Hidden */
+/* ── Hidden ── */
 .hidden { display: none !important; }
 
-@media (max-width: 768px) {
-  .page-wrap { padding: 70px 12px 32px; }
-  .summary-pills { flex-direction: column; }
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .page { padding: 24px 16px 48px; }
+  .page-header h1 { font-size: 24px; }
+  .drop-zone { padding: 48px 20px; }
+  .summary-pills { gap: 8px; }
+  .s-pill { flex: 1; min-width: 0; justify-content: center; font-size: 13px; padding: 8px 12px; }
+  .export-bar { flex-direction: column; align-items: stretch; }
+  .export-info { margin-left: 0; text-align: center; }
+  .btn-dark { width: 100%; justify-content: center; min-height: 48px; font-size: 15px; }
+  .btn-reset { width: 100%; text-align: center; min-height: 44px; }
 }
 </style>
 </head>
@@ -157,68 +221,67 @@
   </div>
 </nav>
 
-<main class="page-wrap">
+<main class="page">
   <div class="page-header">
     <h1>Carga masiva</h1>
-    <p>Sube tu Carga Maestra CSV &rarr; genera CSV listo para Jumpseller</p>
+    <p>CSV &rarr; Jumpseller &mdash; sube tu Carga Maestra y genera el CSV listo para importar</p>
   </div>
 
   <div id="alert" class="alert"></div>
 
   <!-- Drop zone -->
   <div class="drop-zone" id="dropZone">
-    <div class="drop-icon">&#8593;</div>
-    <div class="drop-text">Arrastra tu CSV aqu&iacute; o haz clic para seleccionar</div>
-    <div class="drop-hint">Carga Maestra desde Google Sheets (.csv)</div>
+    <div class="dz-icon">&uarr;</div>
+    <div class="dz-text">Arrastra tu CSV aqu&iacute; o haz clic para seleccionar</div>
+    <div class="dz-hint">Carga Maestra desde Google Sheets (.csv)</div>
     <input type="file" id="fileInput" accept=".csv,text/csv"/>
   </div>
 
   <!-- Results section -->
   <div id="resultsSection" class="hidden">
+
     <!-- Detected columns -->
     <div class="detected-cols" id="detectedCols"></div>
 
     <!-- Summary pills -->
     <div class="summary-pills">
-      <span class="pill pill-green"><span class="pill-dot"></span><span id="countOk">0</span> OK</span>
-      <span class="pill pill-amber"><span class="pill-dot"></span><span id="countWarn">0</span> Warnings</span>
-      <span class="pill pill-red"><span class="pill-dot"></span><span id="countErr">0</span> Errores</span>
+      <span class="s-pill sp-green"><span class="s-dot"></span><span id="countOk">0</span> OK</span>
+      <span class="s-pill sp-amber"><span class="s-dot"></span><span id="countWarn">0</span> Warnings</span>
+      <span class="s-pill sp-red"><span class="s-dot"></span><span id="countErr">0</span> Errores</span>
     </div>
 
     <!-- Filters -->
     <div class="filter-bar">
-      <button class="filter-pill active" data-filter="all">Todos</button>
-      <button class="filter-pill" data-filter="ok">OK</button>
-      <button class="filter-pill" data-filter="warning">Warning</button>
-      <button class="filter-pill" data-filter="error">Error</button>
+      <button class="f-pill active" data-filter="all">Todos</button>
+      <button class="f-pill" data-filter="ok">OK</button>
+      <button class="f-pill" data-filter="warning">Warning</button>
+      <button class="f-pill" data-filter="error">Error</button>
     </div>
 
     <!-- Table -->
-    <div class="table-section">
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Estado</th>
-                <th>Nombre</th>
-                <th>SKU</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Categor&iacute;a</th>
-                <th>Marca</th>
-                <th>C&oacute;digo Barra</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
+    <div class="tbl-card">
+      <div class="tbl-scroll">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Nombre</th>
+              <th>SKU</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Categor&iacute;a</th>
+              <th>Marca</th>
+              <th>C&oacute;digo Barra</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
       </div>
     </div>
 
     <!-- Export bar -->
     <div class="export-bar">
-      <button class="btn btn-primary" id="btnExport">Exportar CSV Jumpseller</button>
+      <button class="btn-dark" id="btnExport">Exportar CSV Jumpseller</button>
       <button class="btn-reset" id="btnReset">Cargar otro archivo</button>
       <span class="export-info" id="exportInfo"></span>
     </div>
@@ -245,40 +308,31 @@
   });
 
   dropZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dropZone.classList.add('dragover');
   });
-
   dropZone.addEventListener('dragenter', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dropZone.classList.add('dragover');
   });
-
   dropZone.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dropZone.classList.remove('dragover');
   });
-
   dropZone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dropZone.classList.remove('dragover');
-    var files = e.dataTransfer.files;
-    if (files.length > 0) processFile(files[0]);
+    if (e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
   });
-
   fileInput.addEventListener('change', function() {
     if (fileInput.files.length > 0) processFile(fileInput.files[0]);
   });
 
   /* ── Filter pills ── */
-  document.querySelectorAll('.filter-pill').forEach(function(btn) {
+  document.querySelectorAll('.f-pill').forEach(function(btn) {
     btn.addEventListener('click', function() {
       currentFilter = btn.getAttribute('data-filter');
-      document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.f-pill').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
       renderTable();
     });
@@ -294,8 +348,8 @@
     resultsSection.classList.add('hidden');
     dropZone.style.display = '';
     fileInput.value = '';
-    document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
-    document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+    document.querySelectorAll('.f-pill').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelector('.f-pill[data-filter="all"]').classList.add('active');
   });
 
   /* ── Process file ── */
@@ -320,7 +374,6 @@
 
     var headers = splitCSVLine(lines[0]).map(function(h) { return h.trim().toLowerCase(); });
 
-    // Column mapping — order matters, more specific aliases first
     var colMap = {
       name:        findCol(headers, ['nombre', 'name', 'producto']),
       sku:         findCol(headers, ['sku', 'codigo', 'c\u00f3digo', 'code']),
@@ -332,22 +385,17 @@
       description: findCol(headers, ['descripcion', 'descripci\u00f3n', 'description', 'detalle'])
     };
 
-    // Show detected columns
     showDetectedColumns(colMap, headers);
 
     rows = [];
     var skuCount = {};
 
-    // First pass: count SKUs for duplicate detection
     for (var i = 1; i < lines.length; i++) {
       var cols = splitCSVLine(lines[i]);
       var sku = getVal(cols, colMap.sku);
-      if (sku) {
-        skuCount[sku] = (skuCount[sku] || 0) + 1;
-      }
+      if (sku) skuCount[sku] = (skuCount[sku] || 0) + 1;
     }
 
-    // Second pass: build rows with validation
     for (var i = 1; i < lines.length; i++) {
       var cols = splitCSVLine(lines[i]);
       var row = {
@@ -363,20 +411,14 @@
         issues:      []
       };
 
-      // Red: missing required fields
       if (!row.name) { row.status = 'error'; row.issues.push('Falta nombre'); }
       if (!row.price || isNaN(parseFloat(row.price.replace(/[$.]/g, '').replace(',', '.')))) {
-        row.status = 'error';
-        row.issues.push('Falta precio');
+        row.status = 'error'; row.issues.push('Falta precio');
       }
-
-      // Amber: duplicate SKU
       if (row.sku && skuCount[row.sku] > 1) {
         if (row.status !== 'error') row.status = 'warning';
         row.issues.push('SKU duplicado');
       }
-
-      // Amber: empty barcode
       if (!row.barcode) {
         if (row.status !== 'error') row.status = 'warning';
         row.issues.push('C\u00f3digo barra vac\u00edo');
@@ -412,15 +454,13 @@
     detectedColsEl.innerHTML = html;
   }
 
-  /* ── Find column by aliases ── */
+  /* ── Find column ── */
   function findCol(headers, aliases) {
-    // Exact match first
     for (var a = 0; a < aliases.length; a++) {
       for (var h = 0; h < headers.length; h++) {
         if (headers[h] === aliases[a]) return h;
       }
     }
-    // Partial match
     for (var a = 0; a < aliases.length; a++) {
       for (var h = 0; h < headers.length; h++) {
         if (headers[h].indexOf(aliases[a]) !== -1) return h;
@@ -434,7 +474,7 @@
     return (cols[idx] || '').trim();
   }
 
-  /* ── CSV line parser (handles quotes, commas, semicolons) ── */
+  /* ── CSV line parser ── */
   function splitCSVLine(line) {
     var result = [];
     var current = '';
@@ -472,8 +512,7 @@
   /* ── Status pill HTML ── */
   function getStatusPill(status) {
     var labels = { error: 'Error', warning: 'Warning', ok: 'OK' };
-    var cls = 's-' + status;
-    return '<span class="status-pill ' + cls + '"><span class="dot"></span>' + labels[status] + '</span>';
+    return '<span class="st-pill st-' + status + '"><span class="st-dot"></span>' + labels[status] + '</span>';
   }
 
   /* ── Render table ── */
@@ -485,7 +524,7 @@
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-3,#6E6E73)">Sin resultados para este filtro.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:#6E6E73">Sin resultados para este filtro.</td></tr>';
       return;
     }
 
