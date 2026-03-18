@@ -77,17 +77,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
   transition:all 0.2s cubic-bezier(.4,0,.2,1)}
 .glass:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.12)}
 
-/* ── Metrics ── */
-.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:32px}
-.m-card{padding:18px 20px}
-.m-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;
-  color:rgba(255,255,255,0.35);margin-bottom:10px}
-.m-val{font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;
-  letter-spacing:-0.03em;line-height:1;color:#fff}
-.m-val.ld{height:28px;width:72px;border-radius:7px;
-  background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.07) 50%,rgba(255,255,255,0.03) 75%);
-  background-size:200% 100%;animation:shm 1.5s infinite}
-.m-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:10px;display:flex;align-items:center;gap:5px}
+/* ── Dots ── */
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
 .dot-g{background:#34C759}.dot-r{background:#FF3B30}.dot-a{background:#FF9500}.dot-b{background:#5AC8FA}
 .dot-p{animation:pulse 1.8s ease-in-out infinite}
@@ -129,22 +119,18 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
   .hero{padding:100px 0 48px}
   .hero h1{font-size:48px}
   .hero-stats{max-width:480px}
-  .metrics{grid-template-columns:repeat(4,1fr)}
-  .actions{grid-template-columns:repeat(5,1fr)}
+.actions{grid-template-columns:repeat(5,1fr)}
 }
 
 /* ── Mobile ── */
 @media(max-width:860px){
   .nav-links{display:none}
-  .metrics{grid-template-columns:repeat(2,1fr)}
-  .actions{grid-template-columns:repeat(2,1fr)}
+.actions{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:480px){
   .hero h1{font-size:28px}
   .hero-stat-val{font-size:20px}
-  .metrics{grid-template-columns:1fr}
-  .actions{grid-template-columns:repeat(2,1fr)}
-  .m-val{font-size:24px}
+.actions{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -196,34 +182,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
           <div class="hero-stat-label">Sin stock</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-val ld" id="hUnits">&nbsp;</div>
-          <div class="hero-stat-label">Unidades</div>
+          <div class="hero-stat-val ld" id="hSync">&nbsp;</div>
+          <div class="hero-stat-label">Sync</div>
         </div>
-      </div>
-    </div>
-
-    <!-- Metrics -->
-    <div class="section-label">Métricas en vivo</div>
-    <div class="metrics">
-      <div class="glass m-card">
-        <div class="m-label">Bsale con stock</div>
-        <div class="m-val ld" id="mBsale">&nbsp;</div>
-        <div class="m-sub"><span class="dot dot-g"></span>Productos disponibles</div>
-      </div>
-      <div class="glass m-card">
-        <div class="m-label">Productos Jumpseller</div>
-        <div class="m-val ld" id="mJump">&nbsp;</div>
-        <div class="m-sub"><span class="dot dot-b"></span>Publicados</div>
-      </div>
-      <div class="glass m-card">
-        <div class="m-label">Stock crítico</div>
-        <div class="m-val ld" id="mCrit">&nbsp;</div>
-        <div class="m-sub"><span class="dot dot-r dot-p"></span>Stock en 0</div>
-      </div>
-      <div class="glass m-card">
-        <div class="m-label">Sincronización</div>
-        <div class="m-val ld" id="mSync">&nbsp;</div>
-        <div class="m-sub" id="mSyncSub"></div>
       </div>
     </div>
 
@@ -282,14 +243,9 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
       setVal('hBsale', m.bsale_products);
       setVal('hJump', m.jumpseller_products);
       setVal('hCrit', m.stock_critico);
-      setVal('hUnits', m.total_unidades || 0);
 
-      // Metric cards
-      setVal('mBsale', m.bsale_products);
-      setVal('mJump', m.jumpseller_products);
-      setVal('mCrit', m.stock_critico);
     } catch(e) {
-      ['hBsale','hJump','hCrit','hUnits','mBsale','mJump','mCrit'].forEach(function(id){
+      ['hBsale','hJump','hCrit'].forEach(function(id){
         var el = document.getElementById(id);
         if (el) { el.textContent = '—'; el.classList.remove('ld'); }
       });
@@ -298,24 +254,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
 
   /* ── Sync status ── */
   (async function(){
-    var el = document.getElementById('mSync'), sub = document.getElementById('mSyncSub');
+    var el = document.getElementById('hSync');
     try {
       var data = await apiFetch('/api/sync?action=compare');
       var items = Array.isArray(data) ? data : (data.items || []);
       var diffs = items.filter(function(p){ return p.diferencia !== null && p.diferencia !== 0 }).length;
-      el.classList.remove('ld');
-      if (diffs === 0) {
-        el.innerHTML = '<span class="dot dot-g"></span>';
-        sub.textContent = 'Todo sincronizado';
-      } else {
-        el.innerHTML = '<span class="dot dot-r dot-p"></span>';
-        sub.textContent = diffs + ' diferencias';
-      }
-    } catch(e) {
-      el.textContent = '—';
-      el.classList.remove('ld');
-      sub.textContent = 'Sin conexión';
-    }
+      if (el) { el.textContent = diffs === 0 ? '✓' : diffs; el.classList.remove('ld'); }
+    } catch(e) { if (el) { el.textContent = '—'; el.classList.remove('ld'); } }
   })();
 
   /* ── Sync actions ── */
