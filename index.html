@@ -16,10 +16,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#fff;font-size
   background:#0C1210}
 
 /* ── Background ── */
-.bg{position:fixed;inset:0;z-index:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(45,106,79,0.08) 0%,transparent 70%),
-             radial-gradient(ellipse 50% 50% at 80% 80%,rgba(45,106,79,0.04) 0%,transparent 60%),
-             #0C1210}
+.bg{position:fixed;inset:0;z-index:0;background:#0C1210 url('assets/banner-forest.jpg') center/cover no-repeat}
+.bg::after{content:'';position:absolute;inset:0;background:rgba(12,18,16,0.85)}
 
 /* ── Content ── */
 .content{position:relative;z-index:1;min-height:100vh;padding-bottom:1px}
